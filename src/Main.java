@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import mathray.Definition;
 import mathray.Variable;
 import mathray.eval.precision.Intervals;
 import mathray.plot.Plotter;

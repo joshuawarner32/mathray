@@ -3,6 +3,7 @@ package mathray.eval.simplify;
 import mathray.Call;
 import mathray.Constant;
 import mathray.Definition;
+import mathray.Expressions;
 import mathray.Transformer;
 import mathray.Value;
 import mathray.Variable;
@@ -23,6 +24,15 @@ public class Simplifications {
         return new ProductExpr(new Vector<Expr>(this), Vector.<Expr>empty(), ((ConstExpr)expr).value, Constant.get(1));
       }
       return new ProductExpr(new Vector<Expr>(this, expr), Vector.<Expr>empty(), Constant.get(1), Constant.get(1));
+    }
+    
+    public Expr add(Expr expr) {
+      if(expr instanceof SumExpr) {
+        return expr.add(this);
+      } else if(expr instanceof ConstExpr) {
+        return new SumExpr(new Vector<Expr>(this), Vector.<Expr>empty(), Constant.get(0));
+      }
+      return new SumExpr(new Vector<Expr>(this, expr), Vector.<Expr>empty(), Constant.get(0));
     }
     
     public abstract Value toValue();
@@ -49,6 +59,23 @@ public class Simplifications {
     }
     
     @Override
+    public Expr mul(Expr expr) {
+      if(expr instanceof ConstExpr) {
+        return new ConstExpr(value.mul(((ConstExpr)expr).value));
+      }
+      return new ProductExpr(new Vector<Expr>(expr), Vector.<Expr>empty(), value, Constant.get(1));
+    }
+
+    @Override
+    public Expr add(Expr expr) {
+      if(expr instanceof ConstExpr) {
+        return new ConstExpr(value.add(((ConstExpr)expr).value));
+      } else {
+        return new SumExpr(new Vector<Expr>(expr), Vector.<Expr>empty(), value);
+      }
+    }
+    
+    @Override
     public Value toValue() {
       return value;
     }
@@ -66,11 +93,10 @@ public class Simplifications {
       this.coeffNum = coeffNum;
       this.coeffDenom = coeffDenom;
     }
-    
+
+    @Override
     public Expr mul(Expr expr) {
-      if(expr instanceof ProductExpr) {
-        return mul((ProductExpr)expr);
-      } else if(expr instanceof ConstExpr) {
+      if(expr instanceof ConstExpr) {
         return new ProductExpr(num, denom, coeffNum.mul(((ConstExpr)expr).value), coeffDenom);
       } else if(expr instanceof ProductExpr) {
         ProductExpr prod = (ProductExpr)expr;
@@ -82,8 +108,50 @@ public class Simplifications {
     
     @Override
     public Value toValue() {
-      // TODO Auto-generated method stub
-      return null;
+      if(coeffNum.equals(Constant.get(0))) {
+        return Constant.get(0);
+      } else {
+        Value ret = fold(DIV, fold(MUL, toValues(num)), toValues(denom));
+        if(coeffNum.equals(coeffDenom)) {
+          return ret;
+        } else {
+          return Expressions.mul(div(coeffNum, coeffDenom), ret);
+        }
+      }
+    }
+  }
+  
+  private static class SumExpr extends Expr {
+    private final Vector<Expr> pos;
+    private final Vector<Expr> neg;
+    private final Constant offset;
+    
+    private SumExpr(Vector<Expr> pos, Vector<Expr> neg, Constant offset) {
+      this.pos = pos;
+      this.neg = neg;
+      this.offset = offset;
+    }
+
+    @Override
+    public Expr add(Expr expr) {
+      if(expr instanceof ConstExpr) {
+        return new SumExpr(pos, neg, offset.add(((ConstExpr)expr).value));
+      } else if(expr instanceof ProductExpr) {
+        SumExpr sum = (SumExpr)expr;
+        return new SumExpr(pos.concat(sum.pos), neg.concat(sum.neg), offset.add(sum.offset));
+      } else {
+        throw new RuntimeException("unhandled case");
+      }
+    }
+    
+    @Override
+    public Value toValue() {
+      Value ret = fold(SUB, fold(ADD, toValues(pos)), toValues(neg));
+      if(offset.equals(Constant.get(0))) {
+        return ret;
+      } else {
+        return Expressions.add(offset, ret);
+      }
     }
   }
   
@@ -112,7 +180,10 @@ public class Simplifications {
         return in.accept(new Visitor<Expr>() {
           @Override
           public Vector<Expr> call(Visitor<Expr> v, Call call) {
-            if(call.func == MUL) {
+            if(call.func == ADD) {
+              Vector<Expr> args = call.visitArgs(v);
+              return vector(args.get(0).add(args.get(1)));
+            } else if(call.func == MUL) {
               Vector<Expr> args = call.visitArgs(v);
               return vector(args.get(0).mul(args.get(1)));
             } else {

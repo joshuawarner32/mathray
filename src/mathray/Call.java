@@ -1,5 +1,7 @@
 package mathray;
 
+import java.util.Arrays;
+
 import mathray.eval.Visitor;
 import mathray.eval.text.DefaultPrinter;
 
@@ -113,6 +115,11 @@ public final class Call implements Comparable<Call> {
       }
     }
     return 0;
+  }
+  
+  @Override
+  public String toString() {
+    return Arrays.toString(selects);
   }
 
 }

@@ -7,7 +7,6 @@ import static org.junit.Assert.*;
 
 import mathray.Definition;
 import mathray.FunctionD;
-import mathray.Value;
 import mathray.Variable;
 import mathray.Vector;
 import mathray.calc.Derivatives;
@@ -97,6 +96,7 @@ public class Sandbox {
     assertSimplifiesTo(def(args(x), x), def(args(x), x));
     assertSimplifiesTo(def(args(x), add(x, num(0))), def(args(x), x));
     assertSimplifiesTo(def(args(x), add(num(0), x)), def(args(x), x));
+    assertSimplifiesTo(def(args(x), add(num(1), x)), def(args(x), add(num(1), x)));
     assertSimplifiesTo(def(args(x), mul(x, num(1))), def(args(x), x));
     assertSimplifiesTo(def(args(x), mul(num(1), x)), def(args(x), x));
     assertSimplifiesTo(def(args(x), mul(x, num(0))), def(args(x), num(0)));
@@ -129,7 +129,6 @@ public class Sandbox {
   @Test
   public void testInterval() {
     Variable x = var("x");
-    Variable y = var("y");
     
     assertIntervalizesTo(def(args(x), div(num(1), x)), vector(x), null);
   }

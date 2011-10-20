@@ -36,6 +36,36 @@ public class Expressions {
     return res;
   }
   
+  public static Value fold(Function func, Vector<Value> values) {
+    if(values.size() < 1) {
+      throw new IllegalArgumentException("length of values must be > 0");
+    } else if(values.size() < 2) {
+      return values.get(0);
+    }
+    if(func.outputArity != 1 || func.inputArity != 2) {
+      throw new IllegalArgumentException("arity of func");
+    }
+    Value res = func.call(vector(values.get(0), values.get(1))).select(0);
+    for(int i = 2; i < values.size(); i++) {
+      res = func.call(vector(res, values.get(i))).select(0);
+    }
+    return res;
+  }
+  
+  public static Value fold(Function func, Value start, Vector<Value> values) {
+    if(values.size() < 1) {
+      return start;
+    }
+    if(func.outputArity != 1 || func.inputArity != 2) {
+      throw new IllegalArgumentException("arity of func");
+    }
+    Value res = start;
+    for(int i = 1; i < values.size(); i++) {
+      res = func.call(vector(res, values.get(i))).select(0);
+    }
+    return res;
+  }
+  
   public static Value add(Value... values) {
     return fold(ADD, values);
   }
