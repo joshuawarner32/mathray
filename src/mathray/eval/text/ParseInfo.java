@@ -12,6 +12,7 @@ import mathray.Variable;
 import mathray.Vector;
 import mathray.eval.Visitor;
 import mathray.eval.Impl;
+import mathray.eval.text.ParseInfo.Builder;
 import static mathray.Expressions.*;
 
 public class ParseInfo {
@@ -45,6 +46,11 @@ public class ParseInfo {
     
     public Builder postfix(String name, int prec, Function function) {
       operators.put(function, new OperatorPrecedenceImplementation(null, null, name, prec));
+      return this;
+    }
+
+    public Builder var(Variable var) {
+      variables.put(var.name, var);
       return this;
     }
     
