@@ -19,12 +19,11 @@ import static mathray.Functions.*;
 
 public class Derivatives {
   
-  private static final Variable x = var("x");
-  private static final Variable y = var("y");
-  
   private static final Map<Function, Vector<Definition>> derivs = new HashMap<Function, Vector<Definition>>();
   
   static {
+    Variable x = var("x");
+    Variable y = var("y");
     register(ADD, def(args(x, y), num(1)), def(args(x, y), num(1)));
     register(MUL, def(args(x, y), y), def(args(x, y), x));
     
@@ -32,6 +31,7 @@ public class Derivatives {
     
     register(SIN, def(args(x), neg(cos(x))));
     register(COS, def(args(x), sin(x)));
+    register(SQRT, def(args(x), div(num(1), mul(num(2), sqrt(x)))));
   }
   
   private static void register(Function func, Definition... derivDefs) {

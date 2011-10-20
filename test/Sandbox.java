@@ -114,6 +114,8 @@ public class Sandbox {
     assertDerivesTo(def(args(x), cos(x)), x, def(args(x), sin(x)));
     assertDerivesTo(def(args(x), sin(x)), x, def(args(x), neg(cos(x))));
     assertDerivesTo(def(args(x), neg(sin(x))), x, def(args(x), cos(x)));
+
+    assertDerivesTo(def(args(x), sqrt(x)), x, def(args(x), div(num(1), mul(num(2), sqrt(x)))));
   }
   
   private static void assertIntervalizesTo(Definition def, Vector<Variable> vars, Definition result) {
