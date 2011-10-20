@@ -30,7 +30,8 @@ public class Sandbox {
       .infix("*", 2, MUL)
       .infix("/", 2, DIV)
       .build();
-    
+
+    assertEquals(num(0), parser.parse("0"));
     assertEquals(add(num(1), num(2)), parser.parse("1+2"));
     assertEquals(mul(num(1), num(2)), parser.parse("1*2"));
     assertEquals(add(num(1), mul(num(2), num(3))), parser.parse("1+2*3"));
