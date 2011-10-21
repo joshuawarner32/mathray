@@ -1,5 +1,8 @@
 package mathray.eval.simplify;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import mathray.Call;
 import mathray.Rational;
 import mathray.Definition;
@@ -24,18 +27,17 @@ public class Simplifications {
         if(((ConstExpr)expr).value.equals(Rational.get(0))) {
           return expr;
         }
-        return new ProductExpr(((ConstExpr)expr).value, new Vector<Expr>(this));
       }
-      return new ProductExpr(Rational.get(1), new Vector<Expr>(this, expr));
+      return new ProductExpr(Rational.get(1), vector(this, expr));
     }
     
     public Expr add(Expr expr) {
       if(expr instanceof SumExpr) {
         return expr.add(this);
       } else if(expr instanceof ConstExpr) {
-        return new SumExpr(new Vector<Expr>(this), Vector.<Expr>empty(), Rational.get(0));
+        return new SumExpr(num(0), vector(this));
       }
-      return new SumExpr(new Vector<Expr>(this, expr), Vector.<Expr>empty(), Rational.get(0));
+      return new SumExpr(num(0), vector(this, expr));
     }
     
     public boolean isNegative() {
@@ -93,7 +95,7 @@ public class Simplifications {
       if(expr instanceof ConstExpr) {
         return new ConstExpr(value.add(((ConstExpr)expr).value));
       } else {
-        return new SumExpr(new Vector<Expr>(expr), Vector.<Expr>empty(), value);
+        return new SumExpr(value, vector(expr));
       }
     }
     
@@ -188,6 +190,14 @@ public class Simplifications {
       return mul(r, v);
     }
   }
+
+  private static Value constAdd(Rational r, Value v) {
+    if(r.equals(num(0))) {
+      return num(0);
+    } else {
+      return add(r, v);
+    }
+  }
   
   private static class ProductExpr extends Expr {
     private final Rational coeff;
@@ -263,23 +273,21 @@ public class Simplifications {
   }
   
   private static class SumExpr extends Expr {
-    private final Vector<Expr> pos;
-    private final Vector<Expr> neg;
     private final Rational offset;
+    private final Vector<Expr> terms;
     
-    private SumExpr(Vector<Expr> pos, Vector<Expr> neg, Rational offset) {
-      this.pos = pos;
-      this.neg = neg;
+    private SumExpr(Rational offset, Vector<Expr> terms) {
       this.offset = offset;
+      this.terms = terms;
     }
 
     @Override
     public Expr add(Expr expr) {
       if(expr instanceof ConstExpr) {
-        return new SumExpr(pos, neg, offset.add(((ConstExpr)expr).value));
+        return new SumExpr(offset.add(((ConstExpr)expr).value), terms);
       } else if(expr instanceof ProductExpr) {
         SumExpr sum = (SumExpr)expr;
-        return new SumExpr(pos.concat(sum.pos), neg.concat(sum.neg), offset.add(sum.offset));
+        return new SumExpr(offset.add(sum.offset), terms.concat(sum.terms));
       } else {
         throw new RuntimeException("unhandled case");
       }
@@ -287,17 +295,26 @@ public class Simplifications {
     
     @Override
     public Value toValue() {
-      Value ret;
-      if(pos.size() > 0) {
-        ret = fold(SUB, fold(ADD, toValues(pos)), toValues(neg));
-      } else {
-        ret = neg(fold(ADD, toValues(neg)));
+      Value ret = null;
+      List<Value> negs = new LinkedList<Value>();
+      for(Expr expr : terms) {
+        if(expr.isNegative()) {
+          negs.add(expr.toNegativeValue());
+        } else {
+          if(ret == null) {
+            ret = expr.toValue();
+          } else {
+            ret = Expressions.add(ret, expr.toValue());
+          }
+        }
       }
-      if(offset.equals(Rational.get(0))) {
-        return ret;
-      } else {
-        return Expressions.add(offset, ret);
+      if(ret == null) {
+        ret = neg(negs.remove(0));
       }
+      for(Value v : negs) {
+        ret = sub(ret, v);
+      }
+      return constAdd(offset, ret);
     }
   }
   
