@@ -1,6 +1,6 @@
 package mathray.eval.machine;
 
-import mathray.Constant;
+import mathray.Rational;
 import mathray.Definition;
 import mathray.Function;
 import mathray.Vector;
@@ -50,8 +50,8 @@ public class MachineEvaluator {
   
   public static Vector<Double> eval(Definition def, Vector<Double> params) {
     Context<Double> ctx = new Context<Double>(def.args.<Double>bind(params), env, new Translator<Double>() {
-      public Double translate(Constant cst) {
-        return (double)cst.value;
+      public Double translate(Rational r) {
+        return r.toDouble();
       }
     });
     return ctx.run(def.values);

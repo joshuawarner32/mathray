@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Stack;
 
 import mathray.Call;
-import mathray.Constant;
+import mathray.Rational;
 import mathray.Function;
 import mathray.Value;
 import mathray.Variable;
@@ -81,8 +81,8 @@ public class ParseInfo {
       }
 
       @Override
-      public PrecedenceString constant(Constant cst) {
-        return new PrecedenceString(String.valueOf(cst.value), Integer.MAX_VALUE);
+      public PrecedenceString constant(Rational r) {
+        return new PrecedenceString(r.toString(), Integer.MAX_VALUE);
       }
       
     }).toString();

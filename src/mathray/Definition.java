@@ -27,7 +27,7 @@ public class Definition implements Impl<Value> {
         return a.get(args.getIndex(var));
       }
       @Override
-      public Value constant(Constant cst) {
+      public Value constant(Rational cst) {
         return cst;
       }
     };

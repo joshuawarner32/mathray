@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mathray.Call;
-import mathray.Constant;
+import mathray.Rational;
 import mathray.Definition;
 import mathray.Function;
 import mathray.Generator;
@@ -82,7 +82,7 @@ public class Derivatives {
       }
       
       @Override
-      public Value constant(Constant cst) {
+      public Value constant(Rational cst) {
         return num(0);
       }
       

@@ -118,8 +118,8 @@ public class Expressions {
     return SQRT.call(values).select(0);
   }
   
-  public static Value num(long value) {
-    return Constant.get(value);
+  public static Rational num(long value) {
+    return Rational.get(value);
   }
 
 }

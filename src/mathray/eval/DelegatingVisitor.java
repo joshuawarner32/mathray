@@ -1,7 +1,7 @@
 package mathray.eval;
 
 import mathray.Call;
-import mathray.Constant;
+import mathray.Rational;
 import mathray.Variable;
 import mathray.Vector;
 
@@ -24,7 +24,7 @@ public class DelegatingVisitor<T> implements Visitor<T> {
   }
 
   @Override
-  public T constant(Constant cst) {
+  public T constant(Rational cst) {
     return visitor.constant(cst);
   }
 

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mathray.Call;
-import mathray.Constant;
+import mathray.Rational;
 import mathray.Transformer;
 import mathray.Value;
 import mathray.Variable;
@@ -44,7 +44,7 @@ public class Context<T> implements Visitor<T> {
   }
 
   @Override
-  public T constant(Constant cst) {
+  public T constant(Rational cst) {
     T ret = cache.get(cst);
     if(ret == null) {
       cache.put(cst, ret = translator.translate(cst));

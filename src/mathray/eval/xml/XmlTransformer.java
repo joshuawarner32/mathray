@@ -14,7 +14,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import mathray.Call;
-import mathray.Constant;
+import mathray.Rational;
 import mathray.Value;
 import mathray.Variable;
 import mathray.Vector;
@@ -50,9 +50,9 @@ public class XmlTransformer {
     }
 
     @Override
-    public Element constant(Constant cst) {
-      Element el = doc.createElement("cst");
-      el.setAttribute("value", String.valueOf(cst.value));
+    public Element constant(Rational r) {
+      Element el = doc.createElement("rational");
+      el.setAttribute("value", r.toString());
       return el;
     }
     

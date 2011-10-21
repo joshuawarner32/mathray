@@ -1,7 +1,7 @@
 package mathray.eval;
 
 import mathray.Call;
-import mathray.Constant;
+import mathray.Rational;
 import mathray.Value;
 import mathray.Variable;
 import mathray.Vector;
@@ -23,7 +23,7 @@ public class IdentityVisitor implements Visitor<Value> {
   }
 
   @Override
-  public Value constant(Constant cst) {
+  public Value constant(Rational cst) {
     return cst;
   }
 

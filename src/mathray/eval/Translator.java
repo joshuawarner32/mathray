@@ -1,9 +1,9 @@
 package mathray.eval;
 
-import mathray.Constant;
+import mathray.Rational;
 
 public interface Translator<T> {
   
-  public T translate(Constant cst);
+  public T translate(Rational cst);
   
 }

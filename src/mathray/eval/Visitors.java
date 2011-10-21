@@ -5,7 +5,7 @@ import java.util.Map;
 
 import mathray.Args;
 import mathray.Call;
-import mathray.Constant;
+import mathray.Rational;
 import mathray.Variable;
 import mathray.Vector;
 
@@ -50,7 +50,7 @@ public class Visitors {
       }
 
       @Override
-      public T constant(Constant cst) {
+      public T constant(Rational cst) {
         T ret = (T)cache.get(cst);
         if(ret != null) {
           return ret;

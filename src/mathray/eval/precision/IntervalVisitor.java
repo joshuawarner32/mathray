@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mathray.Call;
-import mathray.Constant;
+import mathray.Rational;
 import mathray.Function;
 import mathray.Value;
 import mathray.Variable;
@@ -107,7 +107,7 @@ public class IntervalVisitor implements Visitor<Interval> {
   }
 
   @Override
-  public Interval constant(Constant cst) {
+  public Interval constant(Rational cst) {
     return new Interval(cst, cst);
   }
 

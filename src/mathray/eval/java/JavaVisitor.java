@@ -5,7 +5,7 @@ import java.util.Map;
 import org.objectweb.asm.Opcodes;
 
 import mathray.Call;
-import mathray.Constant;
+import mathray.Rational;
 import mathray.Function;
 import mathray.Variable;
 import mathray.Vector;
@@ -88,8 +88,8 @@ public class JavaVisitor implements Visitor<JavaValue> {
   }
 
   @Override
-  public JavaValue constant(Constant cst) {
-    return mgen.cst((double)cst.value);
+  public JavaValue constant(Rational r) {
+    return mgen.cst(r.toDouble());
   }
 
 }
