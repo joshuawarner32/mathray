@@ -182,18 +182,24 @@ public class Simplifications {
   private static Value constMul(Rational r, Value v) {
     if(r.equals(num(0))) {
       return num(0);
-    } else if(r.equals(num(1))) {
-      return v;
-    } else if(r.equals(num(-1))) {
-      return neg(v);
     } else {
-      return mul(r, v);
+      if(v != null) { 
+        if(r.equals(num(1))) {
+          return v;
+        } else if(r.equals(num(-1))) {
+          return neg(v);
+        } else {
+          return mul(r, v);
+        }
+      } else {
+        return r;
+      }
     }
   }
 
   private static Value constAdd(Rational r, Value v) {
     if(r.equals(num(0))) {
-      return num(0);
+      return v;
     } else {
       return add(r, v);
     }
@@ -262,13 +268,7 @@ public class Simplifications {
           }
         }
       }
-      if(denom == null) {
-        return constMul(coeff, num);
-      } else if(num == null) {
-        return Expressions.div(coeff.numerator(), constMul(coeff.numerator(), denom));
-      } else {
-        return div(constMul(coeff.numerator(), num), constMul(coeff.denominator(), denom));
-      }
+      return div(constMul(coeff.numerator(), num), constMul(coeff.denominator(), denom));
     }
   }
   
