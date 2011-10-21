@@ -9,7 +9,7 @@ import mathray.Definition;
 import mathray.FunctionD;
 import mathray.Variable;
 import mathray.Vector;
-import mathray.calc.Derivatives;
+import mathray.eval.calc.Derivatives;
 import mathray.eval.java.JavaCompiler;
 import mathray.eval.machine.MachineEvaluator;
 import mathray.eval.precision.Intervals;

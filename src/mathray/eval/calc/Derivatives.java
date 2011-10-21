@@ -1,4 +1,4 @@
-package mathray.calc;
+package mathray.eval.calc;
 
 import java.util.HashMap;
 import java.util.Map;
