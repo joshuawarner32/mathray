@@ -104,7 +104,7 @@ public class Simplifications {
     
     @Override
     public boolean isReciprocal() {
-      return true;
+      return !value.isInteger();
     }
     
     @Override
