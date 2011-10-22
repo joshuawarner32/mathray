@@ -21,12 +21,8 @@ public class Simplifications {
   private static abstract class Expr {
     
     public Expr mul(Expr expr) {
-      if(expr instanceof ProductExpr) {
+      if(expr instanceof ProductExpr || expr instanceof ConstExpr) {
         return expr.mul(this);
-      } else if(expr instanceof ConstExpr) {
-        if(((ConstExpr)expr).value.equals(Rational.get(0))) {
-          return expr;
-        }
       }
       return new ProductExpr(Rational.get(1), vector(this, expr));
     }
@@ -85,8 +81,12 @@ public class Simplifications {
         return this;
       } else if(expr instanceof ConstExpr) {
         return new ConstExpr(value.mul(((ConstExpr)expr).value));
-      } else {
+      } else if(value.equals(num(1))) {
+        return expr;
+      } else if(expr instanceof ProductExpr) {
         return expr.mul(this);
+      } else {
+        return new ProductExpr(value, vector(expr));
       }
     }
 
@@ -268,7 +268,11 @@ public class Simplifications {
           }
         }
       }
-      return div(constMul(coeff.numerator(), num), constMul(coeff.denominator(), denom));
+      if(denom == null && coeff.denominator().equals(num(1))) {
+        return constMul(coeff.numerator(), num);
+      } else {
+        return div(constMul(coeff.numerator(), num), constMul(coeff.denominator(), denom));
+      }
     }
   }
   
@@ -351,7 +355,7 @@ public class Simplifications {
               return vector(args.get(0).mul(args.get(1)));
             } else if(call.func == NEG) {
               Vector<Expr> args = call.visitArgs(v);
-              return vector((Expr)new ProductExpr(num(-1), vector(args.get(0))));
+              return vector(new ConstExpr(num(-1)).mul(args.get(0)));
             } else {
               return toExprs(call.selectAll());
             }
