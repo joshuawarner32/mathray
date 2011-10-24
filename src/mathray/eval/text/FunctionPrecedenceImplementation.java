@@ -6,12 +6,14 @@ import mathray.eval.Impl;
 
 public class FunctionPrecedenceImplementation implements Impl<PrecedenceString> {
   
-  private FunctionPrecedenceImplementation() {}
+  private final Function func;
   
-  public static FunctionPrecedenceImplementation Instance = new FunctionPrecedenceImplementation();
-
+  public FunctionPrecedenceImplementation(Function func) {
+    this.func = func;
+  }
+  
   @Override
-  public Vector<PrecedenceString> call(Function func, Vector<PrecedenceString> args) {
+  public Vector<PrecedenceString> call(Vector<PrecedenceString> args) {
     if(func.outputArity == 1) {
       return new Vector<PrecedenceString>(f(func.name, args));
     } else {

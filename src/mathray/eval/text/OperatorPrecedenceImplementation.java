@@ -1,7 +1,6 @@
 package mathray.eval.text;
 
 import static mathray.Expressions.vector;
-import mathray.Function;
 import mathray.Vector;
 import mathray.eval.Impl;
 
@@ -23,7 +22,7 @@ public class OperatorPrecedenceImplementation implements Impl<PrecedenceString> 
   }
 
   @Override
-  public Vector<PrecedenceString> call(Function func, Vector<PrecedenceString> args) {
+  public Vector<PrecedenceString> call(Vector<PrecedenceString> args) {
     StringBuilder b = new StringBuilder();
     if(begin != null) {
       b.append(begin);

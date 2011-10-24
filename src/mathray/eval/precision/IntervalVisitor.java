@@ -21,7 +21,7 @@ public class IntervalVisitor implements Visitor<Interval> {
   
   {
     register(ADD, new Impl<Interval>() {
-      public Vector<Interval> call(Function func, Vector<Interval> args) {
+      public Vector<Interval> call(Vector<Interval> args) {
         Interval r = args.get(0);
         Interval o = args.get(1);
         return vector(new Interval(add(r.a, o.a), add(r.b, o.b)));
@@ -29,7 +29,7 @@ public class IntervalVisitor implements Visitor<Interval> {
     });
     
     register(SUB, new Impl<Interval>() {
-      public Vector<Interval> call(Function func, Vector<Interval> args) {
+      public Vector<Interval> call(Vector<Interval> args) {
         Interval r = args.get(0);
         Interval o = args.get(1);
         return vector(new Interval(sub(r.a, o.b), sub(r.b, o.a)));
@@ -37,7 +37,7 @@ public class IntervalVisitor implements Visitor<Interval> {
     });
     
     register(MUL, new Impl<Interval>() {
-      public Vector<Interval> call(Function func, Vector<Interval> args) {
+      public Vector<Interval> call(Vector<Interval> args) {
         Interval r = args.get(0);
         Interval o = args.get(1);
         Value ac = mul(r.a, o.a);
@@ -54,7 +54,7 @@ public class IntervalVisitor implements Visitor<Interval> {
     });
     
     register(DIV, new Impl<Interval>() {
-      public Vector<Interval> call(Function func, Vector<Interval> args) {
+      public Vector<Interval> call(Vector<Interval> args) {
         Interval r = args.get(0);
         Interval o = args.get(1);
         Value ac = div(r.a, o.a);
@@ -71,13 +71,13 @@ public class IntervalVisitor implements Visitor<Interval> {
     });
     
     register(SIN, new Impl<Interval>() {
-      public Vector<Interval> call(Function func, Vector<Interval> args) {
+      public Vector<Interval> call(Vector<Interval> args) {
         throw new RuntimeException("not implemented");
       }
     });
 
     register(SQRT, new Impl<Interval>() {
-      public Vector<Interval> call(Function func, Vector<Interval> args) {
+      public Vector<Interval> call(Vector<Interval> args) {
         Interval r = args.get(0);
         return vector(new Interval(sqrt(r.a), sqrt(r.b)));
       }
@@ -98,7 +98,7 @@ public class IntervalVisitor implements Visitor<Interval> {
   
   @Override
   public Vector<Interval> call(Visitor<Interval> v, Call call) {
-    return implement(call.func).call(call.func, call.visitArgs(v));
+    return implement(call.func).call(call.visitArgs(v));
   }
   
   @Override

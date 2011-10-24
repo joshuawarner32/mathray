@@ -12,12 +12,13 @@ import mathray.Variable;
 import mathray.Vector;
 import mathray.eval.Visitor;
 import mathray.eval.Impl;
-import mathray.eval.text.ParseInfo.Builder;
 import static mathray.Expressions.*;
 
 public class ParseInfo {
   
   private Map<Function, Impl<PrecedenceString>> operators = new HashMap<Function, Impl<PrecedenceString>>();
+  
+  private Map<String, Object> thingies = new HashMap<String, Object>();
 
   private Map<String, SingularFunction> functions = new HashMap<String, SingularFunction>();
   
@@ -72,7 +73,7 @@ public class ParseInfo {
 
       @Override
       public Vector<PrecedenceString> call(Visitor<PrecedenceString> v, Call call) {
-        return implement(call.func).call(call.func, call.visitArgs(this));
+        return implement(call.func).call(call.visitArgs(this));
       }
 
       @Override
@@ -99,9 +100,9 @@ public class ParseInfo {
         } else {
           SingularFunction func = functions.get(tok.text);
           if(func != null) {
-            
+            throw new RuntimeException("unhandled case");
           } else {
-            // parse error
+            // TODO: real parse exceptions
             throw new RuntimeException("parse error");
           }
         }
@@ -111,9 +112,9 @@ public class ParseInfo {
         break;
       case Symbol:
         if(tok.text.equals('(')) {
-          
+          throw new RuntimeException("unhandled case");
         } else if(tok.text.equals(')')) {
-          
+          throw new RuntimeException("unhandled case");
         } else {
           
         }
@@ -121,8 +122,8 @@ public class ParseInfo {
       }
     }
     if(stack.size() != 1) {
-      // parse error
-      throw new RuntimeException("parse error");
+      // TODO: real parse exceptions
+      throw new RuntimeException("stack size wrong: 1 != " + stack.size());
     }
     return stack.pop();
   }
@@ -132,7 +133,7 @@ public class ParseInfo {
     if(ret != null) {
       return ret;
     }
-    return FunctionPrecedenceImplementation.Instance;
+    return new FunctionPrecedenceImplementation(func);
   }
 
 }

@@ -76,7 +76,7 @@ public class Derivatives {
         return paralellSum(Vector.generate(call.args.size(), new Generator<Vector<Value>>() {
           @Override
           public Vector<Value> generate(int index) {
-            return paralellScalarMul(der.get(index).call(null, call.args), args.get(index));
+            return paralellScalarMul(der.get(index).call(call.args), args.get(index));
           }
         }));
       }

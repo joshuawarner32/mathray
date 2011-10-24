@@ -6,9 +6,16 @@ import static mathray.Functions.SUB;
 import static org.junit.Assert.*;
 
 import mathray.Definition;
+import mathray.Function;
 import mathray.FunctionD;
+import mathray.Rational;
 import mathray.Variable;
 import mathray.Vector;
+import mathray.eval.Binder;
+import mathray.eval.Context;
+import mathray.eval.Impl;
+import mathray.eval.Implementer;
+import mathray.eval.Translator;
 import mathray.eval.calc.Derivatives;
 import mathray.eval.java.JavaCompiler;
 import mathray.eval.machine.MachineEvaluator;

@@ -29,7 +29,7 @@ public class Context<T> implements Visitor<T> {
   public Vector<T> call(Visitor<T> v, Call call) {
     Vector<T> ret = callCache.get(call);
     if(ret == null) {
-      callCache.put(call, ret = implementer.implement(call.func).call(call.func, call.visitArgs(v)));
+      callCache.put(call, ret = implementer.implement(call.func).call(call.visitArgs(v)));
     }
     return ret;
   }
@@ -59,8 +59,5 @@ public class Context<T> implements Visitor<T> {
         return in.accept(Context.this);
       }
     });
-  }
-  
-  
-
+  }  
 }

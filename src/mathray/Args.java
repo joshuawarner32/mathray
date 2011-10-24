@@ -66,4 +66,8 @@ public class Args implements Iterable<Variable> {
     return new Vector(vars.keySet().toArray());
   }
 
+  public boolean isSubsetOf(Args args) {
+    return args.vars.entrySet().containsAll(vars.entrySet());
+  }
+
 }

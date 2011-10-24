@@ -4,6 +4,6 @@ import mathray.Rational;
 
 public interface Translator<T> {
   
-  public T translate(Rational cst);
+  public T translate(Rational r);
   
 }

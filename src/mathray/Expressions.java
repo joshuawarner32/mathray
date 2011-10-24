@@ -102,12 +102,20 @@ public class Expressions {
     return MIN_MAX.call(values).select(1);
   }
   
-  public static Value sin(Value... values) {
-    return SIN.call(values).select(0);
+  public static Value sin(Value value) {
+    return SIN.call(value).select(0);
   }
   
-  public static Value cos(Value... values) {
-    return COS.call(values).select(0);
+  public static Value sinh(Value value) {
+    return SINH.call(value).select(0);
+  }
+  
+  public static Value cos(Value value) {
+    return COS.call(value).select(0);
+  }
+  
+  public static Value cosh(Value value) {
+    return COSH.call(value).select(0);
   }
   
   public static Value tan(Value... values) {

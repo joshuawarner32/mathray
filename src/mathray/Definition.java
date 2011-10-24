@@ -16,7 +16,7 @@ public class Definition implements Impl<Value> {
   }
 
   @Override
-  public Vector<Value> call(Function func, final Vector<Value> a) {
+  public Vector<Value> call(final Vector<Value> a) {
     final Visitor<Value> v = new Visitor<Value>() {
       @Override
       public Vector<Value> call(Visitor<Value> v, Call call) {
