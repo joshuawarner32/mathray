@@ -129,5 +129,9 @@ public class Expressions {
   public static Rational num(long value) {
     return Rational.get(value);
   }
+  
+  public static Rational num(long num, long denom) {
+    return Rational.get(num, denom);
+  }
 
 }
