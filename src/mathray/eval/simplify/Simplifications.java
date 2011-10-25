@@ -20,20 +20,28 @@ public class Simplifications {
   
   private static abstract class Expr {
     
-    public Expr mul(Expr expr) {
+    public Expr exprMul(Expr expr) {
       if(expr instanceof ProductExpr || expr instanceof ConstExpr) {
-        return expr.mul(this);
+        return expr.exprMul(this);
       }
-      return new ProductExpr(Rational.get(1), vector(this, expr));
+      return new ProductExpr(num(1), vector(this, expr));
     }
     
-    public Expr add(Expr expr) {
+    public Expr exprAdd(Expr expr) {
       if(expr instanceof SumExpr) {
-        return expr.add(this);
+        return expr.exprAdd(this);
       } else if(expr instanceof ConstExpr) {
-        return new SumExpr(num(0), vector(this));
+        return new SumExpr(((ConstExpr)expr).value, vector(this));
       }
       return new SumExpr(num(0), vector(this, expr));
+    }
+    
+    public Expr exprNeg() {
+      return new ProductExpr(num(-1), vector(this));
+    }
+    
+    public Expr exprRecip() {
+      return new PowerExpr(this, new ConstExpr(num(-1)));
     }
     
     public boolean isNegative() {
@@ -76,7 +84,7 @@ public class Simplifications {
     }
     
     @Override
-    public Expr mul(Expr expr) {
+    public Expr exprMul(Expr expr) {
       if(value.equals(Rational.get(0))) {
         return this;
       } else if(expr instanceof ConstExpr) {
@@ -84,14 +92,14 @@ public class Simplifications {
       } else if(value.equals(num(1))) {
         return expr;
       } else if(expr instanceof ProductExpr) {
-        return expr.mul(this);
+        return expr.exprMul(this);
       } else {
         return new ProductExpr(value, vector(expr));
       }
     }
 
     @Override
-    public Expr add(Expr expr) {
+    public Expr exprAdd(Expr expr) {
       if(expr instanceof ConstExpr) {
         return new ConstExpr(value.add(((ConstExpr)expr).value));
       } else {
@@ -215,7 +223,7 @@ public class Simplifications {
     }
 
     @Override
-    public Expr mul(Expr expr) {
+    public Expr exprMul(Expr expr) {
       if(expr instanceof ConstExpr) {
         return new ProductExpr(coeff.mul(((ConstExpr)expr).value), factors);
       } else if(expr instanceof ProductExpr) {
@@ -286,10 +294,10 @@ public class Simplifications {
     }
 
     @Override
-    public Expr add(Expr expr) {
+    public Expr exprAdd(Expr expr) {
       if(expr instanceof ConstExpr) {
         return new SumExpr(offset.add(((ConstExpr)expr).value), terms);
-      } else if(expr instanceof ProductExpr) {
+      } else if(expr instanceof SumExpr) {
         SumExpr sum = (SumExpr)expr;
         return new SumExpr(offset.add(sum.offset), terms.concat(sum.terms));
       } else {
@@ -349,13 +357,16 @@ public class Simplifications {
           public Vector<Expr> call(Visitor<Expr> v, Call call) {
             if(call.func == ADD) {
               Vector<Expr> args = call.visitArgs(v);
-              return vector(args.get(0).add(args.get(1)));
+              return vector(args.get(0).exprAdd(args.get(1)));
             } else if(call.func == MUL) {
               Vector<Expr> args = call.visitArgs(v);
-              return vector(args.get(0).mul(args.get(1)));
+              return vector(args.get(0).exprMul(args.get(1)));
+            } else if(call.func == DIV) {
+              Vector<Expr> args = call.visitArgs(v);
+              return vector(args.get(0).exprMul(args.get(1).exprRecip()));
             } else if(call.func == NEG) {
               Vector<Expr> args = call.visitArgs(v);
-              return vector(new ConstExpr(num(-1)).mul(args.get(0)));
+              return vector(args.get(0).exprNeg());
             } else {
               return toExprs(call.selectAll());
             }
