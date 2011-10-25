@@ -1,14 +1,6 @@
-import static mathray.Expressions.add;
-import static mathray.Expressions.args;
-import static mathray.Expressions.cos;
-import static mathray.Expressions.def;
-import static mathray.Expressions.div;
-import static mathray.Expressions.mul;
-import static mathray.Expressions.neg;
-import static mathray.Expressions.num;
-import static mathray.Expressions.sin;
-import static mathray.Expressions.sqrt;
-import static mathray.Expressions.var;
+
+import static mathray.Expressions.*;
+import static mathray.NamedConstants.*;
 import static org.junit.Assert.assertEquals;
 import mathray.Definition;
 import mathray.Variable;
@@ -25,10 +17,20 @@ public class Derive {
     assertEquals(result, Simplifications.simplify(Derivatives.derive(def, x)));
   }
   
+  Variable x = var("x");
+  Variable y = var("y");
+  
+  @Test
+  public void testConstants() {
+    assertDerivesTo(def(args(x), PI), x, def(args(x), num(0)));
+    assertDerivesTo(def(args(x), num(0)), x, def(args(x), num(0)));
+    assertDerivesTo(def(args(x), num(1)), x, def(args(x), num(0)));
+    assertDerivesTo(def(args(x), sin(num(1))), x, def(args(x), num(0)));
+    assertDerivesTo(def(args(x), add(num(1), sin(num(2)))), x, def(args(x), num(0)));
+  }
+  
   @Test
   public void testDerive() {
-    Variable x = var("x");
-    Variable y = var("y");
     assertDerivesTo(def(args(x), x), x, def(args(x), num(1)));
     assertDerivesTo(def(args(x, y), add(x, y)), x, def(args(x, y), num(1)));
     assertDerivesTo(def(args(x, y), mul(x, y)), x, def(args(x, y), y));
