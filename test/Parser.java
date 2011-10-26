@@ -13,6 +13,7 @@ public class Parser {
   Variable x = var("x");
   Variable y = var("y");
   ParseInfo parser = ParseInfo.builder()
+    .group("(", ")")
     .infix("+", 1, ADD.select(0))
     .infix("-", 1, SUB.select(0))
     .infix("*", 2, MUL.select(0))

@@ -1,7 +1,9 @@
 package mathray.eval.text;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import mathray.Call;
@@ -37,6 +39,12 @@ public class ParseInfo {
   private Map<SelectFunction, Impl<PrecedenceString>> operators = new HashMap<SelectFunction, Impl<PrecedenceString>>();
   
   private Map<String, InfixOperator> infixes = new HashMap<String, InfixOperator>();
+  
+  private Set<String> symbols = new HashSet<String>();
+  
+  private String groupBegin;
+  
+  private String groupEnd;
 
   private Map<String, SelectFunction> functions = new HashMap<String, SelectFunction>();
   
@@ -51,23 +59,40 @@ public class ParseInfo {
     
     private Map<String, InfixOperator> infixes = new HashMap<String, InfixOperator>();
     
+    private Set<String> symbols = new HashSet<String>();
+    
+    private String groupBegin;
+    
+    private String groupEnd;
+    
     private Map<String, SelectFunction> functions = new HashMap<String, SelectFunction>();
     
     private Map<String, Variable> variables = new HashMap<String, Variable>();
     
+    public Builder group(String begin, String end) {
+      symbols.add(begin);
+      symbols.add(end);
+      groupBegin = begin;
+      groupEnd = end;
+      return this;
+    }
+    
     public Builder infix(String name, int precedence, SelectFunction function) {
       operators.put(function, new OperatorPrecedenceImplementation(null, name, null, precedence));
       infixes.put(name, new InfixOperator(name, precedence, function));
+      symbols.add(name);
       return this;
     }
     
     public Builder prefix(String name, int precedence, SelectFunction function) {
       operators.put(function, new OperatorPrecedenceImplementation(name, null, null, precedence));
+      symbols.add(name);
       return this;
     }
     
     public Builder postfix(String name, int precedence, SelectFunction function) {
       operators.put(function, new OperatorPrecedenceImplementation(null, null, name, precedence));
+      symbols.add(name);
       return this;
     }
 
@@ -82,6 +107,9 @@ public class ParseInfo {
       info.functions.putAll(functions);
       info.variables.putAll(variables);
       info.infixes.putAll(infixes);
+      info.symbols.addAll(symbols);
+      info.groupBegin = groupBegin;
+      info.groupEnd = groupEnd;
       return info;
     }
   }
@@ -115,7 +143,7 @@ public class ParseInfo {
     Stack<Value> stack = new Stack<Value>();
     Stack<InfixOperator> ops = new Stack<InfixOperator>();
     ops.push(new InfixOperator("sentinel", Integer.MIN_VALUE, null));
-    for(Token tok : Token.tokens(text)) {
+    for(Token tok : Token.tokens(symbols, text)) {
       switch(tok.type) {
       case Identifier:
         Value val = variables.get(tok.text);
@@ -135,10 +163,16 @@ public class ParseInfo {
         stack.push(num(Long.valueOf(tok.text)));
         break;
       case Symbol:
-        if(tok.text.equals('(')) {
-          throw new RuntimeException("unhandled case");
-        } else if(tok.text.equals(')')) {
-          throw new RuntimeException("unhandled case");
+        if(tok.text.equals(groupBegin)) {
+          ops.push(new InfixOperator("paren", Integer.MIN_VALUE, null));
+        } else if(tok.text.equals(groupEnd)) {
+          while(Integer.MIN_VALUE < ops.peek().precedence) {
+            InfixOperator o = ops.pop();
+            Value b = stack.pop();
+            Value a = stack.pop();
+            stack.push(o.func.call(a, b));
+          }
+          ops.pop();
         } else {
           InfixOperator op = infixes.get(tok.text);
           if(op != null) {
