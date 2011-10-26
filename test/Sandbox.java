@@ -16,25 +16,6 @@ import org.junit.Test;
 
 public class Sandbox {
   
-  @Test
-  public void testParser() {
-    Variable x = var("x");
-    ParseInfo parser = ParseInfo.builder()
-      .infix("+", 1, ADD.select(0))
-      .infix("-", 1, SUB.select(0))
-      .infix("*", 2, MUL.select(0))
-      .infix("/", 2, DIV.select(0))
-      .var(x)
-      .build();
-
-    assertEquals(num(0), parser.parse("0"));
-    assertEquals(x, parser.parse("x"));
-    assertEquals(add(num(1), num(2)), parser.parse("1+2"));
-    assertEquals(mul(num(1), num(2)), parser.parse("1*2"));
-    assertEquals(add(num(1), mul(num(2), num(3))), parser.parse("1+2*3"));
-    assertEquals(add(mul(num(1), num(2)), num(3)), parser.parse("1*2+3"));
-  }
-  
   private static void assertIntervalizesTo(Definition def, Vector<Variable> vars, Definition result) {
     assertEquals(result, Simplifications.simplify(Intervals.intervalize(def, vars)));
   }
