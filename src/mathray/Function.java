@@ -1,5 +1,6 @@
 package mathray;
 
+
 public class Function implements Comparable<Function> {
   
   public final String name;
@@ -10,6 +11,8 @@ public class Function implements Comparable<Function> {
   
   public final Vector<String> individualNames;
   
+  private final SelectFunction[] selectFunctions;
+  
   public Function(String name, int inputArity, int outputArity) {
     this(name, inputArity, outputArity, defaultNames(name, outputArity));
   }
@@ -19,6 +22,10 @@ public class Function implements Comparable<Function> {
     this.inputArity = inputArity;
     this.outputArity = outputArity;
     this.individualNames = individualNames;
+    selectFunctions = new SelectFunction[outputArity];
+    for(int i = 0; i < outputArity; i++) {
+      selectFunctions[i] = new SelectFunction(this, i);
+    }
   }
   
   private static Vector<String> defaultNames(String name, int count) {
@@ -59,6 +66,10 @@ public class Function implements Comparable<Function> {
       return d;
     }
     return hashCode() - func.hashCode();
+  }
+
+  public SelectFunction select(int i) {
+    return selectFunctions[i];
   }
 
   // Purposefully not overriding hashCode and equals - we want identity comparisons.

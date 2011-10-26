@@ -1,17 +1,15 @@
-package mathray.eval.text;
+package mathray;
 
 import java.util.Stack;
 
-import mathray.Function;
-import mathray.Value;
 
-public class SingularFunction {
+public class SelectFunction {
   
   public final Function func;
   
   public final int outputIndex;
   
-  public SingularFunction(Function func, int outputIndex) {
+  public SelectFunction(Function func, int outputIndex) {
     this.func = func;
     this.outputIndex = outputIndex;
   }

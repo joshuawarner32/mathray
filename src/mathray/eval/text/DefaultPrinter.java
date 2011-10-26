@@ -12,10 +12,10 @@ public class DefaultPrinter {
   private DefaultPrinter() {}
 
   private static ParseInfo parser = ParseInfo.builder()
-      .infix("+", 1, ADD)
-      .infix("-", 1, SUB)
-      .infix("*", 2, MUL)
-      .infix("/", 2, DIV)
+      .infix("+", 1, ADD.select(0))
+      .infix("-", 1, SUB.select(0))
+      .infix("*", 2, MUL.select(0))
+      .infix("/", 2, DIV.select(0))
       .build();
   
   public static String toString(Definition def) {

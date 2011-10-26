@@ -20,10 +20,10 @@ public class Sandbox {
   public void testParser() {
     Variable x = var("x");
     ParseInfo parser = ParseInfo.builder()
-      .infix("+", 1, ADD)
-      .infix("-", 1, SUB)
-      .infix("*", 2, MUL)
-      .infix("/", 2, DIV)
+      .infix("+", 1, ADD.select(0))
+      .infix("-", 1, SUB.select(0))
+      .infix("*", 2, MUL.select(0))
+      .infix("/", 2, DIV.select(0))
       .var(x)
       .build();
 
@@ -32,7 +32,7 @@ public class Sandbox {
     assertEquals(add(num(1), num(2)), parser.parse("1+2"));
     assertEquals(mul(num(1), num(2)), parser.parse("1*2"));
     assertEquals(add(num(1), mul(num(2), num(3))), parser.parse("1+2*3"));
-    assertEquals(mul(add(num(1), num(2)), num(3)), parser.parse("1*2+3"));
+    assertEquals(add(mul(num(1), num(2)), num(3)), parser.parse("1*2+3"));
   }
   
   private static void assertIntervalizesTo(Definition def, Vector<Variable> vars, Definition result) {

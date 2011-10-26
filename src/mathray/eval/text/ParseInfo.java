@@ -7,6 +7,7 @@ import java.util.Stack;
 import mathray.Call;
 import mathray.Rational;
 import mathray.Function;
+import mathray.SelectFunction;
 import mathray.Value;
 import mathray.Variable;
 import mathray.Vector;
@@ -16,11 +17,28 @@ import static mathray.Expressions.*;
 
 public class ParseInfo {
   
-  private Map<Function, Impl<PrecedenceString>> operators = new HashMap<Function, Impl<PrecedenceString>>();
+  private static class InfixOperator {
+    public final String name;
+    public final int precedence;
+    public final SelectFunction func;
+    
+    public InfixOperator(String name, int precedence, SelectFunction func) {
+      this.name = name;
+      this.precedence = precedence;
+      this.func = func;
+    }
+    
+    @Override
+    public String toString() {
+      return name + "/" + precedence;
+    }
+  }
   
-  private Map<String, Object> thingies = new HashMap<String, Object>();
+  private Map<SelectFunction, Impl<PrecedenceString>> operators = new HashMap<SelectFunction, Impl<PrecedenceString>>();
+  
+  private Map<String, InfixOperator> infixes = new HashMap<String, InfixOperator>();
 
-  private Map<String, SingularFunction> functions = new HashMap<String, SingularFunction>();
+  private Map<String, SelectFunction> functions = new HashMap<String, SelectFunction>();
   
   private Map<String, Variable> variables = new HashMap<String, Variable>();
   
@@ -29,24 +47,27 @@ public class ParseInfo {
   public static class Builder {
     private Builder() {}
 
-    private Map<Function, Impl<PrecedenceString>> operators = new HashMap<Function, Impl<PrecedenceString>>();
+    private Map<SelectFunction, Impl<PrecedenceString>> operators = new HashMap<SelectFunction, Impl<PrecedenceString>>();
     
-    private Map<String, SingularFunction> functions = new HashMap<String, SingularFunction>();
+    private Map<String, InfixOperator> infixes = new HashMap<String, InfixOperator>();
+    
+    private Map<String, SelectFunction> functions = new HashMap<String, SelectFunction>();
     
     private Map<String, Variable> variables = new HashMap<String, Variable>();
     
-    public Builder infix(String name, int prec, Function function) {
-      operators.put(function, new OperatorPrecedenceImplementation(null, name, null, prec));
+    public Builder infix(String name, int precedence, SelectFunction function) {
+      operators.put(function, new OperatorPrecedenceImplementation(null, name, null, precedence));
+      infixes.put(name, new InfixOperator(name, precedence, function));
       return this;
     }
     
-    public Builder prefix(String name, int prec, Function function) {
-      operators.put(function, new OperatorPrecedenceImplementation(name, null, null, prec));
+    public Builder prefix(String name, int precedence, SelectFunction function) {
+      operators.put(function, new OperatorPrecedenceImplementation(name, null, null, precedence));
       return this;
     }
     
-    public Builder postfix(String name, int prec, Function function) {
-      operators.put(function, new OperatorPrecedenceImplementation(null, null, name, prec));
+    public Builder postfix(String name, int precedence, SelectFunction function) {
+      operators.put(function, new OperatorPrecedenceImplementation(null, null, name, precedence));
       return this;
     }
 
@@ -60,6 +81,7 @@ public class ParseInfo {
       info.operators.putAll(operators);
       info.functions.putAll(functions);
       info.variables.putAll(variables);
+      info.infixes.putAll(infixes);
       return info;
     }
   }
@@ -91,6 +113,8 @@ public class ParseInfo {
   
   public Value parse(String text) {
     Stack<Value> stack = new Stack<Value>();
+    Stack<InfixOperator> ops = new Stack<InfixOperator>();
+    ops.push(new InfixOperator("sentinel", Integer.MIN_VALUE, null));
     for(Token tok : Token.tokens(text)) {
       switch(tok.type) {
       case Identifier:
@@ -98,7 +122,7 @@ public class ParseInfo {
         if(val != null) {
           stack.push(val);
         } else {
-          SingularFunction func = functions.get(tok.text);
+          SelectFunction func = functions.get(tok.text);
           if(func != null) {
             throw new RuntimeException("unhandled case");
           } else {
@@ -116,10 +140,25 @@ public class ParseInfo {
         } else if(tok.text.equals(')')) {
           throw new RuntimeException("unhandled case");
         } else {
-          
+          InfixOperator op = infixes.get(tok.text);
+          if(op != null) {
+            while(op.precedence < ops.peek().precedence) {
+              InfixOperator o = ops.pop();
+              Value b = stack.pop();
+              Value a = stack.pop();
+              stack.push(o.func.call(a, b));
+            }
+            ops.push(op);
+          }
         }
         break;
       }
+    }
+    while(Integer.MIN_VALUE < ops.peek().precedence) {
+      InfixOperator o = ops.pop();
+      Value b = stack.pop();
+      Value a = stack.pop();
+      stack.push(o.func.call(a, b));
     }
     if(stack.size() != 1) {
       // TODO: real parse exceptions
