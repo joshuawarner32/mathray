@@ -19,6 +19,7 @@ public class Parser {
     .infix("*", 2, MUL.select(0))
     .infix("/", 2, DIV.select(0))
     .infix("^", 2, POW.select(0))
+    .function("sin", SIN.select(0))
     .var(x)
     .var(y)
     .build();

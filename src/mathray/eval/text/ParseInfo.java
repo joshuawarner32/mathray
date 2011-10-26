@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import mathray.Call;
+import mathray.Expressions;
 import mathray.Rational;
 import mathray.Function;
 import mathray.SelectFunction;
@@ -111,6 +112,11 @@ public class ParseInfo {
       info.groupBegin = groupBegin;
       info.groupEnd = groupEnd;
       return info;
+    }
+
+    public Builder function(String name, SelectFunction function) {
+      functions.put(name, function);
+      return this;
     }
   }
   
