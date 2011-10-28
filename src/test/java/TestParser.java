@@ -2,9 +2,8 @@ import static mathray.Expressions.*;
 import static mathray.Functions.*;
 import static org.junit.Assert.*;
 import mathray.Variable;
+import mathray.eval.text.InfixOperator.Associativity;
 import mathray.eval.text.ParseInfo;
-import mathray.eval.text.ParseInfo.Associativity;
-
 import org.junit.Test;
 
 

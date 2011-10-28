@@ -16,30 +16,10 @@ import mathray.Variable;
 import mathray.Vector;
 import mathray.eval.Visitor;
 import mathray.eval.Impl;
+import mathray.eval.text.InfixOperator.Associativity;
 import static mathray.Expressions.*;
 
 public class ParseInfo {
-
-  public enum Associativity {LEFT, RIGHT};
-  
-  private static class InfixOperator {
-    public final String name;
-    public final int precedence;
-    public final Associativity associativity;
-    public final SelectFunction func;
-    
-    public InfixOperator(String name, int precedence, Associativity associativity, SelectFunction func) {
-      this.name = name;
-      this.precedence = precedence;
-      this.associativity = associativity;
-      this.func = func;
-    }
-    
-    @Override
-    public String toString() {
-      return name + "/" + precedence;
-    }
-  }
   
   private Map<SelectFunction, Impl<PrecedenceString>> operators = new HashMap<SelectFunction, Impl<PrecedenceString>>();
   

@@ -3,7 +3,7 @@ package mathray.eval.text;
 import static mathray.Functions.*;
 import mathray.Definition;
 import mathray.Value;
-import mathray.eval.text.ParseInfo.Associativity;
+import mathray.eval.text.InfixOperator.Associativity;
 
 public class DefaultPrinter {
   
