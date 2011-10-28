@@ -10,7 +10,7 @@ import mathray.eval.simplify.Simplifications;
 import org.junit.Test;
 
 
-public class Derive {
+public class TestDerive {
 
 
   private static void assertDerivesTo(Definition def, Variable x, Definition result) {

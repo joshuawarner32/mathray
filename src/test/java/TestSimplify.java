@@ -8,7 +8,7 @@ import mathray.eval.simplify.Simplifications;
 import org.junit.Test;
 
 
-public class Simplify {
+public class TestSimplify {
 
   private static void assertSimplifiesTo(Definition def, Definition result) {
     assertEquals(result, Simplifications.simplify(def));

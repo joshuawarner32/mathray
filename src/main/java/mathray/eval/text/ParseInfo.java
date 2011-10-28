@@ -18,15 +18,19 @@ import mathray.eval.Impl;
 import static mathray.Expressions.*;
 
 public class ParseInfo {
+
+  public enum Associativity {LEFT, RIGHT};
   
   private static class InfixOperator {
     public final String name;
     public final int precedence;
+    public final Associativity associativity;
     public final SelectFunction func;
     
-    public InfixOperator(String name, int precedence, SelectFunction func) {
+    public InfixOperator(String name, int precedence, Associativity associativity, SelectFunction func) {
       this.name = name;
       this.precedence = precedence;
+      this.associativity = associativity;
       this.func = func;
     }
     
@@ -77,9 +81,9 @@ public class ParseInfo {
       return this;
     }
     
-    public Builder infix(String name, int precedence, SelectFunction function) {
+    public Builder infix(String name, int precedence, Associativity associativity, SelectFunction function) {
       operators.put(function, new OperatorPrecedenceImplementation(null, name, null, precedence));
-      infixes.put(name, new InfixOperator(name, precedence, function));
+      infixes.put(name, new InfixOperator(name, precedence, associativity, function));
       symbols.add(name);
       return this;
     }
@@ -142,7 +146,7 @@ public class ParseInfo {
   public Value parse(String text) {
     Stack<Value> stack = new Stack<Value>();
     Stack<InfixOperator> ops = new Stack<InfixOperator>();
-    ops.push(new InfixOperator("sentinel", Integer.MIN_VALUE, null));
+    ops.push(new InfixOperator("sentinel", Integer.MIN_VALUE, Associativity.RIGHT, null));
     for(Token tok : Token.tokens(symbols, text)) {
       switch(tok.type) {
       case Identifier:
@@ -164,7 +168,7 @@ public class ParseInfo {
         break;
       case Symbol:
         if(tok.text.equals(groupBegin)) {
-          ops.push(new InfixOperator("paren", Integer.MIN_VALUE, null));
+          ops.push(new InfixOperator("paren", Integer.MIN_VALUE, Associativity.RIGHT, null));
         } else if(tok.text.equals(groupEnd)) {
           while(Integer.MIN_VALUE < ops.peek().precedence) {
             InfixOperator o = ops.pop();
@@ -176,7 +180,7 @@ public class ParseInfo {
         } else {
           InfixOperator op = infixes.get(tok.text);
           if(op != null) {
-            while(op.precedence < ops.peek().precedence) {
+            while(op.precedence < ops.peek().precedence || (op.associativity == Associativity.LEFT && op.precedence == ops.peek().precedence)) {
               InfixOperator o = ops.pop();
               Value b = stack.pop();
               Value a = stack.pop();

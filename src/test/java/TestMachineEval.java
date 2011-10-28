@@ -14,7 +14,7 @@ import mathray.eval.machine.MachineEvaluator;
 
 import org.junit.Test;
 
-public class MachineEval {
+public class TestMachineEval {
 
   private static void assertEvaluatesTo(Definition def, Vector<Double> args, Vector<Double> results) {
     assertEquals(results, MachineEvaluator.eval(def, args));

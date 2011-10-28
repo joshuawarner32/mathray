@@ -19,7 +19,7 @@ import mathray.eval.java.JavaCompiler;
 import org.junit.Test;
 
 
-public class JavaCompilerEval {
+public class TestJavaCompilerEval {
 
   
   private static void assertCompileEvaluatesTo(Definition def, Vector<Double> args, Vector<Double> results) {

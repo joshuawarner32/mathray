@@ -1,11 +1,9 @@
 package mathray.eval.text;
 
-import static mathray.Functions.ADD;
-import static mathray.Functions.DIV;
-import static mathray.Functions.MUL;
-import static mathray.Functions.SUB;
+import static mathray.Functions.*;
 import mathray.Definition;
 import mathray.Value;
+import mathray.eval.text.ParseInfo.Associativity;
 
 public class DefaultPrinter {
   
@@ -13,10 +11,11 @@ public class DefaultPrinter {
 
   private static ParseInfo parser = ParseInfo.builder()
       .group("(", ")")
-      .infix("+", 1, ADD.select(0))
-      .infix("-", 1, SUB.select(0))
-      .infix("*", 2, MUL.select(0))
-      .infix("/", 2, DIV.select(0))
+      .infix("+", 1, Associativity.LEFT, ADD.select(0))
+      .infix("-", 1, Associativity.LEFT, SUB.select(0))
+      .infix("*", 2, Associativity.LEFT, MUL.select(0))
+      .infix("/", 2, Associativity.LEFT, DIV.select(0))
+      .infix("^", 2, Associativity.RIGHT, POW.select(0))
       .build();
   
   public static String toString(Definition def) {
