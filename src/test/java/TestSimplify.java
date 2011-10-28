@@ -60,6 +60,14 @@ public class TestSimplify {
   }
   
   @Test
+  public void testPowerSpecialCases() {
+    //assertSimplifiesTo(def(args(x), pow(x, num(0))), def(args(x), num(1)));
+    assertSimplifiesTo(def(args(x), pow(x, num(1))), def(args(x), x));
+    assertSimplifiesTo(def(args(x), pow(x, num(-1))), def(args(x), div(num(1), x)));
+    assertSimplifiesTo(def(args(x), pow(x, num(1, 2))), def(args(x), sqrt(x)));
+  }
+  
+  @Test
   public void testCoefficientCompression() {
     assertSimplifiesTo(def(args(x), mul(num(1), num(2), x)), def(args(x), mul(num(2), x)));
     assertSimplifiesTo(def(args(x), mul(num(1), x, num(2))), def(args(x), mul(num(2), x)));

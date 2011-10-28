@@ -43,6 +43,10 @@ public class Simplifications {
     public Expr exprRecip() {
       return new PowerExpr(this, new ConstExpr(num(-1)));
     }
+
+    public Expr exprPow(Expr expr) {
+      return new PowerExpr(this, expr);
+    }
     
     public boolean isNegative() {
       return false;
@@ -143,6 +147,11 @@ public class Simplifications {
     }
     
     @Override
+    public Expr exprPow(Expr expr) {
+      return new PowerExpr(base, power.exprMul(expr));
+    }
+    
+    @Override
     public boolean isNegative() {
       if(power instanceof ConstExpr) {
         ConstExpr cexp = (ConstExpr)power;
@@ -166,6 +175,8 @@ public class Simplifications {
           return base.toReciprocalValue();
         } else if(cexp.value.equals(num(0))) {
           return num(1);
+        } else if(cexp.value.equals(num(1, 2))) {
+          return sqrt(base.toValue());
         }
       }
       return pow(base.toValue(), power.toValue());
@@ -367,6 +378,9 @@ public class Simplifications {
             } else if(call.func == NEG) {
               Vector<Expr> args = call.visitArgs(v);
               return vector(args.get(0).exprNeg());
+            } else if(call.func == POW) {
+              Vector<Expr> args = call.visitArgs(v);
+              return vector(args.get(0).exprPow(args.get(1)));
             } else {
               return toExprs(call.selectAll());
             }

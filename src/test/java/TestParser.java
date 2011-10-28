@@ -19,7 +19,8 @@ public class TestParser {
     .infix("-", 1, Associativity.LEFT, SUB.select(0))
     .infix("*", 2, Associativity.LEFT, MUL.select(0))
     .infix("/", 2, Associativity.LEFT, DIV.select(0))
-    .infix("^", 2, Associativity.RIGHT, POW.select(0))
+    .infix("^", 3, Associativity.RIGHT, POW.select(0))
+    .function("sin", SIN.select(0))
     .var(x)
     .var(y)
     .build();
