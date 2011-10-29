@@ -118,12 +118,16 @@ public class Expressions {
     return COSH.call(value).select(0);
   }
   
-  public static Value tan(Value... values) {
-    return TAN.call(values).select(0);
+  public static Value tan(Value value) {
+    return TAN.call(value).select(0);
   }
   
-  public static Value sqrt(Value... values) {
-    return SQRT.call(values).select(0);
+  public static Value sqrt(Value value) {
+    return SQRT.call(value).select(0);
+  }
+
+  public static Value ln(Value value) {
+    return LN.call(value).select(0);
   }
   
   public static Rational num(long value) {

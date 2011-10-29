@@ -1,5 +1,7 @@
 package mathray.eval.text;
 
+import static mathray.Expressions.num;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -7,23 +9,24 @@ import java.util.Set;
 import java.util.Stack;
 
 import mathray.Call;
-import mathray.Expressions;
-import mathray.Rational;
 import mathray.Function;
+import mathray.Generator;
+import mathray.Rational;
 import mathray.SelectFunction;
 import mathray.Value;
 import mathray.Variable;
 import mathray.Vector;
-import mathray.eval.Visitor;
 import mathray.eval.Impl;
+import mathray.eval.Visitor;
 import mathray.eval.text.InfixOperator.Associativity;
-import static mathray.Expressions.*;
 
 public class ParseInfo {
   
-  private Map<SelectFunction, Impl<PrecedenceString>> operators = new HashMap<SelectFunction, Impl<PrecedenceString>>();
+  private Map<Function, OperatorImpl> operators = new HashMap<Function, OperatorImpl>();
   
   private Map<String, InfixOperator> infixes = new HashMap<String, InfixOperator>();
+  
+  private Map<String, PrefixOperator> prefixes = new HashMap<String, PrefixOperator>();
   
   private Set<String> symbols = new HashSet<String>();
   
@@ -37,69 +40,76 @@ public class ParseInfo {
   
   private ParseInfo() {}
   
+  private static class OperatorImpl implements Impl<PrecedenceString> {
+    
+    public final Operator[] ops;
+    
+    public OperatorImpl(int outputArity) {
+      ops = new Operator[outputArity];
+    }
+
+    @Override
+    public Vector<PrecedenceString> call(final Vector<PrecedenceString> args) {
+      return Vector.<PrecedenceString>generate(ops.length, new Generator<PrecedenceString>() {
+        @Override
+        public PrecedenceString generate(int index) {
+          return ops[index].call(args);
+        }
+      });
+    }
+    
+  }
+  
   public static class Builder {
     private Builder() {}
-
-    private Map<SelectFunction, Impl<PrecedenceString>> operators = new HashMap<SelectFunction, Impl<PrecedenceString>>();
     
-    private Map<String, InfixOperator> infixes = new HashMap<String, InfixOperator>();
-    
-    private Set<String> symbols = new HashSet<String>();
-    
-    private String groupBegin;
-    
-    private String groupEnd;
-    
-    private Map<String, SelectFunction> functions = new HashMap<String, SelectFunction>();
-    
-    private Map<String, Variable> variables = new HashMap<String, Variable>();
+    private ParseInfo info = new ParseInfo();
     
     public Builder group(String begin, String end) {
-      symbols.add(begin);
-      symbols.add(end);
-      groupBegin = begin;
-      groupEnd = end;
+      info.symbols.add(begin);
+      info.symbols.add(end);
+      info.groupBegin = begin;
+      info.groupEnd = end;
       return this;
     }
     
     public Builder infix(String name, int precedence, Associativity associativity, SelectFunction function) {
-      operators.put(function, new OperatorPrecedenceImplementation(null, name, null, precedence));
-      infixes.put(name, new InfixOperator(name, precedence, associativity, function));
-      symbols.add(name);
+      InfixOperator op = new InfixOperator(name, function, precedence, associativity);
+      putOperator(name, op);
+      info.infixes.put(name, op);
+      info.symbols.add(name);
       return this;
     }
     
     public Builder prefix(String name, int precedence, SelectFunction function) {
-      operators.put(function, new OperatorPrecedenceImplementation(name, null, null, precedence));
-      symbols.add(name);
+      PrefixOperator op = new PrefixOperator(name, function, precedence);
+      putOperator(name, op);
+      info.prefixes.put(name, op);
+      info.symbols.add(name);
       return this;
     }
     
-    public Builder postfix(String name, int precedence, SelectFunction function) {
-      operators.put(function, new OperatorPrecedenceImplementation(null, null, name, precedence));
-      symbols.add(name);
-      return this;
+    private void putOperator(String name, Operator operator) {
+      Function func = operator.function.func;
+      OperatorImpl impl = info.operators.get(func);
+      if(impl == null) {
+        info.operators.put(func, impl = new OperatorImpl(func.outputArity));
+      }
+      impl.ops[operator.function.outputIndex] = operator;
     }
 
     public Builder var(Variable var) {
-      variables.put(var.name, var);
+      info.variables.put(var.name, var);
       return this;
     }
     
     public ParseInfo build() {
-      ParseInfo info = new ParseInfo();
-      info.operators.putAll(operators);
-      info.functions.putAll(functions);
-      info.variables.putAll(variables);
-      info.infixes.putAll(infixes);
-      info.symbols.addAll(symbols);
-      info.groupBegin = groupBegin;
-      info.groupEnd = groupEnd;
+      // TODO: enforce immutability
       return info;
     }
 
     public Builder function(String name, SelectFunction function) {
-      functions.put(name, function);
+      info.functions.put(name, function);
       return this;
     }
   }
@@ -131,14 +141,21 @@ public class ParseInfo {
   
   public Value parse(String text) {
     Stack<Value> stack = new Stack<Value>();
-    Stack<InfixOperator> ops = new Stack<InfixOperator>();
-    ops.push(new InfixOperator("sentinel", Integer.MIN_VALUE, Associativity.RIGHT, null));
+    Stack<Operator> ops = new Stack<Operator>();
+    ops.push(new SentinelOperator());
+    
+    final int AFTER_OPERATOR = 0;
+    final int AFTER_VALUE = 1;
+    
+    int state = AFTER_OPERATOR;
+    
     for(Token tok : Token.tokens(symbols, text)) {
       switch(tok.type) {
       case Identifier:
         Value val = variables.get(tok.text);
         if(val != null) {
           stack.push(val);
+          state = AFTER_VALUE;
         } else {
           SelectFunction func = functions.get(tok.text);
           if(func != null) {
@@ -151,38 +168,42 @@ public class ParseInfo {
         break;
       case Number:
         stack.push(num(Long.valueOf(tok.text)));
+        state = AFTER_VALUE;
         break;
       case Symbol:
         if(tok.text.equals(groupBegin)) {
-          ops.push(new InfixOperator("paren", Integer.MIN_VALUE, Associativity.RIGHT, null));
+          ops.push(new SentinelOperator());
+          state = AFTER_OPERATOR;
         } else if(tok.text.equals(groupEnd)) {
           while(Integer.MIN_VALUE < ops.peek().precedence) {
-            InfixOperator o = ops.pop();
-            Value b = stack.pop();
-            Value a = stack.pop();
-            stack.push(o.func.call(a, b));
+            ops.pop().reduce(stack);
           }
           ops.pop();
-        } else {
+          state = AFTER_VALUE;
+        } else if(state == AFTER_VALUE) {
           InfixOperator op = infixes.get(tok.text);
           if(op != null) {
             while(op.precedence < ops.peek().precedence || (op.associativity == Associativity.LEFT && op.precedence == ops.peek().precedence)) {
-              InfixOperator o = ops.pop();
-              Value b = stack.pop();
-              Value a = stack.pop();
-              stack.push(o.func.call(a, b));
+              ops.pop().reduce(stack);
             }
             ops.push(op);
+            state = AFTER_OPERATOR;
+          } else {
+            throw new RuntimeException("unexpected operator '" + tok.text + "'");
+          }
+        } else if(state == AFTER_OPERATOR) {
+          PrefixOperator op = prefixes.get(tok.text);
+          if(op != null) {
+            ops.push(op);
+          } else {
+            throw new RuntimeException("unexpected operator '" + tok.text + "'");
           }
         }
         break;
       }
     }
     while(Integer.MIN_VALUE < ops.peek().precedence) {
-      InfixOperator o = ops.pop();
-      Value b = stack.pop();
-      Value a = stack.pop();
-      stack.push(o.func.call(a, b));
+      ops.pop().reduce(stack);
     }
     if(stack.size() != 1) {
       // TODO: real parse exceptions

@@ -25,7 +25,11 @@ public class Derivatives {
     Variable x = var("x");
     Variable y = var("y");
     register(ADD, def(args(x, y), num(1)), def(args(x, y), num(1)));
+    register(SUB, def(args(x, y), num(1)), def(args(x, y), num(-1)));
     register(MUL, def(args(x, y), y), def(args(x, y), x));
+    register(DIV, def(args(x, y), div(num(1), y)), def(args(x, y), div(num(1), pow(x, num(2)))));
+
+    register(POW, def(args(x, y), mul(y, pow(x, sub(y, num(1))))), def(args(x, y), mul(ln(x), pow(x, y))));
     
     register(NEG, def(args(x), num(-1)));
     

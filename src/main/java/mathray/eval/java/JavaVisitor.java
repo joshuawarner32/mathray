@@ -1,7 +1,5 @@
 package mathray.eval.java;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.objectweb.asm.Opcodes;
 
 import mathray.Call;

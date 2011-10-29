@@ -1,7 +1,6 @@
 package mathray;
 
 import mathray.eval.Visitor;
-import mathray.eval.text.DefaultPrinter;
 
 public class Rational extends Value {
   private final long num;

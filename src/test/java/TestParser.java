@@ -14,11 +14,12 @@ public class TestParser {
   Variable y = var("y");
   ParseInfo parser = ParseInfo.builder()
     .group("(", ")")
-    .infix("+", 1, Associativity.LEFT, ADD.select(0))
-    .infix("-", 1, Associativity.LEFT, SUB.select(0))
-    .infix("*", 2, Associativity.LEFT, MUL.select(0))
-    .infix("/", 2, Associativity.LEFT, DIV.select(0))
-    .infix("^", 3, Associativity.RIGHT, POW.select(0))
+    .infix("+", 10, Associativity.LEFT, ADD.select(0))
+    .infix("-", 10, Associativity.LEFT, SUB.select(0))
+    .infix("*", 20, Associativity.LEFT, MUL.select(0))
+    .infix("/", 20, Associativity.LEFT, DIV.select(0))
+    .infix("^", 30, Associativity.RIGHT, POW.select(0))
+    .prefix("-", 25, NEG.select(0))
     .function("sin", SIN.select(0))
     .var(x)
     .var(y)
@@ -58,23 +59,28 @@ public class TestParser {
     assertEquals(pow(num(1), pow(num(2), num(3))), parser.parse("1^2^3"));
   }
   
-  // @Test
-  // public void testFunctions() {
-  //   assertEquals(sin(x), parser.parse("sin(x)"));
-  //   assertEquals(min(x, y), parser.parse("min(x, y)"));
-  // }
+//  @Test
+//  public void testFunctions() {
+//    assertEquals(sin(x), parser.parse("sin(x)"));
+//    assertEquals(min(x, y), parser.parse("min(x, y)"));
+//  }
   
-  // @Test
-  // public void testSimplePrefixOperators() {
-  //   assertEquals(neg(num(1)), parser.parse("-1"));
-  //   assertEquals(neg(x), parser.parse("-x"));
-  // }
+  @Test
+  public void testSimplePrefixOperators() {
+    assertEquals(neg(num(1)), parser.parse("-1"));
+    assertEquals(neg(x), parser.parse("-x"));
+  }
   
-  // @Test
-  // public void testPrefixOrderOfOps() {
-  //   assertEquals(neg(pow(num(1), pow(num(2), num(3)))), parser.parse("-1^2^3"));
-  //   assertEquals(pow(num(1), neg(pow(num(2), num(3)))), parser.parse("1^-2^3"));
-  //   assertEquals(pow(num(1), pow(num(2), neg(num(3)))), parser.parse("1^2^-3"));
-  // }
+  @Test
+  public void testPrefixOrderOfOps() {
+    assertEquals(neg(pow(num(1), pow(num(2), num(3)))), parser.parse("-1^2^3"));
+    assertEquals(pow(num(1), neg(pow(num(2), num(3)))), parser.parse("1^-2^3"));
+    assertEquals(pow(num(1), pow(num(2), neg(num(3)))), parser.parse("1^2^-3"));
+    
+    assertEquals(mul(neg(num(1)), num(2)), parser.parse("-1*2"));
+    assertEquals(mul(pow(num(1), neg(num(2))), num(3)), parser.parse("1^-2*3"));
+    assertEquals(add(pow(num(1), neg(num(2))), num(3)), parser.parse("1^-2+3"));
+    assertEquals(add(num(1), neg(num(2))), parser.parse("1+-2"));
+  }
 
 }

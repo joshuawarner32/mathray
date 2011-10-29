@@ -1,8 +1,5 @@
 package mathray;
 
-import java.util.Stack;
-
-
 public class SelectFunction {
   
   public final Function func;

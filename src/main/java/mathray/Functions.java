@@ -22,6 +22,8 @@ public class Functions {
   public static final Function TAN = new Function("tan", 1, 1);
 
   public static final Function SQRT = new Function("sqrt", 1, 1);
+
+  public static final Function LN = new Function("ln", 1, 1);
   
   public static final Function MIN_MAX = new Function("minMax", 2, 2, vector("min", "max"));
 }

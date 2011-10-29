@@ -1,7 +1,6 @@
 package mathray.eval.complex;
 
 import mathray.Args;
-import mathray.Call;
 import mathray.Definition;
 import mathray.Function;
 import mathray.Rational;
@@ -14,8 +13,6 @@ import mathray.eval.Environment;
 import mathray.eval.Impl;
 import mathray.eval.Implementer;
 import mathray.eval.Translator;
-import mathray.eval.Visitor;
-
 import static mathray.Expressions.*;
 
 public class Splitter {

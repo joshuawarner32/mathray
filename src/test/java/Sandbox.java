@@ -1,8 +1,5 @@
 import static mathray.Expressions.*;
-import static mathray.Functions.ADD;
-import static mathray.Functions.DIV;
-import static mathray.Functions.MUL;
-import static mathray.Functions.SUB;
+import static mathray.Functions.*;
 import static org.junit.Assert.*;
 
 import mathray.Definition;
@@ -10,7 +7,6 @@ import mathray.Variable;
 import mathray.Vector;
 import mathray.eval.precision.Intervals;
 import mathray.eval.simplify.Simplifications;
-import mathray.eval.text.ParseInfo;
 
 import org.junit.Test;
 

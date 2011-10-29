@@ -10,13 +10,13 @@ public class DefaultPrinter {
   private DefaultPrinter() {}
 
   private static ParseInfo parser = ParseInfo.builder()
-      .group("(", ")")
-      .infix("+", 1, Associativity.LEFT, ADD.select(0))
-      .infix("-", 1, Associativity.LEFT, SUB.select(0))
-      .infix("*", 2, Associativity.LEFT, MUL.select(0))
-      .infix("/", 2, Associativity.LEFT, DIV.select(0))
-      .infix("^", 2, Associativity.RIGHT, POW.select(0))
-      .build();
+    .group("(", ")")
+    .infix("+", 1, Associativity.LEFT, ADD.select(0))
+    .infix("-", 1, Associativity.LEFT, SUB.select(0))
+    .infix("*", 2, Associativity.LEFT, MUL.select(0))
+    .infix("/", 2, Associativity.LEFT, DIV.select(0))
+    .infix("^", 2, Associativity.RIGHT, POW.select(0))
+    .build();
   
   public static String toString(Definition def) {
     StringBuilder b = new StringBuilder();
