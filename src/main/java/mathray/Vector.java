@@ -1,5 +1,6 @@
 package mathray;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -104,6 +105,35 @@ public final class Vector<T> implements Iterable<T> {
   @SuppressWarnings("unchecked")
   public static <T> Vector<T> empty() {
     return EMPTY;
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T> Vector<T> flatten(Vector<Vector<T>> group) {
+    Vector<T> res = new Vector<T>();
+    ArrayList<T> list = new ArrayList<T>();
+    for(Vector<T> vec : group) {
+      for(T t : vec) {
+        list.add(t);
+      }
+    }
+    res.items = (T[])list.toArray();
+    return res;
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T> Vector<Vector<T>> group(Vector<T> flat, int size) {
+    Vector<Vector<T>> res = new Vector<Vector<T>>();
+    ArrayList<Vector<T>> list = new ArrayList<Vector<T>>();
+    T[] items = (T[])new Object[size];
+    int i = 0;
+    while(i < flat.size()) {
+      for(int j = 0; j < size; j++, i++) {
+        items[j] = flat.get(i);
+      }
+      list.add(new Vector<T>(items)); // the constructor clones the array
+    }
+    res.items = (Vector<T>[])list.toArray();
+    return res;
   }
 
 }

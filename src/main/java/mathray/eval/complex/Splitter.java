@@ -17,11 +17,11 @@ import static mathray.Expressions.*;
 
 public class Splitter {
   
-  public static Definition split(Definition def, Environment<Value> env, final Definition splitter, final Args args, final Vector<Vector<Variable>> replacements) {
+  public static Definition split(Definition def, final Environment<Value> env, final Definition splitter, final Args args, final Vector<Vector<Variable>> replacements) {
     if(!args.isSubsetOf(def.args)) {
       throw new IllegalArgumentException();
     }
-    int newSize = splitter.values.size();
+    final int newSize = splitter.values.size();
     for(Vector<Variable> repl : replacements) {
       if(newSize != repl.size()) {
         throw new IllegalArgumentException();
@@ -51,12 +51,11 @@ public class Splitter {
     });
     Vector<Vector<Value>> res = new Context<Vector<Value>>(args.bind(bindings), new Implementer<Vector<Value>>() {
       @Override
-      public Impl<Vector<Value>> implement(Function func) {
+      public Impl<Vector<Value>> implement(final Function func) {
         return new Impl<Vector<Value>>() {
           @Override
           public Vector<Vector<Value>> call(Vector<Vector<Value>> args) {
-            // TODO
-            return null;
+            return Vector.group(env.implement(func).call(Vector.flatten(args)), newSize);
           }
         };
       }
