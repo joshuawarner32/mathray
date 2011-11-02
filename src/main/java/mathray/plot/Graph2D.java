@@ -36,8 +36,8 @@ public final class Graph2D {
           arr[i] = currentCurve.get(i);
         }
         curves.add(arr);
+        currentCurve = new ArrayList<Integer>();
       }
-      currentCurve = new ArrayList<Integer>();
     }
     
     public Graph2D build() {
