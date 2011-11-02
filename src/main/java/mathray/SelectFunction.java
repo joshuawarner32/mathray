@@ -14,4 +14,8 @@ public class SelectFunction {
   public Value call(Value... args) {
     return func.call(args).select(outputIndex);
   }
+
+  public Value call(Vector<Value> args) {
+    return func.call(args).select(outputIndex);
+  }
 }
