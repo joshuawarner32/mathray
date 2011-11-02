@@ -39,6 +39,19 @@ public final class Graph2D {
       }
       currentCurve = new ArrayList<Integer>();
     }
+    
+    public Graph2D build() {
+      float[] realVerts = new float[verts.size()];
+      for(int i = 0; i < realVerts.length; i++) {
+        realVerts[i] = verts.get(i);
+      }
+      split();
+      int[][] realCurves = new int[curves.size()][];
+      for(int i = 0; i < realCurves.length; i++) {
+        realCurves[i] = curves.get(i);
+      }
+      return new Graph2D(realVerts, realCurves);
+    }
   }
   
   public static Builder builder() {
