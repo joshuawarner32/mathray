@@ -94,5 +94,26 @@ public class Plotter {
     }
     return ret;
   }
+  
+  public static Graph2D graphPlot(Definition def, double min, double max, int width, int height) {
+    FunctionD f = JavaCompiler.compile(def);
+    double[] in = new double[1];
+    double[] out = new double[1];
+    double[] vals = new double[width + 1];
+    double minh = Double.POSITIVE_INFINITY;
+    double maxh = Double.NEGATIVE_INFINITY;
+    for(int i = 0; i <= width; i++) {
+      double x = (max - min) * i / width + min;
+      double y = vals[i] = eval(f, in, out, x);
+      if(y < minh) {
+        minh = y;
+      }
+      if(y > maxh) {
+        maxh = y;
+      }
+    }
+    Graph2D.Builder b = Graph2D.builder();
+    return b.build();
+  }
 
 }
