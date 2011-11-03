@@ -28,6 +28,12 @@ public class Affine {
         return vector(args.get(0).pairwise(ADD.define(), Definition.identity(1), Definition.identity(1), args.get(1)));
       }
     })
+    .register(SUB, new Impl<AffineForm>() {
+      @Override
+      public Vector<AffineForm> call(Vector<AffineForm> args) {
+        return vector(args.get(0).pairwise(SUB.define(), Definition.identity(1), NEG.define(), args.get(1)));
+      }
+    })
     .build();
   
   public static Vector<AffineForm> affine(Definition def, Args args) {
