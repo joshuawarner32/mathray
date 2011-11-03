@@ -95,15 +95,15 @@ public class Plotter {
     return ret;
   }
   
-  public static Graph2D graphPlot(Definition def, double min, double max, int width, int height) {
+  public static Graph2D graphPlot(Definition def, double xa, double xb, int points) {
     FunctionD f = JavaCompiler.compile(def);
     double[] in = new double[1];
     double[] out = new double[1];
-    double[] vals = new double[width + 1];
+    double[] vals = new double[points];
     double minh = Double.POSITIVE_INFINITY;
     double maxh = Double.NEGATIVE_INFINITY;
-    for(int i = 0; i <= width; i++) {
-      double x = (max - min) * i / width + min;
+    for(int i = 0; i < points; i++) {
+      double x = (xb - xa) * i / points + xa;
       double y = vals[i] = eval(f, in, out, x);
       if(y < minh) {
         minh = y;
@@ -113,6 +113,10 @@ public class Plotter {
       }
     }
     Graph2D.Builder b = Graph2D.builder();
+    for(int i = 0; i < points; i++) {
+      double x = (xb - xa) * i / points + xa;
+      b.point((float)x, (float)vals[i]);
+    }
     return b.build();
   }
 
