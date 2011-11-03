@@ -2,6 +2,7 @@ package mathray.random;
 
 import java.util.Random;
 
+import mathray.Args;
 import mathray.Definition;
 import mathray.Function;
 import mathray.Generator;
@@ -20,14 +21,16 @@ public final class ValueRandom {
   private Vector<Variable> namedConstants;
   private Vector<Function> functions;
   
-  public ValueRandom(Vector<Variable> namedConstants) {
+  public ValueRandom(Vector<Variable> namedConstants, Vector<Function> functions) {
+    this.namedConstants = namedConstants;
+    this.functions = functions;
     random = new Random();
   }
   
   public Rational randomRational() {
     // TODO: improve
-    long a = random.nextLong();
-    long b = random.nextLong();
+    long a = random.nextInt(11) - 6;
+    long b = random.nextInt(4) + 1;
     return num(a, b);
   }
   
@@ -44,29 +47,32 @@ public final class ValueRandom {
     return function.select(random.nextInt(function.outputArity));
   }
   
-  public Value randomValue(final double recurseProb, final double decay, final double rationalProb) {
-    // TODO: arguments
+  public Value randomValue(final Vector<Variable> args, final double recurseProb, final double decay, final double rationalProb) {
     if(random.nextDouble() < recurseProb) {
       SelectFunction function = randomSelectFunction();
       return function.call(Vector.<Value>generate(function.func.inputArity, new Generator<Value>() {
         @Override
         public Value generate(int index) {
-          return randomValue(recurseProb * decay, decay, rationalProb);
+          return randomValue(args, recurseProb * decay, decay, rationalProb);
         }
       }));
     } else if(random.nextDouble() < rationalProb) {
       return randomRational();
     } else {
-      return randomNamedConstant();
+      int r = random.nextInt(namedConstants.size() + args.size());
+      if(r < namedConstants.size()) {
+        return namedConstants.get(r);
+      } else {
+        return args.get(r - namedConstants.size());
+      }
     }
   }
   
-  public Definition randomDefinition(int inputArity, int outputArity, final double recurseProb, final double decay, final double rationalProb) {
-    // TODO: arguments
-    return new Definition(args(), Vector.<Value>generate(outputArity, new Generator<Value>() {
+  public Definition randomDefinition(final Args args, int outputArity, final double recurseProb, final double decay, final double rationalProb) {
+    return new Definition(args, Vector.<Value>generate(outputArity, new Generator<Value>() {
       @Override
       public Value generate(int index) {
-        return randomValue(recurseProb, decay, rationalProb);
+        return randomValue(args.toVector(), recurseProb, decay, rationalProb);
       }
     }));
   }

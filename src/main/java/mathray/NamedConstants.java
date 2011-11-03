@@ -13,5 +13,7 @@ public final class NamedConstants {
   public static final Variable POS_INF = var("pos_inf");
   
   public static final Variable NEG_INF = var("neg_inf");
+  
+  public static final Vector<Variable> ALL = vector(PI, E);
 
 }
