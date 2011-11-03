@@ -3,6 +3,7 @@ package mathray;
 import mathray.eval.Impl;
 import mathray.eval.Visitor;
 import mathray.eval.text.DefaultPrinter;
+import static mathray.Expressions.*;
 
 public class Definition implements Impl<Value> {
   
@@ -16,7 +17,7 @@ public class Definition implements Impl<Value> {
   }
 
   @Override
-  public Vector<Value> call(final Vector<Value> a) {
+  public final Vector<Value> call(final Vector<Value> a) {
     final Visitor<Value> v = new Visitor<Value>() {
       @Override
       public Vector<Value> call(Visitor<Value> v, Call call) {
@@ -37,6 +38,10 @@ public class Definition implements Impl<Value> {
         return in.accept(v);
       }
     });
+  }
+  
+  public final Vector<Value> call(Value... values) {
+    return call(new Vector<Value>(values));
   }
   
   @Override
@@ -63,6 +68,12 @@ public class Definition implements Impl<Value> {
     }
     // TODO
     return values.equals(def.values);
+  }
+
+  public static Definition identity(int count) {
+    Args args = args(count);
+    Vector<Value> values = args.toValueVector();
+    return new Definition(args, values);
   }
 
 }

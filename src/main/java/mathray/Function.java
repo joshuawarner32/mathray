@@ -1,5 +1,6 @@
 package mathray;
 
+import static mathray.Expressions.*;
 
 public class Function implements Comparable<Function> {
   
@@ -12,6 +13,8 @@ public class Function implements Comparable<Function> {
   public final Vector<String> individualNames;
   
   private final SelectFunction[] selectFunctions;
+  
+  private Definition definition; // created lazily
   
   public Function(String name, int inputArity, int outputArity) {
     this(name, inputArity, outputArity, defaultNames(name, outputArity));
@@ -70,6 +73,20 @@ public class Function implements Comparable<Function> {
 
   public SelectFunction select(int i) {
     return selectFunctions[i];
+  }
+
+  public Definition define() {
+    if(definition == null) {
+      Args args = args(inputArity);
+      final Vector<Value> vargs = args.toValueVector();
+      definition = new Definition(args, Vector.<Value>generate(outputArity, new Generator() {
+        @Override
+        public Object generate(int index) {
+          return call(vargs);
+        }
+      }));
+    }
+    return definition;
   }
 
   // Purposefully not overriding hashCode and equals - we want identity comparisons.

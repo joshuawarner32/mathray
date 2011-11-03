@@ -14,6 +14,10 @@ public class Expressions {
     return new Args(args);
   }
   
+  public static Args args(int count) {
+    return new Args(count);
+  }
+  
   public static <T> Vector<T> vector(T... values) {
     return new Vector<T>(values);
   }

@@ -34,5 +34,9 @@ public class Variable extends Value {
       throw new RuntimeException("unhandled case");
     }
   }
+
+  public static Variable index(int i) {
+    return new Variable("x" + i);
+  }
   
 }

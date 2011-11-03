@@ -28,6 +28,12 @@ public class Args implements Iterable<Variable> {
       vars.put(args[i], i);
     }
   }
+  
+  public Args(int count) {
+    for(int i = 0; i < count; i++) {
+      vars.put(Variable.index(i), i);
+    }
+  }
 
   public int size() {
     return vars.size();
@@ -62,11 +68,16 @@ public class Args implements Iterable<Variable> {
   }
 
   @SuppressWarnings("unchecked")
-  public Vector<Variable> toVector() {
+  public final Vector<Variable> toVector() {
     return new Vector(vars.keySet().toArray());
   }
 
-  public boolean isSubsetOf(Args args) {
+  @SuppressWarnings("unchecked")
+  public Vector<Value> toValueVector() {
+    return (Vector)toVector();
+  }
+
+  public final boolean isSubsetOf(Args args) {
     return args.vars.entrySet().containsAll(vars.entrySet());
   }
 
