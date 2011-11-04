@@ -50,14 +50,29 @@ public class MachineEvaluator {
           return vector(Math.sin(args.get(0)));
         }
       })
+      .register(SINH, new Impl<Double>() {
+        public Vector<Double> call(Vector<Double> args) {
+          return vector(Math.sinh(args.get(0)));
+        }
+      })
       .register(COS, new Impl<Double>() {
         public Vector<Double> call(Vector<Double> args) {
           return vector(Math.cos(args.get(0)));
         }
       })
+      .register(COSH, new Impl<Double>() {
+        public Vector<Double> call(Vector<Double> args) {
+          return vector(Math.cosh(args.get(0)));
+        }
+      })
       .register(TAN, new Impl<Double>() {
         public Vector<Double> call(Vector<Double> args) {
           return vector(Math.tan(args.get(0)));
+        }
+      })
+      .register(TANH, new Impl<Double>() {
+        public Vector<Double> call(Vector<Double> args) {
+          return vector(Math.tanh(args.get(0)));
         }
       })
       .register(LOG, new Impl<Double>() {

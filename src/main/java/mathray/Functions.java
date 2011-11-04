@@ -20,6 +20,7 @@ public class Functions {
   public static final Function COS = new Function("cos", 1, 1);
   public static final Function COSH = new Function("cosh", 1, 1);
   public static final Function TAN = new Function("tan", 1, 1);
+  public static final Function TANH = new Function("tanh", 1, 1);
 
   public static final Function SQRT = new Function("sqrt", 1, 1);
 
