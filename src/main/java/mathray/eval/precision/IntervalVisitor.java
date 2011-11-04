@@ -90,6 +90,14 @@ public class IntervalVisitor implements Visitor<Interval> {
         return vector(new Interval(a.select(0), b.select(0)), new Interval(a.select(1), b.select(1)));
       }
     })
+    .register(ABS, new Impl<Interval>() {
+      public Vector<Interval> call(Vector<Interval> args) {
+        Value aa = abs(args.get(0).a);
+        Value ab = abs(args.get(0).b);
+        Call minMax = minMax(aa, ab);
+        return new Interval(minMax.select(0), minMax.select(1));
+      }
+    })
     .register(SQRT, new Impl<Interval>() {
       public Vector<Interval> call(Vector<Interval> args) {
         Interval r = args.get(0);

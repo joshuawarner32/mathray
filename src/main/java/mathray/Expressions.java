@@ -106,6 +106,10 @@ public class Expressions {
     return MIN_MAX.call(values).select(1);
   }
   
+  public static Value abs(Value value) {
+    return ABS.call(value).select(0);
+  }
+  
   public static Value selectSign(Value test, Value negative, Value zero, Value positive) {
     return SELECT_SIGN.call(test, negative, zero, positive).select(0);
   }
