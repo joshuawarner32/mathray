@@ -15,6 +15,7 @@ import mathray.eval.Environment;
 import mathray.eval.Visitor;
 import mathray.eval.Impl;
 import static mathray.Expressions.*;
+import static mathray.NamedConstants.*;
 
 public class IntervalVisitor implements Visitor<Interval> {
   
@@ -67,7 +68,19 @@ public class IntervalVisitor implements Visitor<Interval> {
     })
     .register(SIN, new Impl<Interval>() {
       public Vector<Interval> call(Vector<Interval> args) {
-        throw new RuntimeException("not implemented");
+        Interval x = args.get(0);
+        Value diff = sub(x.b, x.a);
+        Interval full = new Interval(num(-1), num(1));
+        Value va = sin(x.a);
+        Value vb = sin(x.b);
+        Value da = cos(x.a);
+        Value db = cos(x.b);
+        Interval els = new Interval(num(-1), max(va, vb));
+        Interval dbltz = intervalSelectSign(db, new Interval(min(va, vb), num(1)), els, els);
+        Call minMax = minMax(va, vb);
+        Interval els2 = new Interval(minMax.select(0), minMax.select(1));
+        Interval fallback = intervalSelectSign(mul(da, db), dbltz, els2, els2);
+        return vector(intervalSelectSign(sub(diff, mul(num(2), PI)), full, full, fallback));
       }
     })
     .register(SQRT, new Impl<Interval>() {
@@ -84,6 +97,10 @@ public class IntervalVisitor implements Visitor<Interval> {
   
   private static Interval intervalSelectContains(Interval test, Interval t, Interval f) {
     return new Interval(selectContains(test, t.a, f.a), selectContains(test, t.b, f.b));
+  }
+  
+  private static Interval intervalSelectSign(Value test, Interval n, Interval z, Interval p) {
+    return new Interval(selectSign(test, n.a, z.a, p.a), selectSign(test, n.b, z.b, p.b));
   }
 
   private Impl<Interval> implement(Function func) {
