@@ -35,6 +35,11 @@ public class MachineEvaluator {
           return vector(args.get(0) / args.get(1));
         }
       })
+      .register(POW, new Impl<Double>() {
+        public Vector<Double> call(Vector<Double> args) {
+          return vector(Math.pow(args.get(0), args.get(1)));
+        }
+      })
       .register(SIN, new Impl<Double>() {
         public Vector<Double> call(Vector<Double> args) {
           return vector(Math.sin(args.get(0)));
