@@ -26,4 +26,6 @@ public class Functions {
   public static final Function LN = new Function("ln", 1, 1);
   
   public static final Function MIN_MAX = new Function("minMax", 2, 2, vector("min", "max"));
+  
+  public static final Function SELECT_SIGN = new Function("selectSign", 4, 1);
 }

@@ -66,7 +66,7 @@ public class IntervalVisitor implements Visitor<Interval> {
         Interval ret = new Interval(
             min(m1.select(0), m2.select(0)),
             max(m1.select(1), m2.select(1)));
-        return vector(ret);
+        return vector(intervalSelectContains(args.get(1), Interval.INFINITE, ret));
       }
     });
     
@@ -82,6 +82,15 @@ public class IntervalVisitor implements Visitor<Interval> {
         return vector(new Interval(sqrt(r.a), sqrt(r.b)));
       }
     });
+  }
+  
+  private static Value selectContains(Interval test, Value t, Value f) {
+    Value p = selectSign(test.b, f, t, t);
+    return selectSign(test.a, p, p, f);
+  }
+  
+  private static Interval intervalSelectContains(Interval test, Interval t, Interval f) {
+    return new Interval(selectContains(test, t.a, f.a), selectContains(test, t.b, f.b));
   }
   
   public void register(Function func, Impl<Interval> impl) {
