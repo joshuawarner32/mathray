@@ -142,6 +142,14 @@ public class Expressions {
     return LOG.call(value).select(0);
   }
   
+  public static Value up(Value value) {
+    return UP.call(value).select(0);
+  }
+  
+  public static Value down(Value value) {
+    return DOWN.call(value).select(0);
+  }
+  
   public static Rational num(long value) {
     return Rational.get(value);
   }

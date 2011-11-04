@@ -4,6 +4,7 @@ import mathray.Value;
 import mathray.Vector;
 import mathray.eval.text.ParseInfo;
 import static mathray.NamedConstants.*;
+import static mathray.Expressions.*;
 
 public class Interval {
 
@@ -13,8 +14,8 @@ public class Interval {
   public static final Interval INFINITE = new Interval(NEG_INF, POS_INF);
   
   public Interval(Value a, Value b) {
-    this.a = a;
-    this.b = b;
+    this.a = down(a);
+    this.b = up(b);
   }
   
   public String toString(ParseInfo parser) {
