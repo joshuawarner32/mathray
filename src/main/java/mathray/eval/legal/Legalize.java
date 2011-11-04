@@ -18,6 +18,7 @@ public class Legalize {
   private static Environment<Value> env = Environment.<Value>builder()
     .register(SUB, def(args(x, y), add(x, neg(y))))
     .register(DIV, def(args(x, y), mul(x, pow(y, num(-1)))))
+    .register(NEG, def(args(x), mul(num(-1), x)))
     .register(TAN, def(args(x), div(sin(x), cos(x))))
     .build();
   
