@@ -29,6 +29,7 @@ public final class Complex {
     .register(MUL, def(args(xr, xi, yr, yi), sub(mul(xr, yr), mul(xi, yi)), add(mul(xr, yi), mul(xi, yr))))
     .register(DIV, def(args(xr, xi, yr, yi), div(add(mul(xr, yr), mul(xi, yi)), DIV_DENOM), div(sub(mul(xi, yr), mul(xr, yi)), DIV_DENOM)))
     .register(SIN, def(args(xr, xi), mul(cosh(xi), sin(xr)), mul(sinh(xi), cos(xr))))
+    .register(COS, def(args(xr, xi), mul(cosh(xi), cos(xr)), neg(mul(sinh(xi), sin(xr)))))
     .build();
   
   public static Definition complexify(Definition def, Args args, Vector<Vector<Variable>> replacements) {
