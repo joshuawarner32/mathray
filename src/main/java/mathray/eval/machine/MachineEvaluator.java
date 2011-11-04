@@ -35,6 +35,11 @@ public class MachineEvaluator {
           return vector(args.get(0) / args.get(1));
         }
       })
+      .register(NEG, new Impl<Double>() {
+        public Vector<Double> call(Vector<Double> args) {
+          return vector(-args.get(0));
+        }
+      })
       .register(POW, new Impl<Double>() {
         public Vector<Double> call(Vector<Double> args) {
           return vector(Math.pow(args.get(0), args.get(1)));
@@ -48,6 +53,11 @@ public class MachineEvaluator {
       .register(COS, new Impl<Double>() {
         public Vector<Double> call(Vector<Double> args) {
           return vector(Math.cos(args.get(0)));
+        }
+      })
+      .register(TAN, new Impl<Double>() {
+        public Vector<Double> call(Vector<Double> args) {
+          return vector(Math.tan(args.get(0)));
         }
       })
       .register(MIN_MAX, new Impl<Double>() {
