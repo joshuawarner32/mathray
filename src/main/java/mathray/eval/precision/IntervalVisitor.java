@@ -95,7 +95,7 @@ public class IntervalVisitor implements Visitor<Interval> {
         Value aa = abs(args.get(0).a);
         Value ab = abs(args.get(0).b);
         Call minMax = minMax(aa, ab);
-        return new Interval(minMax.select(0), minMax.select(1));
+        return vector(new Interval(minMax.select(0), minMax.select(1)));
       }
     })
     .register(SQRT, new Impl<Interval>() {
