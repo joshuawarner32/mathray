@@ -113,6 +113,16 @@ public class MachineEvaluator {
           }
         }
       })
+      .register(UP, new Impl<Double>() {
+        public Vector<Double> call(Vector<Double> args) {
+          return vector(Math.nextUp(args.get(0)));
+        }
+      })
+      .register(DOWN, new Impl<Double>() {
+        public Vector<Double> call(Vector<Double> args) {
+          return vector(-Math.nextUp(-args.get(0)));
+        }
+      })
       .build();
   
   public static Vector<Double> eval(Definition def, Vector<Double> params) {
