@@ -20,6 +20,9 @@ public class Legalize {
     .register(DIV, def(args(x, y), mul(x, pow(y, num(-1)))))
     .register(NEG, def(args(x), mul(num(-1), x)))
     .register(TAN, def(args(x), div(sin(x), cos(x))))
+    .register(SQRT, def(args(x), pow(x, num(1, 2))))
+    .register(UP, def(args(x), x))
+    .register(DOWN, def(args(x), x))
     .build();
   
   public static Definition legalize(Definition def, Set<Function> legal) {
