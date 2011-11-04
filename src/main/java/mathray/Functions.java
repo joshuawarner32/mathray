@@ -23,7 +23,8 @@ public class Functions {
 
   public static final Function SQRT = new Function("sqrt", 1, 1);
 
-  public static final Function LN = new Function("ln", 1, 1);
+  // The natural logarithm.  What other base could you possibly care about?
+  public static final Function LOG = new Function("log", 1, 1);
   
   public static final Function MIN_MAX = new Function("minMax", 2, 2, vector("min", "max"));
   

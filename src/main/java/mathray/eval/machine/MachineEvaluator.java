@@ -60,6 +60,11 @@ public class MachineEvaluator {
           return vector(Math.tan(args.get(0)));
         }
       })
+      .register(LOG, new Impl<Double>() {
+        public Vector<Double> call(Vector<Double> args) {
+          return vector(Math.log(args.get(0)));
+        }
+      })
       .register(MIN_MAX, new Impl<Double>() {
         public Vector<Double> call(Vector<Double> args) {
           double a = args.get(0);

@@ -139,7 +139,7 @@ public class Expressions {
   }
 
   public static Value ln(Value value) {
-    return LN.call(value).select(0);
+    return LOG.call(value).select(0);
   }
   
   public static Rational num(long value) {
