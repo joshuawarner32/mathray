@@ -83,6 +83,13 @@ public class IntervalVisitor implements Visitor<Interval> {
         return vector(intervalSelectSign(sub(diff, mul(num(2), PI)), full, full, fallback));
       }
     })
+    .register(MIN_MAX, new Impl<Interval>() {
+      public Vector<Interval> call(Vector<Interval> args) {
+        Call a = minMax(args.get(0).a, args.get(1).a);
+        Call b = minMax(args.get(0).b, args.get(1).b);
+        return vector(new Interval(a.select(0), b.select(0)), new Interval(a.select(1), b.select(1)));
+      }
+    })
     .register(SQRT, new Impl<Interval>() {
       public Vector<Interval> call(Vector<Interval> args) {
         Interval r = args.get(0);
