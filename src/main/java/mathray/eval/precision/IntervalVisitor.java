@@ -11,32 +11,29 @@ import mathray.Function;
 import mathray.Value;
 import mathray.Variable;
 import mathray.Vector;
+import mathray.eval.Environment;
 import mathray.eval.Visitor;
 import mathray.eval.Impl;
 import static mathray.Expressions.*;
 
 public class IntervalVisitor implements Visitor<Interval> {
   
-  private Map<Function, Impl<Interval>> impls = new HashMap<Function, Impl<Interval>>();
-  
-  {
-    register(ADD, new Impl<Interval>() {
+  Environment<Interval> env = Environment.<Interval>builder() 
+    .register(ADD, new Impl<Interval>() {
       public Vector<Interval> call(Vector<Interval> args) {
         Interval r = args.get(0);
         Interval o = args.get(1);
         return vector(new Interval(add(r.a, o.a), add(r.b, o.b)));
       }
-    });
-    
-    register(SUB, new Impl<Interval>() {
+    })
+    .register(SUB, new Impl<Interval>() {
       public Vector<Interval> call(Vector<Interval> args) {
         Interval r = args.get(0);
         Interval o = args.get(1);
         return vector(new Interval(sub(r.a, o.b), sub(r.b, o.a)));
       }
-    });
-    
-    register(MUL, new Impl<Interval>() {
+    })
+    .register(MUL, new Impl<Interval>() {
       public Vector<Interval> call(Vector<Interval> args) {
         Interval r = args.get(0);
         Interval o = args.get(1);
@@ -51,9 +48,8 @@ public class IntervalVisitor implements Visitor<Interval> {
             max(m1.select(1), m2.select(1)));
         return vector(ret);
       }
-    });
-    
-    register(DIV, new Impl<Interval>() {
+    })
+    .register(DIV, new Impl<Interval>() {
       public Vector<Interval> call(Vector<Interval> args) {
         Interval r = args.get(0);
         Interval o = args.get(1);
@@ -68,21 +64,19 @@ public class IntervalVisitor implements Visitor<Interval> {
             max(m1.select(1), m2.select(1)));
         return vector(intervalSelectContains(args.get(1), Interval.INFINITE, ret));
       }
-    });
-    
-    register(SIN, new Impl<Interval>() {
+    })
+    .register(SIN, new Impl<Interval>() {
       public Vector<Interval> call(Vector<Interval> args) {
         throw new RuntimeException("not implemented");
       }
-    });
-
-    register(SQRT, new Impl<Interval>() {
+    })
+    .register(SQRT, new Impl<Interval>() {
       public Vector<Interval> call(Vector<Interval> args) {
         Interval r = args.get(0);
         return vector(new Interval(sqrt(r.a), sqrt(r.b)));
       }
-    });
-  }
+    })
+    .build();
   
   private static Value selectContains(Interval test, Value t, Value f) {
     return selectSign(mul(test.a, test.b), t, t, f);
@@ -91,17 +85,9 @@ public class IntervalVisitor implements Visitor<Interval> {
   private static Interval intervalSelectContains(Interval test, Interval t, Interval f) {
     return new Interval(selectContains(test, t.a, f.a), selectContains(test, t.b, f.b));
   }
-  
-  public void register(Function func, Impl<Interval> impl) {
-    impls.put(func, impl);
-  }
 
   private Impl<Interval> implement(Function func) {
-    Impl<Interval> ret = impls.get(func);
-    if(ret == null) {
-      throw new RuntimeException("couldn't find impl");
-    }
-    return ret;
+    return env.implement(func);
   }
   
   @Override
