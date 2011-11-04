@@ -40,6 +40,27 @@ public class MachineEvaluator {
           return vector(Math.sin(args.get(0)));
         }
       })
+      .register(COS, new Impl<Double>() {
+        public Vector<Double> call(Vector<Double> args) {
+          return vector(Math.cos(args.get(0)));
+        }
+      })
+      .register(MIN_MAX, new Impl<Double>() {
+        public Vector<Double> call(Vector<Double> args) {
+          double a = args.get(0);
+          double b = args.get(1);
+          if(a > b) {
+            return vector(b, a);
+          } else {
+            return vector(a, b);
+          }
+        }
+      })
+      .register(ABS, new Impl<Double>() {
+        public Vector<Double> call(Vector<Double> args) {
+          return vector(Math.abs(args.get(0)));
+        }
+      })
       .register(SQRT, new Impl<Double>() {
         public Vector<Double> call(Vector<Double> args) {
           return vector(Math.sqrt(args.get(0)));
