@@ -80,6 +80,11 @@ public class MachineEvaluator {
           return vector(Math.log(args.get(0)));
         }
       })
+      .register(SQRT, new Impl<Double>() {
+        public Vector<Double> call(Vector<Double> args) {
+          return vector(Math.sqrt(args.get(0)));
+        }
+      })
       .register(MIN_MAX, new Impl<Double>() {
         public Vector<Double> call(Vector<Double> args) {
           double a = args.get(0);
@@ -96,9 +101,16 @@ public class MachineEvaluator {
           return vector(Math.abs(args.get(0)));
         }
       })
-      .register(SQRT, new Impl<Double>() {
+      .register(SELECT_SIGN, new Impl<Double>() {
         public Vector<Double> call(Vector<Double> args) {
-          return vector(Math.sqrt(args.get(0)));
+          double test = args.get(0);
+          if(test < 0) {
+            return vector(args.get(1));
+          } else if(test > 0) {
+            return vector(args.get(3));
+          } else {
+            return vector(args.get(2));
+          }
         }
       })
       .build();
