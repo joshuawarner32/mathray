@@ -85,8 +85,7 @@ public class IntervalVisitor implements Visitor<Interval> {
   }
   
   private static Value selectContains(Interval test, Value t, Value f) {
-    Value p = selectSign(test.b, f, t, t);
-    return selectSign(test.a, p, p, f);
+    return selectSign(mul(test.a, test.b), t, t, f);
   }
   
   private static Interval intervalSelectContains(Interval test, Interval t, Interval f) {
