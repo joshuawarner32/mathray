@@ -1,4 +1,5 @@
 import mathray.Args;
+import mathray.Definition;
 import mathray.NamedConstants;
 import mathray.Variable;
 import mathray.eval.simplify.Simplifications;
@@ -11,12 +12,20 @@ import static mathray.Functions.*;
 public class Main {
 
   public static void main(String[] args) {
+    printRandomExpressionForever();
+  }
+
+  private static void printRandomExpressionForever() {
     ValueRandom random = new ValueRandom(NamedConstants.ALL, vector(ADD, SUB, MUL, DIV, SIN, SQRT, NEG));
     LineReader reader = new LineReader(System.in);
     Variable x = var("x");
     Args a = args(x);
     do {
-      System.out.println(DefaultPrinter.toString(Simplifications.simplify(random.randomDefinition(a, 1, 0.95, 0.5, 0.5))));
-    } while(!reader.readLine().equals("q"));
+      Definition orig = random.randomDefinition(a, 1, 0.99, 0.5, 0.7);
+      Definition simple = Simplifications.simplify(orig);
+      System.out.println(orig.toJavaString());
+      System.out.println("\ttraditional: " + DefaultPrinter.toString(orig));
+      System.out.println("\tsimplified:  " + DefaultPrinter.toString(simple));
+    } while(true);//while(!reader.readLine().equals("q"));
   }
 }
