@@ -95,8 +95,13 @@ public final class Vector<T> implements Iterable<T> {
     return ret;
   }
 
-  public Vector<T> concat(Vector<T> num) {
-    return null;
+  public Vector<T> concat(Vector<T> other) {
+    Vector<T> ret = new Vector<T>();
+    ret.items = Arrays.copyOf(items, items.length + other.items.length);
+    for(int i = 0; i < other.items.length; i++) {
+      ret.items[i + items.length] = other.items[i];
+    }
+    return ret;
   }
   
   @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -134,6 +139,13 @@ public final class Vector<T> implements Iterable<T> {
     }
     res.items = (Vector<T>[])list.toArray();
     return res;
+  }
+
+  public Vector<T> append(T item) {
+    Vector<T> ret = new Vector<T>();
+    ret.items = Arrays.copyOf(items, items.length + 1);
+    ret.items[items.length] = item;
+    return ret;
   }
 
 }

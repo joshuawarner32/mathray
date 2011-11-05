@@ -241,7 +241,7 @@ public class Simplifications {
         ProductExpr prod = (ProductExpr)expr;
         return new ProductExpr(coeff.mul(prod.coeff), factors.concat(prod.factors));
       } else {
-        throw new RuntimeException("unhandled case");
+        return new ProductExpr(coeff, factors.append(expr));
       }
     }
     
@@ -312,7 +312,7 @@ public class Simplifications {
         SumExpr sum = (SumExpr)expr;
         return new SumExpr(offset.add(sum.offset), terms.concat(sum.terms));
       } else {
-        throw new RuntimeException("unhandled case");
+        return new SumExpr(offset, terms.append(expr));
       }
     }
     
