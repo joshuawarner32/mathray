@@ -76,4 +76,16 @@ public class Definition implements Impl<Value> {
     return new Definition(args, values);
   }
 
+  public String toJavaString() {
+    StringBuilder b = new StringBuilder();
+    b.append("def(");
+    b.append(args.toJavaString());
+    for(Value v : values) {
+      b.append(", ");
+      b.append(v.toJavaString());
+    }
+    b.append(")");
+    return b.toString();
+  }
+
 }

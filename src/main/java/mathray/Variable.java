@@ -38,5 +38,10 @@ public class Variable extends Value {
   public static Variable index(int i) {
     return new Variable("x" + i);
   }
+
+  @Override
+  public String toJavaString() {
+    return name;
+  }
   
 }

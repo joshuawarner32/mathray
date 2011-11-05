@@ -136,4 +136,13 @@ public class Rational extends Value {
     return num / (double)denom;
   }
 
+  @Override
+  public String toJavaString() {
+    if(denom == 1) {
+      return "num(" + num + ")";
+    } else {
+      return "num(" + num + ", " + denom + ")";
+    }
+  }
+
 }

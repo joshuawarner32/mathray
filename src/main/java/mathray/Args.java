@@ -67,18 +67,29 @@ public class Args implements Iterable<Variable> {
     return obj instanceof Args && vars.equals(((Args)obj).vars);
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   public final Vector<Variable> toVector() {
     return new Vector(vars.keySet().toArray());
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   public Vector<Value> toValueVector() {
     return (Vector)toVector();
   }
 
   public final boolean isSubsetOf(Args args) {
     return args.vars.entrySet().containsAll(vars.entrySet());
+  }
+
+  public String toJavaString() {
+    StringBuilder b = new StringBuilder();
+    Vector<Variable> vars = toVector();
+    b.append("args(");
+    if(vars.size() > 0) {
+      b.append(vars.get(0).name);
+    }
+    b.append(")");
+    return b.toString();
   }
 
 }

@@ -52,6 +52,22 @@ public final class Call implements Comparable<Call> {
         throw new RuntimeException("unhandled case");
       }
     }
+
+    @Override
+    public String toJavaString() {
+      StringBuilder b = new StringBuilder();
+      b.append(call.func.individualNames.get(index));
+      b.append("(");
+      if(call.args.size() > 0) {
+        b.append(call.args.get(0).toJavaString());
+      }
+      for(int i = 1; i < call.args.size(); i++) {
+        b.append(", ");
+        b.append(call.args.get(i).toJavaString());
+      }
+      b.append(")");
+      return b.toString();
+    }
   
   }
 

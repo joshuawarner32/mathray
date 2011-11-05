@@ -9,5 +9,7 @@ public abstract class Value implements Comparable<Value> {
   public final Vector<Value> toVector() {
     return new Vector<Value>(this);
   }
+
+  public abstract String toJavaString();
   
 }
