@@ -34,6 +34,12 @@ public class Affine {
         return vector(args.get(0).pairwise(SUB.define(), Definition.identity(1), NEG.define(), args.get(1)));
       }
     })
+    .register(NEG, new Impl<AffineForm>() {
+      @Override
+      public Vector<AffineForm> call(Vector<AffineForm> args) {
+        return vector(args.get(0).all(NEG.define()));
+      }
+    })
     .build();
   
   public static Vector<AffineForm> affine(Definition def, Args args) {

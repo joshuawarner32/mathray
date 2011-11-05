@@ -35,4 +35,12 @@ public class AffineForm {
     return ret;
   }
 
+  public AffineForm all(Definition def) {
+    AffineForm ret = new AffineForm(def.call(center).get(0), coeffs);
+    for(Map.Entry<AffineTerm, Value> coeff : ret.coeffs.entrySet()) {
+      coeff.setValue(def.call(coeff.getValue()).get(0));
+    }
+    return ret;
+  }
+
 }
