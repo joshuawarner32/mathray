@@ -79,10 +79,11 @@ public class Function implements Comparable<Function> {
     if(definition == null) {
       Args args = args(inputArity);
       final Vector<Value> vargs = args.toValueVector();
-      definition = new Definition(args, Vector.<Value>generate(outputArity, new Generator() {
+      final Call c = call(vargs);
+      definition = new Definition(args, Vector.<Value>generate(outputArity, new Generator<Value>() {
         @Override
-        public Object generate(int index) {
-          return call(vargs);
+        public Value generate(int index) {
+          return c.select(index);
         }
       }));
     }
