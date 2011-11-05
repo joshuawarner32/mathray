@@ -2,7 +2,6 @@ package mathray.eval.complex;
 
 import mathray.Args;
 import mathray.Definition;
-import mathray.Function;
 import mathray.Value;
 import mathray.Variable;
 import mathray.Vector;
@@ -25,9 +24,10 @@ public final class Complex {
   
   private static final Environment<Value> env = Environment.<Value>builder()
     .register(ADD, def(args(xr, xi, yr, yi), add(xr, yr), add(xi, yi)))
-    .register(ADD, def(args(xr, xi, yr, yi), sub(xr, yr), sub(xi, yi)))
+    .register(SUB, def(args(xr, xi, yr, yi), sub(xr, yr), sub(xi, yi)))
     .register(MUL, def(args(xr, xi, yr, yi), sub(mul(xr, yr), mul(xi, yi)), add(mul(xr, yi), mul(xi, yr))))
     .register(DIV, def(args(xr, xi, yr, yi), div(add(mul(xr, yr), mul(xi, yi)), DIV_DENOM), div(sub(mul(xi, yr), mul(xr, yi)), DIV_DENOM)))
+    .register(NEG, def(args(xr, xi), neg(xr), neg(xi)))
     .register(SIN, def(args(xr, xi), mul(cosh(xi), sin(xr)), mul(sinh(xi), cos(xr))))
     .register(COS, def(args(xr, xi), mul(cosh(xi), cos(xr)), neg(mul(sinh(xi), sin(xr)))))
     .build();
