@@ -82,5 +82,10 @@ public class TestSimplify {
     assertSimplifiesTo(def(args(x), sub(x, num(-1))), def(args(x), add(num(1), x)));
     assertSimplifiesTo(def(args(x), add(num(1), neg(neg(x)))), def(args(x), add(num(1), x)));
   }
+  
+  @Test
+  public void testRationalReciprocal() {
+    assertSimplifiesTo(def(args(x), div(num(-2), num(1, 4))), def(args(x), num(-8)));
+  }
 
 }

@@ -117,6 +117,11 @@ public class Simplifications {
     }
     
     @Override
+    public Expr exprRecip() {
+      return new ConstExpr(value.reciprocal());
+    }
+    
+    @Override
     public boolean isNegative() {
       return value.isNegative();
     }

@@ -103,7 +103,7 @@ public class Rational extends Value {
     return new Rational(-num, denom);
   }
 
-  public Value reciprocal() {
+  public Rational reciprocal() {
     // no point re-reducing it...
     if(num >= 0) {
       return new Rational(denom, num);
