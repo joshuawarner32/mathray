@@ -72,6 +72,7 @@ public class TestSimplify {
     assertSimplifiesTo(def(args(x), mul(num(1), num(2), x)), def(args(x), mul(num(2), x)));
     assertSimplifiesTo(def(args(x), mul(num(1), x, num(2))), def(args(x), mul(num(2), x)));
     assertSimplifiesTo(def(args(x), mul(x, num(1), num(2))), def(args(x), mul(num(2), x)));
+    assertSimplifiesTo(def(args(x), sin(mul(num(1), num(-2)))), def(args(x), sin(num(-2))));
   }
   
   @Test

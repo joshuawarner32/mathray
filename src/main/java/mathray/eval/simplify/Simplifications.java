@@ -395,7 +395,8 @@ public class Simplifications {
               Vector<Expr> args = call.visitArgs(v);
               return vector(args.get(0).exprPow(args.get(1)));
             } else {
-              return toExprs(call.selectAll());
+              Vector<Expr> args = call.visitArgs(v);
+              return toExprs(call.func.call(toValues(args)).selectAll());
             }
           }
           @Override
