@@ -112,6 +112,11 @@ public class Simplifications {
     }
     
     @Override
+    public Expr exprNeg() {
+      return new ConstExpr(value.negative());
+    }
+    
+    @Override
     public boolean isNegative() {
       return value.isNegative();
     }
@@ -246,6 +251,11 @@ public class Simplifications {
     }
     
     @Override
+    public Expr exprNeg() {
+      return new ProductExpr(coeff.negative(), factors);
+    }
+    
+    @Override
     public boolean isNegative() {
       boolean neg = coeff.isNegative();
       for(Expr expr : factors) {
@@ -369,6 +379,9 @@ public class Simplifications {
             if(call.func == ADD) {
               Vector<Expr> args = call.visitArgs(v);
               return vector(args.get(0).exprAdd(args.get(1)));
+            } else if(call.func == SUB) {
+              Vector<Expr> args = call.visitArgs(v);
+              return vector(args.get(0).exprAdd(args.get(1).exprNeg()));
             } else if(call.func == MUL) {
               Vector<Expr> args = call.visitArgs(v);
               return vector(args.get(0).exprMul(args.get(1)));

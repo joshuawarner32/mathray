@@ -73,5 +73,12 @@ public class TestSimplify {
     assertSimplifiesTo(def(args(x), mul(num(1), x, num(2))), def(args(x), mul(num(2), x)));
     assertSimplifiesTo(def(args(x), mul(x, num(1), num(2))), def(args(x), mul(num(2), x)));
   }
+  
+  @Test
+  public void testDoubleNegative() {
+    assertSimplifiesTo(def(args(x), sub(num(1), neg(x))), def(args(x), add(num(1), x)));
+    assertSimplifiesTo(def(args(x), sub(x, neg(num(1)))), def(args(x), add(num(1), x)));
+    assertSimplifiesTo(def(args(x), sub(x, num(-1))), def(args(x), add(num(1), x)));
+  }
 
 }
