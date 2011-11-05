@@ -1,5 +1,7 @@
 package mathray.plot;
 
+import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +58,32 @@ public final class Graph2D {
   
   public static Builder builder() {
     return new Builder();
+  }
+  
+  public void draw(Graphics2D g, float imagX, float imagY, float width, float height) {
+    float minx = Float.MAX_VALUE, maxx = -Float.MAX_VALUE;
+    float miny = Float.MAX_VALUE, maxy = -Float.MAX_VALUE;
+    for(int[] curve : curves) {
+      for(int i = 1; i < curve.length; i++) {
+        float x = verts[2 * i];
+        float y = verts[2 * i + 1];
+        minx = Math.min(minx, x);
+        maxx = Math.max(maxx, x);
+        miny = Math.min(miny, y);
+        maxy = Math.max(maxy, y);
+      }
+    }
+    for(int[] curve : curves) {
+      float xl = verts[2 * curve[0]] / (maxx - minx) * width + imagX;
+      float yl = verts[2 * curve[0] + 1] / (maxy - miny) * height + imagY;
+      for(int i = 1; i < curve.length; i++) {
+        float x = verts[2 * i] / (maxx - minx) * width + imagX;
+        float y = verts[2 * i + 1] / (maxy - miny) * height + imagY;
+        g.draw(new Line2D.Float(xl, yl, x, y));
+        xl = x;
+        yl = y;
+      }
+    }
   }
 
 }
