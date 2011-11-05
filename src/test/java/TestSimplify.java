@@ -79,6 +79,7 @@ public class TestSimplify {
     assertSimplifiesTo(def(args(x), sub(num(1), neg(x))), def(args(x), add(num(1), x)));
     assertSimplifiesTo(def(args(x), sub(x, neg(num(1)))), def(args(x), add(num(1), x)));
     assertSimplifiesTo(def(args(x), sub(x, num(-1))), def(args(x), add(num(1), x)));
+    assertSimplifiesTo(def(args(x), add(num(1), neg(neg(x)))), def(args(x), add(num(1), x)));
   }
 
 }
