@@ -13,11 +13,12 @@ public class TestPrinter {
   Variable y = var("y");
   ParseInfo parser = ParseInfo.builder()
     .group("(", ")")
-    .infix("+", 1, Associativity.LEFT, ADD.select(0))
-    .infix("-", 1, Associativity.LEFT, SUB.select(0))
-    .infix("*", 2, Associativity.LEFT, MUL.select(0))
-    .infix("/", 2, Associativity.LEFT, DIV.select(0))
-    .infix("^", 3, Associativity.RIGHT, POW.select(0))
+    .infix("+", 10, Associativity.LEFT, ADD.select(0))
+    .infix("-", 10, Associativity.LEFT, SUB.select(0))
+    .infix("*", 20, Associativity.LEFT, MUL.select(0))
+    .infix("/", 20, Associativity.LEFT, DIV.select(0))
+    .infix("^", 30, Associativity.RIGHT, POW.select(0))
+    .prefix("-", 25, NEG.select(0))
     .build();
   
   @Test
@@ -55,6 +56,12 @@ public class TestPrinter {
     assertEquals("1+(2+3)", parser.unparse(add(num(1), add(num(2), num(3)))));
     assertEquals("(1^2)^3", parser.unparse(pow(pow(num(1), num(2)), num(3))));
     assertEquals("1^2^3", parser.unparse(pow(num(1), pow(num(2), num(3)))));
+  }
+  
+  @Test
+  public void testPrefix() {
+    assertEquals("-x", parser.unparse(neg(x)));
+    assertEquals("-1", parser.unparse(neg(num(1))));
   }
 
 }
