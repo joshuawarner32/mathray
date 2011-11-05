@@ -4,9 +4,6 @@ public abstract class Node {
   
   private Node parent;
   
-  private double[] lowLimits;
-  private double[] highLimits;
-  
   private int splitAxis;
   
   private Node child1;
@@ -41,6 +38,27 @@ public abstract class Node {
   protected abstract Node child();
   
   public Node extend(int axis) {
-    return null;
+    Node n = this.parent;
+    while(n != null) {
+      if(n.splitAxis == axis) {
+        return n;
+      }
+      n = n.parent;
+    }
+    // TODO: return new split
+    throw new RuntimeException("not implemented");
+  }
+  
+  // TODO: more arguments
+  public void fill(double[] values) {
+    if(child1 != null) {
+      child1.fill(values);
+      child2.fill(values);
+    } else if(definitelyComplex) {
+      // TODO: real bounds
+      for(int i = 0; i < values.length; i++) {
+        values[i] = Double.NaN;
+      }
+    }
   }
 }
