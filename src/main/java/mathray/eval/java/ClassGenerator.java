@@ -95,6 +95,12 @@ class ClassGenerator {
       methodVisitor.visitInsn(opcode);
       return store();
     }
+
+    public JavaValue unaryOp(int opcode, JavaValue a) {
+      loadD(a);
+      methodVisitor.visitInsn(opcode);
+      return store();
+    }
     
     public JavaValue arg(int index) {
       return new JavaValue(argIndices[index]);

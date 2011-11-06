@@ -34,9 +34,19 @@ public class JavaVisitor implements Visitor<JavaValue> {
           return vector(mgen.binOp(Opcodes.DMUL, args.get(0), args.get(1)));
         }
       })
+      .register(POW, new Impl<JavaValue>() {
+        public Vector<JavaValue> call(Vector<JavaValue> args) {
+          return vector(mgen.callStatic("java/lang/Math", "pow", "(DD)D", args.get(0), args.get(1)));
+        }
+      })
       .register(DIV, new Impl<JavaValue>() {
         public Vector<JavaValue> call(Vector<JavaValue> args) {
           return vector(mgen.binOp(Opcodes.DDIV, args.get(0), args.get(1)));
+        }
+      })
+      .register(NEG, new Impl<JavaValue>() {
+        public Vector<JavaValue> call(Vector<JavaValue> args) {
+          return vector(mgen.unaryOp(Opcodes.DNEG, args.get(0)));
         }
       })
       .register(SQRT, new Impl<JavaValue>() {
@@ -44,9 +54,19 @@ public class JavaVisitor implements Visitor<JavaValue> {
           return vector(mgen.callStatic("java/lang/Math", "sqrt", "(D)D", args.get(0)));
         }
       })
+      .register(LOG, new Impl<JavaValue>() {
+        public Vector<JavaValue> call(Vector<JavaValue> args) {
+          return vector(mgen.callStatic("java/lang/Math", "log", "(D)D", args.get(0)));
+        }
+      })
       .register(SIN, new Impl<JavaValue>() {
         public Vector<JavaValue> call(Vector<JavaValue> args) {
           return vector(mgen.callStatic("java/lang/Math", "sin", "(D)D", args.get(0)));
+        }
+      })
+      .register(SINH, new Impl<JavaValue>() {
+        public Vector<JavaValue> call(Vector<JavaValue> args) {
+          return vector(mgen.callStatic("java/lang/Math", "sinh", "(D)D", args.get(0)));
         }
       })
       .register(COS, new Impl<JavaValue>() {
@@ -54,9 +74,36 @@ public class JavaVisitor implements Visitor<JavaValue> {
           return vector(mgen.callStatic("java/lang/Math", "cos", "(D)D", args.get(0)));
         }
       })
-      .register(POW, new Impl<JavaValue>() {
+      .register(COSH, new Impl<JavaValue>() {
         public Vector<JavaValue> call(Vector<JavaValue> args) {
-          return vector(mgen.callStatic("java/lang/Math", "pow", "(DD)D", args.get(0), args.get(1)));
+          return vector(mgen.callStatic("java/lang/Math", "cosh", "(D)D", args.get(0)));
+        }
+      })
+      .register(TAN, new Impl<JavaValue>() {
+        public Vector<JavaValue> call(Vector<JavaValue> args) {
+          return vector(mgen.callStatic("java/lang/Math", "tan", "(D)D", args.get(0)));
+        }
+      })
+      .register(TANH, new Impl<JavaValue>() {
+        public Vector<JavaValue> call(Vector<JavaValue> args) {
+          return vector(mgen.callStatic("java/lang/Math", "tanh", "(D)D", args.get(0)));
+        }
+      })
+      .register(ABS, new Impl<JavaValue>() {
+        public Vector<JavaValue> call(Vector<JavaValue> args) {
+          return vector(mgen.callStatic("java/lang/Math", "abs", "(D)D", args.get(0)));
+        }
+      })
+      .register(UP, new Impl<JavaValue>() {
+        public Vector<JavaValue> call(Vector<JavaValue> args) {
+          return vector(mgen.callStatic("java/lang/Math", "nextUp", "(D)D", args.get(0)));
+        }
+      })
+      .register(DOWN, new Impl<JavaValue>() {
+        public Vector<JavaValue> call(Vector<JavaValue> args) {
+          JavaValue neg = mgen.unaryOp(Opcodes.DNEG, args.get(0));
+          JavaValue v = mgen.callStatic("java/lang/Math", "nextUp", "(D)D", neg);
+          return vector(mgen.unaryOp(Opcodes.DNEG, v));
         }
       })
       .register(MIN_MAX, new Impl<JavaValue>() {
