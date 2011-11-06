@@ -45,5 +45,9 @@ public class Intervals {
     }
     return new Definition(nargs, Expressions.vector(values));
   }
+  
+  public Definition precisionGuarantee(Definition def, Vector<Variable> vars) {
+    return def;
+  }
 
 }
