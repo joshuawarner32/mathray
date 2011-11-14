@@ -24,7 +24,7 @@ public class TestPrinter {
   @Test
   public void testVariables() {
     assertEquals("x", parser.unparse(x));
-    assertEquals("pi", parser.unparse(NamedConstants.PI));
+    assertEquals("tau", parser.unparse(NamedConstants.TAU));
   }
   
   @Test
