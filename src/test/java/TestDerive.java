@@ -22,7 +22,7 @@ public class TestDerive {
   
   @Test
   public void testConstants() {
-    assertDerivesTo(def(args(x), PI), x, def(args(x), num(0)));
+    assertDerivesTo(def(args(x), TAU), x, def(args(x), num(0)));
     assertDerivesTo(def(args(x), num(0)), x, def(args(x), num(0)));
     assertDerivesTo(def(args(x), num(1)), x, def(args(x), num(0)));
     assertDerivesTo(def(args(x), sin(num(1))), x, def(args(x), num(0)));

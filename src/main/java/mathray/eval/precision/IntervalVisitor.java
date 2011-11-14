@@ -80,7 +80,7 @@ public class IntervalVisitor implements Visitor<Interval> {
         Call minMax = minMax(va, vb);
         Interval els2 = new Interval(minMax.select(0), minMax.select(1));
         Interval fallback = intervalSelectSign(mul(da, db), dbltz, els2, els2);
-        return vector(intervalSelectSign(sub(diff, mul(num(2), PI)), full, full, fallback));
+        return vector(intervalSelectSign(sub(diff, TAU), full, full, fallback));
       }
     })
     .register(MIN_MAX, new Impl<Interval>() {
