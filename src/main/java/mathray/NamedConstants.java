@@ -6,7 +6,10 @@ public final class NamedConstants {
   
   private NamedConstants() {}
   
-  public static final Variable PI = var("pi");
+  // two pi, the REAL circle constant (see tauday.com)
+  public static final Variable TAU = var("tau");
+  
+  public static final Value PI = div(TAU, num(2));
   
   public static final Variable E = var("e");
   
@@ -14,6 +17,6 @@ public final class NamedConstants {
   
   public static final Variable NEG_INF = var("neg_inf");
   
-  public static final Vector<Variable> ALL = vector(PI, E);
+  public static final Vector<Variable> ALL = vector(TAU, E);
 
 }
