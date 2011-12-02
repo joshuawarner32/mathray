@@ -1,9 +1,9 @@
 package mathray.eval;
 
-import mathray.Variable;
+import mathray.Symbol;
 
 public interface Binder<T> {
   
-  public T bind(Variable var);
+  public T bind(Symbol var);
 
 }

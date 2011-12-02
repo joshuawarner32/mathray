@@ -3,10 +3,10 @@ package mathray;
 import mathray.eval.Visitor;
 import mathray.eval.text.DefaultPrinter;
 
-public class Variable extends Value {
+public class Symbol extends Value {
   public final String name;
   
-  public Variable(String name) {
+  public Symbol(String name) {
     this.name = name;
   }
   
@@ -19,13 +19,13 @@ public class Variable extends Value {
 
   @Override
   public <T> T accept(Visitor<T> v) {
-    return v.variable(this);
+    return v.symbol(this);
   }
   
   @Override
   public int compareTo(Value o) {
-    if(o instanceof Variable) {
-      int d = name.compareTo(((Variable)o).name);
+    if(o instanceof Symbol) {
+      int d = name.compareTo(((Symbol)o).name);
       if(d != 0) {
         return d;
       }
@@ -35,8 +35,8 @@ public class Variable extends Value {
     }
   }
 
-  public static Variable index(int i) {
-    return new Variable("x" + i);
+  public static Symbol index(int i) {
+    return new Symbol("x" + i);
   }
 
   @Override

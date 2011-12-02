@@ -13,21 +13,9 @@ public class FunctionPrecedenceImplementation implements Impl<PrecedenceString> 
   }
   
   @Override
-  public Vector<PrecedenceString> call(Vector<PrecedenceString> args) {
-    if(func.outputArity == 1) {
-      return new Vector<PrecedenceString>(f(func.name, args));
-    } else {
-      PrecedenceString[] output = new PrecedenceString[func.outputArity];
-      for(int i = 0; i < func.outputArity; i++) {
-        output[i] = f(func.individualNames.get(i), args);
-      }
-      return new Vector<PrecedenceString>(output);
-    }
-  }
-
-  private PrecedenceString f(String name, Vector<PrecedenceString> args) {
+  public PrecedenceString call(Vector<PrecedenceString> args) {
     StringBuilder b = new StringBuilder();
-    b.append(name);
+    b.append(func.name);
     b.append('(');
     if(args.size() > 0) {
       b.append(args.get(0).text);

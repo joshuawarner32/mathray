@@ -2,7 +2,7 @@ package mathray.eval.text;
 
 import mathray.Value;
 import mathray.Vector;
-import mathray.SelectFunction;
+import mathray.Function;
 
 import java.util.Stack;
 
@@ -10,7 +10,7 @@ public class PrefixOperator extends Operator {
 
   public final String name;
 
-  public PrefixOperator(String name, SelectFunction function, int precedence) {
+  public PrefixOperator(String name, Function function, int precedence) {
     super(function, precedence);
     this.name = name;
   }

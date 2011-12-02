@@ -11,12 +11,12 @@ public class DefaultPrinter {
 
   private static ParseInfo parser = ParseInfo.builder()
     .group("(", ")")
-    .infix("+", 10, Associativity.LEFT, ADD.select(0))
-    .infix("-", 10, Associativity.LEFT, SUB.select(0))
-    .infix("*", 20, Associativity.LEFT, MUL.select(0))
-    .infix("/", 20, Associativity.LEFT, DIV.select(0))
-    .infix("^", 30, Associativity.RIGHT, POW.select(0))
-    .prefix("-", 25, NEG.select(0))
+    .infix("+", 10, Associativity.LEFT, ADD)
+    .infix("-", 10, Associativity.LEFT, SUB)
+    .infix("*", 20, Associativity.LEFT, MUL)
+    .infix("/", 20, Associativity.LEFT, DIV)
+    .infix("^", 30, Associativity.RIGHT, POW)
+    .prefix("-", 25, NEG)
     .build();
   
   public static String toString(Definition def) {
@@ -30,19 +30,7 @@ public class DefaultPrinter {
       b.append(def.args.get(i));
     }
     b.append(") = ");
-    if(def.values.size() == 1) {
-      b.append(parser.unparse(def.values.get(0)));
-    } else {
-      b.append('<');
-      if(def.values.size() > 0) {
-        b.append(def.values.get(0));
-      }
-      for(int i = 1; i < def.values.size(); i++) {
-        b.append(", ");
-        b.append(def.values.get(i));
-      }
-      b.append('>');
-    }
+    b.append(parser.unparse(def.value));
     return b.toString();
   }
   

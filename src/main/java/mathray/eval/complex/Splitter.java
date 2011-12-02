@@ -1,13 +1,15 @@
 package mathray.eval.complex;
 
 import mathray.Args;
+import mathray.Computation;
 import mathray.Definition;
 import mathray.Function;
 import mathray.Rational;
 import mathray.Transformer;
 import mathray.Value;
-import mathray.Variable;
+import mathray.Symbol;
 import mathray.Vector;
+import mathray.eval.ComputeData;
 import mathray.eval.Context;
 import mathray.eval.Environment;
 import mathray.eval.Impl;
@@ -17,31 +19,31 @@ import static mathray.Expressions.*;
 
 public class Splitter {
   
-  public static Definition split(Definition def, final Environment<Value> env, final Definition splitter, final Args args, final Vector<Vector<Variable>> replacements) {
-    if(!args.isSubsetOf(def.args)) {
+  public static Computation split(Computation comp, final ComputeData env, final Computation splitter, final Args args, final Vector<Vector<Symbol>> replacements) {
+    if(!args.isSubsetOf(comp.args)) {
       throw new IllegalArgumentException();
     }
     final int newSize = splitter.values.size();
-    for(Vector<Variable> repl : replacements) {
+    for(Vector<Symbol> repl : replacements) {
       if(newSize != repl.size()) {
         throw new IllegalArgumentException();
       }
     }
-    Variable[] nargsarr = new Variable[args.size() * (newSize - 1) + def.args.size()];
+    Symbol[] nargsarr = new Symbol[args.size() * (newSize - 1) + comp.args.size()];
     int i = 0;
-    for(Variable var : def.args) {
+    for(Symbol var : comp.args) {
       if(args.contains(var)) {
-        Vector<Variable> reps = replacements.get(args.getIndex(var));
-        for(Variable v : reps) {
+        Vector<Symbol> reps = replacements.get(args.getIndex(var));
+        for(Symbol v : reps) {
           nargsarr[i++] = v;
         }
       } else {
         nargsarr[i++] = var;
       }
     }
-    Vector<Vector<Value>> bindings = def.args.toVector().transform(new Transformer<Variable, Vector<Value>>() {
+    Vector<Vector<Value>> bindings = comp.args.toVector().transform(new Transformer<Symbol, Vector<Value>>() {
       @Override
-      public Vector<Value> transform(Variable in) {
+      public Vector<Value> transform(Symbol in) {
         if(args.contains(in)) {
           return (Vector) replacements.get(args.getIndex(in));
         } else {
@@ -54,8 +56,8 @@ public class Splitter {
       public Impl<Vector<Value>> implement(final Function func) {
         return new Impl<Vector<Value>>() {
           @Override
-          public Vector<Vector<Value>> call(Vector<Vector<Value>> args) {
-            return Vector.group(env.implement(func).call(Vector.flatten(args)), newSize);
+          public Vector<Value> call(Vector<Vector<Value>> args) {
+            return null; //Vector.group(env.implement(func).call(Vector.flatten(args)), newSize);
           }
         };
       }
@@ -64,14 +66,14 @@ public class Splitter {
       public Vector<Value> translate(Rational r) {
         return splitter.call(vector((Value)r));
       }
-    }).run(def.values);
-    Value[] ret = new Value[newSize * def.values.size()];
+    }).run(comp.values);
+    Value[] ret = new Value[newSize * comp.values.size()];
     i = 0;
     for(Vector<Value> vec : res) {
       for(Value v : vec) {
         ret[i++] = v;
       }
     }
-    return new Definition(args(nargsarr), vector(ret));
+    return new Computation(args(nargsarr), vector(ret));
   }
 }

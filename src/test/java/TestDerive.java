@@ -3,7 +3,7 @@ import static mathray.Expressions.*;
 import static mathray.NamedConstants.*;
 import static org.junit.Assert.assertEquals;
 import mathray.Definition;
-import mathray.Variable;
+import mathray.Symbol;
 import mathray.eval.calc.Derivatives;
 import mathray.eval.simplify.Simplifications;
 
@@ -13,12 +13,12 @@ import org.junit.Test;
 public class TestDerive {
 
 
-  private static void assertDerivesTo(Definition def, Variable x, Definition result) {
-    assertEquals(result, Simplifications.simplify(Derivatives.derive(def, x)));
+  private static void assertDerivesTo(Definition def, Symbol x, Definition result) {
+    assertEquals(result, Simplifications.simplify(Derivatives.derive(def, x).toComputation()).get(0));
   }
   
-  Variable x = var("x");
-  Variable y = var("y");
+  Symbol x = sym("x");
+  Symbol y = sym("y");
   
   @Test
   public void testConstants() {

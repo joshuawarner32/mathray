@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mathray.Definition;
-import mathray.Function;
-import mathray.SelectFunction;
 import mathray.Value;
 import mathray.eval.precision.AffineContext.AffineTerm;
 
@@ -20,25 +18,24 @@ public class AffineForm {
     this.coeffs = new HashMap<AffineContext.AffineTerm, Value>(coeffs);
   }
   
-  // TODO: some kind of SelectDefinition or generic Select<Definition>
   public AffineForm pairwise(Definition func, Definition id1, Definition id2, AffineForm other) {
     // TODO: use id1
-    AffineForm ret = new AffineForm(func.call(center, other.center).get(0), coeffs);
+    AffineForm ret = new AffineForm(func.call(center, other.center), coeffs);
     for(Map.Entry<AffineTerm, Value> coeff : other.coeffs.entrySet()) {
       Value first = ret.coeffs.get(coeff.getKey());
       if(first == null) {
-        ret.coeffs.put(coeff.getKey(), id2.call(coeff.getValue()).get(0));
+        ret.coeffs.put(coeff.getKey(), id2.call(coeff.getValue()));
       } else {
-        ret.coeffs.put(coeff.getKey(), func.call(first, coeff.getValue()).get(0));
+        ret.coeffs.put(coeff.getKey(), func.call(first, coeff.getValue()));
       }
     }
     return ret;
   }
 
   public AffineForm all(Definition def) {
-    AffineForm ret = new AffineForm(def.call(center).get(0), coeffs);
+    AffineForm ret = new AffineForm(def.call(center), coeffs);
     for(Map.Entry<AffineTerm, Value> coeff : ret.coeffs.entrySet()) {
-      coeff.setValue(def.call(coeff.getValue()).get(0));
+      coeff.setValue(def.call(coeff.getValue()));
     }
     return ret;
   }

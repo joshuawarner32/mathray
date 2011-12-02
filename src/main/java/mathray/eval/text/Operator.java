@@ -2,15 +2,16 @@ package mathray.eval.text;
 
 import mathray.Value;
 import mathray.Vector;
-import mathray.SelectFunction;
+import mathray.Function;
+import mathray.eval.Impl;
 
 import java.util.Stack;
 
-public abstract class Operator {
-  public final SelectFunction function;
+public abstract class Operator implements Impl<PrecedenceString>{
+  public final Function function;
   public final int precedence;
 
-  public Operator(SelectFunction function, int precedence) {
+  public Operator(Function function, int precedence) {
     this.function = function;
     this.precedence = precedence;
   }
