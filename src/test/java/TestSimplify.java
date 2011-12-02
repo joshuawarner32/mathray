@@ -15,6 +15,8 @@ public class TestSimplify {
   }
   
   Symbol x = sym("x");
+  Symbol y = sym("y");
+  Symbol z = sym("z");
   
   @Test
   public void testIrreducable() {
@@ -41,6 +43,18 @@ public class TestSimplify {
     assertSimplifiesTo(def(args(x), add(num(1), num(2), x)), def(args(x), add(num(3), x)));
     assertSimplifiesTo(def(args(x), add(num(1), x, num(2))), def(args(x), add(num(3), x)));
     assertSimplifiesTo(def(args(x), add(x, num(1), num(2))), def(args(x), add(num(3), x)));
+  }
+  
+  @Test
+  public void testMultiplicitiveReassociation() {
+    assertSimplifiesTo(def(args(x), mul(x, mul(y, z))), def(args(x), mul(mul(y, z), x)));
+    assertSimplifiesTo(def(args(x), mul(mul(x, y), z)), def(args(x), mul(mul(x, y), z)));
+  }
+  
+  @Test
+  public void testAdditiveReassociation() {
+    assertSimplifiesTo(def(args(x), add(x, add(y, z))), def(args(x), add(add(y, z), x)));
+    assertSimplifiesTo(def(args(x), add(add(x, y), z)), def(args(x), add(add(x, y), z)));
   }
   
   @Test
@@ -81,11 +95,20 @@ public class TestSimplify {
     assertSimplifiesTo(def(args(x), sub(x, neg(num(1)))), def(args(x), add(num(1), x)));
     assertSimplifiesTo(def(args(x), sub(x, num(-1))), def(args(x), add(num(1), x)));
     assertSimplifiesTo(def(args(x), add(num(1), neg(neg(x)))), def(args(x), add(num(1), x)));
+    assertSimplifiesTo(def(args(x), neg(neg(sin(x)))), def(args(x), sin(x)));
   }
   
   @Test
   public void testRationalReciprocal() {
     assertSimplifiesTo(def(args(x), div(num(-2), num(1, 4))), def(args(x), num(-8)));
+  }
+  
+  @Test
+  public void testPowers() {
+    assertSimplifiesTo(def(args(x), pow(pow(x, x), num(2))), def(args(x), pow(x, mul(num(2), x))));
+    assertSimplifiesTo(def(args(x), pow(x, pow(x, num(2)))), def(args(x), pow(x, pow(x, num(2)))));
+    assertSimplifiesTo(def(args(x), div(num(1), pow(x, num(2)))), def(args(x), pow(x, num(-2))));
+    assertSimplifiesTo(def(args(x), div(num(1), pow(x, x))), def(args(x), pow(x, neg(x))));
   }
 
 }
