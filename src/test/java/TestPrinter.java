@@ -2,23 +2,23 @@ import static mathray.Expressions.*;
 import static mathray.Functions.*;
 import static org.junit.Assert.*;
 import mathray.NamedConstants;
-import mathray.Variable;
+import mathray.Symbol;
 import mathray.eval.text.InfixOperator.Associativity;
 import mathray.eval.text.ParseInfo;
 import org.junit.Test;
 
 public class TestPrinter {
   
-  Variable x = var("x");
-  Variable y = var("y");
+  Symbol x = sym("x");
+  Symbol y = sym("y");
   ParseInfo parser = ParseInfo.builder()
     .group("(", ")")
-    .infix("+", 10, Associativity.LEFT, ADD.select(0))
-    .infix("-", 10, Associativity.LEFT, SUB.select(0))
-    .infix("*", 20, Associativity.LEFT, MUL.select(0))
-    .infix("/", 20, Associativity.LEFT, DIV.select(0))
-    .infix("^", 30, Associativity.RIGHT, POW.select(0))
-    .prefix("-", 25, NEG.select(0))
+    .infix("+", 10, Associativity.LEFT, ADD)
+    .infix("-", 10, Associativity.LEFT, SUB)
+    .infix("*", 20, Associativity.LEFT, MUL)
+    .infix("/", 20, Associativity.LEFT, DIV)
+    .infix("^", 30, Associativity.RIGHT, POW)
+    .prefix("-", 25, NEG)
     .build();
   
   @Test

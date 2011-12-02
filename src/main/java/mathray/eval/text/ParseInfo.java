@@ -12,9 +12,8 @@ import mathray.Call;
 import mathray.Function;
 import mathray.Generator;
 import mathray.Rational;
-import mathray.SelectFunction;
 import mathray.Value;
-import mathray.Variable;
+import mathray.Symbol;
 import mathray.Vector;
 import mathray.eval.Impl;
 import mathray.eval.Visitor;
@@ -22,7 +21,7 @@ import mathray.eval.text.InfixOperator.Associativity;
 
 public class ParseInfo {
   
-  private Map<Function, OperatorImpl> operators = new HashMap<Function, OperatorImpl>();
+  private Map<Function, Operator> operators = new HashMap<Function, Operator>();
   
   private Map<String, InfixOperator> infixes = new HashMap<String, InfixOperator>();
   
@@ -34,31 +33,11 @@ public class ParseInfo {
   
   private String groupEnd;
 
-  private Map<String, SelectFunction> functions = new HashMap<String, SelectFunction>();
+  private Map<String, Function> functions = new HashMap<String, Function>();
   
-  private Map<String, Variable> variables = new HashMap<String, Variable>();
+  private Map<String, Symbol> variables = new HashMap<String, Symbol>();
   
   private ParseInfo() {}
-  
-  private static class OperatorImpl implements Impl<PrecedenceString> {
-    
-    public final Operator[] ops;
-    
-    public OperatorImpl(int outputArity) {
-      ops = new Operator[outputArity];
-    }
-
-    @Override
-    public Vector<PrecedenceString> call(final Vector<PrecedenceString> args) {
-      return Vector.<PrecedenceString>generate(ops.length, new Generator<PrecedenceString>() {
-        @Override
-        public PrecedenceString generate(int index) {
-          return ops[index].call(args);
-        }
-      });
-    }
-    
-  }
   
   public static class Builder {
     private Builder() {}
@@ -73,32 +52,23 @@ public class ParseInfo {
       return this;
     }
     
-    public Builder infix(String name, int precedence, Associativity associativity, SelectFunction function) {
+    public Builder infix(String name, int precedence, Associativity associativity, Function function) {
       InfixOperator op = new InfixOperator(name, function, precedence, associativity);
-      putOperator(name, op);
+      info.operators.put(function, op);
       info.infixes.put(name, op);
       info.symbols.add(name);
       return this;
     }
     
-    public Builder prefix(String name, int precedence, SelectFunction function) {
+    public Builder prefix(String name, int precedence, Function function) {
       PrefixOperator op = new PrefixOperator(name, function, precedence);
-      putOperator(name, op);
+      info.operators.put(function, op);
       info.prefixes.put(name, op);
       info.symbols.add(name);
       return this;
     }
     
-    private void putOperator(String name, Operator operator) {
-      Function func = operator.function.func;
-      OperatorImpl impl = info.operators.get(func);
-      if(impl == null) {
-        info.operators.put(func, impl = new OperatorImpl(func.outputArity));
-      }
-      impl.ops[operator.function.outputIndex] = operator;
-    }
-
-    public Builder var(Variable var) {
+    public Builder sym(Symbol var) {
       info.variables.put(var.name, var);
       return this;
     }
@@ -108,7 +78,7 @@ public class ParseInfo {
       return info;
     }
 
-    public Builder function(String name, SelectFunction function) {
+    public Builder function(String name, Function function) {
       info.functions.put(name, function);
       return this;
     }
@@ -122,12 +92,12 @@ public class ParseInfo {
     return value.accept(new Visitor<PrecedenceString>() {
 
       @Override
-      public Vector<PrecedenceString> call(Visitor<PrecedenceString> v, Call call) {
+      public PrecedenceString call(Call call) {
         return implement(call.func).call(call.visitArgs(this));
       }
 
       @Override
-      public PrecedenceString variable(Variable var) {
+      public PrecedenceString symbol(Symbol var) {
         return new PrecedenceString(var.name, Integer.MAX_VALUE);
       }
 
@@ -157,7 +127,7 @@ public class ParseInfo {
           stack.push(val);
           state = AFTER_VALUE;
         } else {
-          SelectFunction func = functions.get(tok.text);
+          Function func = functions.get(tok.text);
           if(func != null) {
             throw new RuntimeException("unhandled case");
           } else {

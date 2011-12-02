@@ -81,7 +81,7 @@ public class Rational extends Value {
       } else {
         return 0;
       }
-    } else { // Variable or Select
+    } else { // Variable or Call
       return -1;
     }
   }

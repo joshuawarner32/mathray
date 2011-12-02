@@ -9,39 +9,37 @@ public class Definition implements Impl<Value> {
   
   public final Args args;
   
-  public final Vector<Value> values;
+  public final Value value;
   
-  public Definition(Args args, Vector<Value> values) {
+  public Definition(Args args, Value value) {
     this.args = args;
-    this.values = values;
+    this.value = value;
   }
 
-  @Override
-  public final Vector<Value> call(final Vector<Value> a) {
+  public final Value call(final Vector<Value> a) {
     final Visitor<Value> v = new Visitor<Value>() {
       @Override
-      public Vector<Value> call(Visitor<Value> v, Call call) {
-        return call.func.call(call.visitArgs(v)).selectAll();
+      public Value call(Call call) {
+        return call.func.call(call.visitArgs(this));
       }
       @Override
-      public Value variable(Variable var) {
-        return a.get(args.getIndex(var));
+      public Value symbol(Symbol sym) {
+        Integer index = args.getIndex(sym);
+        if(index != null) {
+          return a.get(index);
+        }
+        return sym;
       }
       @Override
       public Value constant(Rational cst) {
         return cst;
       }
     };
-    return values.transform(new Transformer<Value, Value>() {
-      @Override
-      public Value transform(Value in) {
-        return in.accept(v);
-      }
-    });
+    return value.accept(v);
   }
   
-  public final Vector<Value> call(Value... values) {
-    return call(new Vector<Value>(values));
+  public final Value call(Value... values) {
+    return call(vector(values));
   }
   
   @Override
@@ -51,7 +49,7 @@ public class Definition implements Impl<Value> {
   
   @Override
   public int hashCode() {
-    return args.hashCode() + values.hashCode();
+    return args.hashCode() + value.hashCode();
   }
   
   @Override
@@ -64,28 +62,29 @@ public class Definition implements Impl<Value> {
       return false;
     }
     if(args.equals(def.args)) {
-      return values.equals(def.values);
+      return value.equals(def.value);
     }
-    // TODO
-    return values.equals(def.values);
+    // TODO: argument invariance
+    return value.equals(def.value);
   }
 
   public static Definition identity(int count) {
-    Args args = args(count);
-    Vector<Value> values = args.toValueVector();
-    return new Definition(args, values);
+    Args args = args(1);
+    return new Definition(args, args.get(0));
   }
 
   public String toJavaString() {
     StringBuilder b = new StringBuilder();
     b.append("def(");
     b.append(args.toJavaString());
-    for(Value v : values) {
-      b.append(", ");
-      b.append(v.toJavaString());
-    }
+    b.append(", ");
+    b.append(value.toJavaString());
     b.append(")");
     return b.toString();
+  }
+
+  public Computation toComputation() {
+    return new Computation(args, vector(value));
   }
 
 }

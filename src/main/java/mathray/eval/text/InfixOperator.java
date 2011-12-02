@@ -1,8 +1,8 @@
 package mathray.eval.text;
 
+import mathray.Function;
 import mathray.Value;
 import mathray.Vector;
-import mathray.SelectFunction;
 
 import java.util.Stack;
 
@@ -13,7 +13,7 @@ public class InfixOperator extends Operator {
   public final String name;
   public final Associativity associativity;
   
-  public InfixOperator(String name, SelectFunction function, int precedence, Associativity associativity) {
+  public InfixOperator(String name, Function function, int precedence, Associativity associativity) {
     super(function, precedence);
     this.name = name;
     this.associativity = associativity;

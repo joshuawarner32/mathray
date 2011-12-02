@@ -4,12 +4,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import mathray.Call;
+import mathray.Computation;
 import mathray.Rational;
 import mathray.Definition;
 import mathray.Expressions;
 import mathray.Transformer;
 import mathray.Value;
-import mathray.Variable;
+import mathray.Symbol;
 import mathray.Vector;
 import mathray.eval.Visitor;
 
@@ -365,56 +366,49 @@ public class Simplifications {
     });
   }
   
-  private static Vector<Expr> toExprs(Vector<Value> values) {
-    return values.transform(new Transformer<Value, Expr>() {
+  static Visitor<Expr> visitor = new Visitor<Expr>() {
+    @Override
+    public Expr call(Call call) {
+      if(call.func == ADD) {
+        Vector<Expr> args = call.visitArgs(this);
+        return args.get(0).exprAdd(args.get(1));
+      } else if(call.func == SUB) {
+        Vector<Expr> args = call.visitArgs(this);
+        return args.get(0).exprAdd(args.get(1).exprNeg());
+      } else if(call.func == MUL) {
+        Vector<Expr> args = call.visitArgs(this);
+        return args.get(0).exprMul(args.get(1));
+      } else if(call.func == DIV) {
+        Vector<Expr> args = call.visitArgs(this);
+        return args.get(0).exprMul(args.get(1).exprRecip());
+      } else if(call.func == NEG) {
+        Vector<Expr> args = call.visitArgs(this);
+        return args.get(0).exprNeg();
+      } else if(call.func == POW) {
+        Vector<Expr> args = call.visitArgs(this);
+        return args.get(0).exprPow(args.get(1));
+      } else {
+        Vector<Expr> args = call.visitArgs(this);
+        return new ValueExpr(call.func.call(toValues(args)));
+      }
+    }
+    @Override
+    public Expr constant(Rational cst) {
+      return new ConstExpr(cst);
+    }
+    @Override
+    public Expr symbol(Symbol var) {
+      return new ValueExpr(var);
+    }
+  };
+  
+  public static Computation simplify(Computation comp) {
+    return new Computation(comp.args, toValues(comp.values.transform(new Transformer<Value, Expr>() {
       @Override
       public Expr transform(Value in) {
-        return new ValueExpr(in);
+        return in.accept(visitor);
       }
-    });
-  }
-  
-  public static Definition simplify(Definition def) {
-    return new Definition(def.args, def.values.transform(new Transformer<Value, Value>() {
-      @Override
-      public Value transform(Value in) {
-        return in.accept(new Visitor<Expr>() {
-          @Override
-          public Vector<Expr> call(Visitor<Expr> v, Call call) {
-            if(call.func == ADD) {
-              Vector<Expr> args = call.visitArgs(v);
-              return vector(args.get(0).exprAdd(args.get(1)));
-            } else if(call.func == SUB) {
-              Vector<Expr> args = call.visitArgs(v);
-              return vector(args.get(0).exprAdd(args.get(1).exprNeg()));
-            } else if(call.func == MUL) {
-              Vector<Expr> args = call.visitArgs(v);
-              return vector(args.get(0).exprMul(args.get(1)));
-            } else if(call.func == DIV) {
-              Vector<Expr> args = call.visitArgs(v);
-              return vector(args.get(0).exprMul(args.get(1).exprRecip()));
-            } else if(call.func == NEG) {
-              Vector<Expr> args = call.visitArgs(v);
-              return vector(args.get(0).exprNeg());
-            } else if(call.func == POW) {
-              Vector<Expr> args = call.visitArgs(v);
-              return vector(args.get(0).exprPow(args.get(1)));
-            } else {
-              Vector<Expr> args = call.visitArgs(v);
-              return toExprs(call.func.call(toValues(args)).selectAll());
-            }
-          }
-          @Override
-          public Expr constant(Rational cst) {
-            return new ConstExpr(cst);
-          }
-          @Override
-          public Expr variable(Variable var) {
-            return new ValueExpr(var);
-          }
-        }).toValue();
-      }
-    }));
+    })));
   }
 
 }

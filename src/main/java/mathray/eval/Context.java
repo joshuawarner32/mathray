@@ -7,7 +7,7 @@ import mathray.Call;
 import mathray.Rational;
 import mathray.Transformer;
 import mathray.Value;
-import mathray.Variable;
+import mathray.Symbol;
 import mathray.Vector;
 
 public class Context<T> implements Visitor<T> {
@@ -17,7 +17,6 @@ public class Context<T> implements Visitor<T> {
   private final Translator<T> translator;
   
   private final Map<Value, T> cache = new HashMap<Value, T>();
-  private final Map<Call, Vector<T>> callCache = new HashMap<Call, Vector<T>>();
   
   public Context(Binder<T> binder, Implementer<T> implementer, Translator<T> translator) {
     this.binder = binder;
@@ -26,16 +25,16 @@ public class Context<T> implements Visitor<T> {
   }
 
   @Override
-  public Vector<T> call(Visitor<T> v, Call call) {
-    Vector<T> ret = callCache.get(call);
+  public T call(Call call) {
+    T ret = cache.get(call);
     if(ret == null) {
-      callCache.put(call, ret = implementer.implement(call.func).call(call.visitArgs(v)));
+      cache.put(call, ret = implementer.implement(call.func).call(call.visitArgs(this)));
     }
     return ret;
   }
 
   @Override
-  public T variable(Variable var) {
+  public T symbol(Symbol var) {
     T ret = cache.get(var);
     if(ret == null) {
       cache.put(var, ret = binder.bind(var));

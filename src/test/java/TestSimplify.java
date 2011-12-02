@@ -2,7 +2,7 @@
 import static mathray.Expressions.*;
 import static org.junit.Assert.assertEquals;
 import mathray.Definition;
-import mathray.Variable;
+import mathray.Symbol;
 import mathray.eval.simplify.Simplifications;
 
 import org.junit.Test;
@@ -11,10 +11,10 @@ import org.junit.Test;
 public class TestSimplify {
 
   private static void assertSimplifiesTo(Definition def, Definition result) {
-    assertEquals(result, Simplifications.simplify(def));
+    assertEquals(result, Simplifications.simplify(def.toComputation()).get(0));
   }
   
-  Variable x = var("x");
+  Symbol x = sym("x");
   
   @Test
   public void testIrreducable() {

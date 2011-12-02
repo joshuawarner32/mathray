@@ -6,8 +6,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import mathray.Call;
 import mathray.Rational;
 import mathray.Value;
-import mathray.Variable;
-import mathray.Vector;
+import mathray.Symbol;
 import mathray.eval.Visitor;
 
 import org.w3c.dom.Document;
@@ -23,17 +22,17 @@ public class XmlTransformer {
     }
 
     @Override
-    public Vector<Element> call(Visitor<Element> v, Call call) {
+    public Element call(Call call) {
       Element el = doc.createElement("call");
       el.setAttribute("name", call.func.fullName());
-      for(Element arg : call.visitArgs(v)) {
+      for(Element arg : call.visitArgs(this)) {
         el.appendChild(arg);
       }
-      return new Vector<Element>(el);
+      return el;
     }
 
     @Override
-    public Element variable(Variable var) {
+    public Element symbol(Symbol var) {
       Element el = doc.createElement("var");
       el.setAttribute("name", var.name);
       return el;

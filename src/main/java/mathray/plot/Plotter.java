@@ -13,7 +13,7 @@ import mathray.eval.java.JavaCompiler;
 
 public class Plotter {
   
-  private static double eval(FunctionD f, double[] in, double[] out, double x) {
+  /*private static double eval(FunctionD f, double[] in, double[] out, double x) {
     in[0] = x;
     f.call(in, out);
     return out[0];
@@ -118,6 +118,6 @@ public class Plotter {
       b.point((float)x, (float)vals[i]);
     }
     return b.build();
-  }
+  }*/
 
 }
