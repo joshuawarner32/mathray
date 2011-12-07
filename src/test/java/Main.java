@@ -5,7 +5,6 @@ import mathray.Symbol;
 import mathray.eval.simplify.Simplifications;
 import mathray.eval.text.DefaultPrinter;
 import mathray.random.ValueRandom;
-import mathray.util.LineReader;
 import static mathray.Expressions.*;
 import static mathray.Functions.*;
 
@@ -17,7 +16,6 @@ public class Main {
 
   private static void printRandomExpressionForever() {
     ValueRandom random = new ValueRandom(NamedConstants.ALL, vector(ADD, SUB, MUL, DIV, SIN, SQRT, NEG));
-    LineReader reader = new LineReader(System.in);
     Symbol x = sym("x");
     Args a = args(x);
     do {
@@ -26,6 +24,6 @@ public class Main {
       System.out.println(orig.toJavaString());
       //System.out.println("\ttraditional: " + DefaultPrinter.toString(orig));
       //System.out.println("\tsimplified:  " + DefaultPrinter.toString(simple));
-    } while(true);//while(!reader.readLine().equals("q"));
+    } while(true);//while(!System.console().readLine().equals("q"));
   }
 }
