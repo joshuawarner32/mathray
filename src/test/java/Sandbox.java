@@ -11,15 +11,9 @@ import org.junit.Test;
 
 public class Sandbox {
   
-  private static void assertIntervalizesTo(Definition def, Vector<Symbol> vars, Definition result) {
-    assertEquals(result, Simplifications.simplify(Intervals.intervalize(def.toComputation(), vars)));
-  }
-  
   @Test
-  public void testInterval() {
-    Symbol x = sym("x");
+  public void testEmpty() {
     
-    assertIntervalizesTo(def(args(x), div(num(1), x)), vector(x), null);
   }
 
 }
