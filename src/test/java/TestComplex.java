@@ -8,7 +8,7 @@ import mathray.Args;
 import mathray.Definition;
 import mathray.Symbol;
 import mathray.Vector;
-import mathray.eval.complex.Complex;
+import mathray.eval.complex.ComplexTransform;
 
 public class TestComplex {
   

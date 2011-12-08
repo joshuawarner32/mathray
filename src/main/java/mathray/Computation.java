@@ -1,6 +1,5 @@
 package mathray;
 
-import static mathray.Expressions.*;
 import mathray.eval.Visitor;
 
 public class Computation {

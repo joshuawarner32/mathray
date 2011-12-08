@@ -3,18 +3,16 @@ package mathray.eval.complex;
 import mathray.Args;
 import mathray.Computation;
 import mathray.Definition;
+import mathray.FunctionRegistrar;
 import mathray.Value;
 import mathray.Symbol;
 import mathray.Vector;
 import mathray.eval.ComputeData;
-import mathray.eval.Environment;
 
 import static mathray.Expressions.*;
 import static mathray.Functions.*;
 
-public final class Complex {
-  
-  private Complex() {}
+public final class ComplexTransform extends FunctionRegistrar<Computation> {
 
   private static final Symbol x = sym("x");
   private static final Symbol xr = sym("xr");

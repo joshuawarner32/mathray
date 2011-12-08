@@ -2,15 +2,12 @@ import java.util.Random;
 
 import mathray.Computation;
 import mathray.Definition;
-import mathray.Function;
 import mathray.Symbol;
 import mathray.Vector;
 import mathray.eval.machine.MachineEvaluator;
 import mathray.eval.precision.Intervals;
 
 import static mathray.Expressions.*;
-import static mathray.Functions.*;
-
 import org.junit.Test;
 import static org.junit.Assert.*;
 

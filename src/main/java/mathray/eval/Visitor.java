@@ -8,7 +8,7 @@ public interface Visitor<T> {
   
   public T call(Call call);
   
-  public T symbol(Symbol var);
+  public T symbol(Symbol sym);
 
   public T constant(Rational cst);
 

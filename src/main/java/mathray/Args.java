@@ -10,7 +10,7 @@ public class Args implements Iterable<Symbol> {
   
   private Map<Symbol, Integer> syms = new HashMap<Symbol, Integer>();
   
-  public int getIndex(Symbol sym) {
+  public Integer getIndex(Symbol sym) {
     return syms.get(sym);
   }
 

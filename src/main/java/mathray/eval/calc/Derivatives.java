@@ -1,15 +1,11 @@
 package mathray.eval.calc;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import mathray.Call;
 import mathray.Computation;
+import mathray.FunctionRegistrar;
 import mathray.Rational;
 import mathray.Definition;
-import mathray.Function;
 import mathray.Generator;
-import mathray.Transformer;
 import mathray.Value;
 import mathray.Symbol;
 import mathray.Vector;
@@ -18,11 +14,9 @@ import mathray.eval.Visitor;
 import static mathray.Expressions.*;
 import static mathray.Functions.*;
 
-public class Derivatives {
+public class Derivatives extends FunctionRegistrar<Computation> {
   
-  private static final Map<Function, Computation> derivs = new HashMap<Function, Computation>();
-  
-  static {
+  {
     Symbol x = sym("x");
     Symbol y = sym("y");
     register(ADD, compute(args(x, y), num(1), num(1)));
@@ -39,25 +33,18 @@ public class Derivatives {
     register(SQRT, compute(args(x), div(num(1), mul(num(2), sqrt(x)))));
   }
   
-  private static void register(Function func, Computation d) {
-    derivs.put(func, d);
+  public static final Derivatives DEFAULT = new Derivatives();
+  
+  public static Definition derive(Definition def, Symbol diffVar) {
+    return DEFAULT.transform(def, diffVar);
   }
   
-  private static Vector<Value> paralellScalarMul(Vector<Value> values, final Value value) {
-    return values.transform(new Transformer<Value, Value>() {
-      @Override
-      public Value transform(Value in) {
-        return mul(in, value);
-      }
-    });
-  }
-
-  public static Definition derive(Definition def, final Symbol diffVar) {
+  public Definition transform(Definition def, final Symbol diffVar) {
     final Visitor<Value> deriver = new Visitor<Value>() {
       @Override
       public Value call(final Call call) {
         final Vector<Value> args = call.visitArgs(this);
-        final Computation comp = derivs.get(call.func);
+        final Computation comp = lookup(call.func);
         final Vector<Value> vals = comp.call(call.args);
         return add(Vector.generate(comp.values.size(), new Generator<Value>() {
           @Override
@@ -79,12 +66,5 @@ public class Derivatives {
     };
     
     return new Definition(def.args, def.value.accept(deriver));
-    
-    /*return new Definition(def.args, def.values.transform(new Transformer<Value, Value>() {
-      @Override
-      public Value transform(Value in) {
-        return in.accept(deriver);
-      }
-    }));*/
   }
 }

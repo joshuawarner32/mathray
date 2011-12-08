@@ -4,7 +4,6 @@ import org.objectweb.asm.Opcodes;
 
 import mathray.Call;
 import mathray.Computation;
-import mathray.Definition;
 import mathray.FunctionD;
 import mathray.Rational;
 import mathray.Symbol;
@@ -14,7 +13,6 @@ import mathray.eval.Impl;
 import mathray.eval.Visitor;
 import mathray.eval.java.ClassGenerator.MethodGenerator;
 
-import static mathray.Expressions.*;
 import static mathray.Functions.*;
 
 public class JavaCompiler {

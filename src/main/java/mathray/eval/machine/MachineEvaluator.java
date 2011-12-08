@@ -1,20 +1,23 @@
 package mathray.eval.machine;
 
+import mathray.Call;
 import mathray.Computation;
 import mathray.Definition;
 import mathray.Rational;
+import mathray.Symbol;
+import mathray.Transformer;
+import mathray.Value;
 import mathray.Vector;
-import mathray.eval.Context;
-import mathray.eval.Environment;
-import mathray.eval.Translator;
+import mathray.eval.EvalData;
 import mathray.eval.Impl;
+import mathray.eval.Visitor;
 
 import static mathray.Functions.*;
 
 public class MachineEvaluator {
   
-  private static final Environment<Double> env =
-    Environment.<Double>builder()
+  private static final EvalData<Impl<Double>, Double> env =
+      EvalData.<Impl<Double>, Double>builder()
       .register(ADD, new Impl<Double>() {
         public Double call(Vector<Double> args) {
           return args.get(0) + args.get(1);
@@ -124,13 +127,33 @@ public class MachineEvaluator {
       })
       .build();
   
-  public static Vector<Double> eval(Computation comp, Vector<Double> params) {
-    Context<Double> ctx = new Context<Double>(comp.args.<Double>bind(params), env, new Translator<Double>() {
-      public Double translate(Rational r) {
-        return r.toDouble();
+  public static Vector<Double> eval(final Computation comp, final Vector<Double> params) {
+    final Visitor<Double> v = new Visitor<Double>() {
+      @Override
+      public Double call(Call call) {
+        return env.defineFunction(call.func).call(call.visitArgs(this));
+      }
+
+      @Override
+      public Double symbol(Symbol sym) {
+        Integer ret = comp.args.getIndex(sym);
+        if(ret != null) {
+          return params.get(ret);
+        } else {
+          return env.defineSymbol(sym);
+        }
+      }
+
+      @Override
+      public Double constant(Rational cst) {
+        return cst.toDouble();
+      }
+    };
+    return comp.values.transform(new Transformer<Value, Double>() {
+      public Double transform(Value in) {
+        return in.accept(v);
       }
     });
-    return ctx.run(comp.values);
   }
 
   public static double eval(Definition def, Vector<Double> args) {

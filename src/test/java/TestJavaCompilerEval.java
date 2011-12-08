@@ -1,7 +1,6 @@
 import static mathray.Expressions.*;
 import static org.junit.Assert.assertEquals;
 import mathray.Computation;
-import mathray.Definition;
 import mathray.FunctionD;
 import mathray.Symbol;
 import mathray.Vector;

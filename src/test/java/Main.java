@@ -2,8 +2,6 @@ import mathray.Args;
 import mathray.Definition;
 import mathray.NamedConstants;
 import mathray.Symbol;
-import mathray.eval.simplify.Simplifications;
-import mathray.eval.text.DefaultPrinter;
 import mathray.random.ValueRandom;
 import static mathray.Expressions.*;
 import static mathray.Functions.*;
