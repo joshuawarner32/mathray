@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import mathray.eval.Binder;
-
 public class Args implements Iterable<Symbol> {
   
   private Map<Symbol, Integer> syms = new HashMap<Symbol, Integer>();
@@ -46,15 +44,6 @@ public class Args implements Iterable<Symbol> {
   @Override
   public Iterator<Symbol> iterator() {
     return syms.keySet().iterator();
-  }
-  
-  public <T> Binder<T> bind(final Vector<T> params) {
-    return new Binder<T>() {
-      @Override
-      public T bind(Symbol var) {
-        return params.get(getIndex(var));
-      }
-    };
   }
   
   @Override

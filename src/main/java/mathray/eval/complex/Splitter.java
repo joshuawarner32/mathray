@@ -1,25 +1,20 @@
 package mathray.eval.complex;
 
 import mathray.Args;
+import mathray.Call;
 import mathray.Computation;
-import mathray.Definition;
-import mathray.Function;
+import mathray.FunctionRegistrar;
 import mathray.Rational;
 import mathray.Transformer;
 import mathray.Value;
 import mathray.Symbol;
 import mathray.Vector;
-import mathray.eval.ComputeData;
-import mathray.eval.Context;
-import mathray.eval.Environment;
-import mathray.eval.Impl;
-import mathray.eval.Implementer;
-import mathray.eval.Translator;
+import mathray.eval.Visitor;
 import static mathray.Expressions.*;
 
 public class Splitter {
   
-  public static Computation split(Computation comp, final ComputeData env, final Computation splitter, final Args args, final Vector<Vector<Symbol>> replacements) {
+  public static Computation split(Computation comp, final FunctionRegistrar<Computation> env, final Computation splitter, final Args args, final Vector<Vector<Symbol>> replacements) {
     if(!args.isSubsetOf(comp.args)) {
       throw new IllegalArgumentException();
     }
@@ -41,7 +36,8 @@ public class Splitter {
         nargsarr[i++] = var;
       }
     }
-    Vector<Vector<Value>> bindings = comp.args.toVector().transform(new Transformer<Symbol, Vector<Value>>() {
+    final Vector<Vector<Value>> bindings = comp.args.toVector().transform(new Transformer<Symbol, Vector<Value>>() {
+      @SuppressWarnings({ "unchecked", "rawtypes" })
       @Override
       public Vector<Value> transform(Symbol in) {
         if(args.contains(in)) {
@@ -51,27 +47,27 @@ public class Splitter {
         }
       }
     });
-    Vector<Vector<Value>> res = new Context<Vector<Value>>(args.bind(bindings), new Implementer<Vector<Value>>() {
+    Visitor<Vector<Value>> v = new Visitor<Vector<Value>>() {
       @Override
-      public Impl<Vector<Value>> implement(final Function func) {
-        return new Impl<Vector<Value>>() {
-          @Override
-          public Vector<Value> call(Vector<Vector<Value>> args) {
-            return null; //Vector.group(env.implement(func).call(Vector.flatten(args)), newSize);
-          }
-        };
+      public Vector<Value> symbol(Symbol sym) {
+        return bindings.get(args.getIndex(sym));
       }
-    }, new Translator<Vector<Value>>() {
+      
       @Override
-      public Vector<Value> translate(Rational r) {
-        return splitter.call(vector((Value)r));
+      public Vector<Value> constant(Rational rat) {
+        return splitter.call(vector((Value)rat));
       }
-    }).run(comp.values);
+      
+      @Override
+      public Vector<Value> call(Call call) {
+        return null; // TODO
+      }
+    };
     Value[] ret = new Value[newSize * comp.values.size()];
     i = 0;
-    for(Vector<Value> vec : res) {
-      for(Value v : vec) {
-        ret[i++] = v;
+    for(Value val : comp.values) {
+      for(Value v2 : val.accept(v)) {
+        ret[i++] = v2;
       }
     }
     return new Computation(args(nargsarr), vector(ret));

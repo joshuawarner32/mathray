@@ -4,20 +4,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mathray.Args;
+import mathray.Call;
 import mathray.Computation;
 import mathray.Definition;
 import mathray.Rational;
+import mathray.Transformer;
 import mathray.Value;
 import mathray.Symbol;
 import mathray.Vector;
-import mathray.eval.Binder;
-import mathray.eval.Context;
 import mathray.eval.Environment;
 import mathray.eval.Impl;
-import mathray.eval.Translator;
+import mathray.eval.Visitor;
 import mathray.eval.precision.AffineContext.AffineTerm;
 
-import static mathray.Expressions.*;
 import static mathray.Functions.*;
 
 public class Affine {
@@ -43,20 +42,30 @@ public class Affine {
     .build();
   
   public static Vector<AffineForm> affine(Computation comp, Args args) {
-    AffineContext affineContext = new AffineContext();
-    return new Context<AffineForm>(new Binder<AffineForm>() {
+    //AffineContext affineContext = new AffineContext();
+    
+    final Visitor<AffineForm> v = new Visitor<AffineForm>() {
       @Override
-      public AffineForm bind(Symbol var) {
+      public AffineForm symbol(Symbol sym) {
         Map<AffineTerm, Value> map = new HashMap<AffineTerm, Value>();
         // TODO: add variance term
-        return new AffineForm(var, map);
+        return new AffineForm(sym, map);
       }
-    }, env, new Translator<AffineForm>() {
       @Override
-      public AffineForm translate(Rational r) {
-        return new AffineForm(r, new HashMap<AffineTerm, Value>());
+      public AffineForm constant(Rational rat) {
+        return new AffineForm(rat, new HashMap<AffineTerm, Value>());
       }
-    }).run(comp.values);
+      @Override
+      public AffineForm call(Call call) {
+        return env.implement(call.func).call(call.visitArgs(this));
+      }
+    };
+    return comp.values.transform(new Transformer<Value, AffineForm>() {
+      @Override
+      public AffineForm transform(Value in) {
+        return in.accept(v);
+      }
+    });
   }
 
 }

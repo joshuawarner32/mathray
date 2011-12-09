@@ -10,6 +10,6 @@ public interface Visitor<T> {
   
   public T symbol(Symbol sym);
 
-  public T constant(Rational cst);
+  public T constant(Rational rat);
 
 }
