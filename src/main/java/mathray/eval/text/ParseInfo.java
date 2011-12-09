@@ -10,11 +10,9 @@ import java.util.Stack;
 
 import mathray.Call;
 import mathray.Function;
-import mathray.Generator;
 import mathray.Rational;
 import mathray.Value;
 import mathray.Symbol;
-import mathray.Vector;
 import mathray.eval.Impl;
 import mathray.eval.Visitor;
 import mathray.eval.text.InfixOperator.Associativity;

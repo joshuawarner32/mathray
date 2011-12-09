@@ -6,7 +6,6 @@ import java.util.List;
 import mathray.Call;
 import mathray.Computation;
 import mathray.Rational;
-import mathray.Definition;
 import mathray.Expressions;
 import mathray.Transformer;
 import mathray.Value;
