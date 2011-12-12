@@ -351,7 +351,7 @@ public class Simplifications {
       List<Value> negs = new LinkedList<Value>();
       if(!offset.equals(num(0))) {
         if(offset.isNegative()) {
-          negs.add(offset);
+          negs.add(offset.negative());
         } else {
           ret = offset;
         }

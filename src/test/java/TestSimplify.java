@@ -64,6 +64,12 @@ public class TestSimplify {
   }
   
   @Test
+  public void testAddNegative() {
+    assertSimplifiesTo(def(args(x), add(x, num(-3))), def(args(x), sub(x, num(3))));
+    assertSimplifiesTo(def(args(x), add(x, neg(y))), def(args(x), sub(x, y)));
+  }
+  
+  @Test
   public void testMultiplicitiveIdentity() {
     assertSimplifiesTo(def(args(x), mul(x, num(1))), def(args(x), x));
     assertSimplifiesTo(def(args(x), mul(num(1), x)), def(args(x), x));
