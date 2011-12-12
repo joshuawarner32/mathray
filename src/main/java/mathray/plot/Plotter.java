@@ -13,7 +13,7 @@ import mathray.eval.java.JavaCompiler;
 
 public class Plotter {
   
-  /*private static double eval(FunctionD f, double[] in, double[] out, double x) {
+  private static double eval(FunctionD f, double[] in, double[] out, double x) {
     in[0] = x;
     f.call(in, out);
     return out[0];
@@ -22,7 +22,7 @@ public class Plotter {
   public static BufferedImage simplePlot(Definition def, double min, double max, int width, int height) {
     BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = (Graphics2D)ret.getGraphics();
-    FunctionD f = JavaCompiler.compile(def);
+    FunctionD f = JavaCompiler.compile(def.toComputation());
     double[] in = new double[1];
     double[] out = new double[1];
     double[] vals = new double[width + 1];
@@ -60,7 +60,7 @@ public class Plotter {
   public static BufferedImage intervalPlot(Definition def, double min, double max, int intervals, int width, int height) {
     BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = (Graphics2D)ret.getGraphics();
-    FunctionD f = JavaCompiler.compile(def);
+    FunctionD f = JavaCompiler.compile(def.toComputation());
     double[] in = new double[2];
     double[] out = new double[2];
     double[] vals = new double[intervals * 2];
@@ -96,7 +96,7 @@ public class Plotter {
   }
   
   public static Graph2D graphPlot(Definition def, double xa, double xb, int points) {
-    FunctionD f = JavaCompiler.compile(def);
+    FunctionD f = JavaCompiler.compile(def.toComputation());
     double[] in = new double[1];
     double[] out = new double[1];
     double[] vals = new double[points];
@@ -118,6 +118,6 @@ public class Plotter {
       b.point((float)x, (float)vals[i]);
     }
     return b.build();
-  }*/
+  }
 
 }
