@@ -5,6 +5,7 @@ import java.util.List;
 
 import mathray.Call;
 import mathray.Computation;
+import mathray.Definition;
 import mathray.Rational;
 import mathray.Expressions;
 import mathray.Transformer;
@@ -283,8 +284,7 @@ public class Simplifications {
       return recip >= direct;
     }
     
-    @Override
-    public Value toValue() {
+    private Value toValue(boolean neg) {
       Value num = null;
       Value denom = null;
       for(Expr expr : factors) {
@@ -302,11 +302,25 @@ public class Simplifications {
           }
         }
       }
+      Rational coeff = this.coeff;
+      if(neg) {
+        coeff = coeff.negative();
+      }
       if(denom == null && coeff.denominator().equals(num(1))) {
         return constMul(coeff.numerator(), num);
       } else {
         return div(constMul(coeff.numerator(), num), constMul(coeff.denominator(), denom));
       }
+    }
+    
+    @Override
+    public Value toNegativeValue() {
+      return toValue(true);
+    }
+    
+    @Override
+    public Value toValue() {
+      return toValue(false);
     }
   }
   
@@ -335,6 +349,13 @@ public class Simplifications {
     public Value toValue() {
       Value ret = null;
       List<Value> negs = new LinkedList<Value>();
+      if(!offset.equals(num(0))) {
+        if(offset.isNegative()) {
+          negs.add(offset);
+        } else {
+          ret = offset;
+        }
+      }
       for(Expr expr : terms) {
         if(expr.isNegative()) {
           negs.add(expr.toNegativeValue());
@@ -346,13 +367,13 @@ public class Simplifications {
           }
         }
       }
-      if(ret == null) {
+      if(ret == null && !offset.equals(num(0))) {
         ret = neg(negs.remove(0));
       }
       for(Value v : negs) {
         ret = sub(ret, v);
       }
-      return constAdd(offset, ret);
+      return ret;
     }
   }
   
@@ -402,12 +423,21 @@ public class Simplifications {
   };
   
   public static Computation simplify(Computation comp) {
-    return new Computation(comp.args, toValues(comp.values.transform(new Transformer<Value, Expr>() {
-      @Override
-      public Expr transform(Value in) {
-        return in.accept(visitor);
-      }
-    })));
+    try {
+      return new Computation(comp.args, comp.values.transform(new Transformer<Value, Value>() {
+        @Override
+        public Value transform(Value in) {
+          return in.accept(visitor).toValue();
+        }
+      }));
+    } catch(ArithmeticException e) {
+      // we can't simplify expressions that have division by zero
+      return comp;
+    }
+  }
+
+  public static Definition simplify(Definition orig) {
+    return simplify(orig.toComputation()).get(0);
   }
 
 }

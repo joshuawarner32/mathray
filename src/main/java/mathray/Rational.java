@@ -10,6 +10,9 @@ public class Rational extends Value {
   private Rational(long num, long denom) {
     this.num = num;
     this.denom = denom;
+    if(denom == 0) {
+      throw new ArithmeticException("constructing Rational with 0 denominator");
+    }
   }
   
   public static Rational get(long value) {

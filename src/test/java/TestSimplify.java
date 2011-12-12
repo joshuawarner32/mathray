@@ -1,4 +1,5 @@
 
+import static mathray.NamedConstants.*;
 import static mathray.Expressions.*;
 import static org.junit.Assert.assertEquals;
 import mathray.Definition;
@@ -55,6 +56,11 @@ public class TestSimplify {
   public void testAdditiveReassociation() {
     assertSimplifiesTo(def(args(x), add(x, add(y, z))), def(args(x), add(add(y, z), x)));
     assertSimplifiesTo(def(args(x), add(add(x, y), z)), def(args(x), add(add(x, y), z)));
+  }
+  
+  @Test
+  public void testReorderSubtract() {
+    assertSimplifiesTo(def(args(x), sub(neg(x), num(-3))), def(args(x), sub(num(3), x)));
   }
   
   @Test
