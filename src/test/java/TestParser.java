@@ -13,7 +13,7 @@ public class TestParser {
   Symbol x = sym("x");
   Symbol y = sym("y");
   ParseInfo parser = ParseInfo.builder()
-    .group("(", ")")
+    .group("(", ",", ")")
     .infix("+", 10, Associativity.LEFT, ADD)
     .infix("-", 10, Associativity.LEFT, SUB)
     .infix("*", 20, Associativity.LEFT, MUL)
@@ -21,6 +21,7 @@ public class TestParser {
     .infix("^", 30, Associativity.RIGHT, POW)
     .prefix("-", 25, NEG)
     .function("sin", SIN)
+    .function("min", MIN)
     .sym(x)
     .sym(y)
     .build();
@@ -59,11 +60,21 @@ public class TestParser {
     assertEquals(pow(num(1), pow(num(2), num(3))), parser.parse("1^2^3"));
   }
   
-//  @Test
-//  public void testFunctions() {
+  @Test
+  public void testFunctions() {
 //    assertEquals(sin(x), parser.parse("sin(x)"));
 //    assertEquals(min(x, y), parser.parse("min(x, y)"));
-//  }
+//    
+//    assertEquals(add(num(1), sin(x)), parser.parse("1+sin(x)"));
+//    assertEquals(add(num(1), min(x, y)), parser.parse("1+min(x, y)"));
+    assertEquals(add(sin(x), num(1)), parser.parse("sin(x)+1"));
+    assertEquals(add(min(x, y), num(1)), parser.parse("min(x, y)+1"));
+    
+    assertEquals(sin(add(num(1), x)), parser.parse("sin(1+x)"));
+    assertEquals(sin(add(x, num(1))), parser.parse("sin(x+1)"));
+    assertEquals(min(add(num(1), x), y), parser.parse("min(1+x, y)"));
+    assertEquals(min(x, add(num(1), y)), parser.parse("min(x, 1+y)"));
+  }
   
   @Test
   public void testSimplePrefixOperators() {

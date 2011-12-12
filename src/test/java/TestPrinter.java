@@ -12,7 +12,7 @@ public class TestPrinter {
   Symbol x = sym("x");
   Symbol y = sym("y");
   ParseInfo parser = ParseInfo.builder()
-    .group("(", ")")
+    .group("(", ",", ")")
     .infix("+", 10, Associativity.LEFT, ADD)
     .infix("-", 10, Associativity.LEFT, SUB)
     .infix("*", 20, Associativity.LEFT, MUL)

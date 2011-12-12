@@ -10,7 +10,7 @@ public class DefaultPrinter {
   private DefaultPrinter() {}
 
   private static ParseInfo parser = ParseInfo.builder()
-    .group("(", ")")
+    .group("(", ",", ")")
     .infix("+", 10, Associativity.LEFT, ADD)
     .infix("-", 10, Associativity.LEFT, SUB)
     .infix("*", 20, Associativity.LEFT, MUL)

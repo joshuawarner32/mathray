@@ -30,6 +30,8 @@ public class ParseInfo {
   private String groupBegin;
   
   private String groupEnd;
+  
+  private String groupSep;
 
   private Map<String, Function> functions = new HashMap<String, Function>();
   
@@ -42,10 +44,12 @@ public class ParseInfo {
     
     private ParseInfo info = new ParseInfo();
     
-    public Builder group(String begin, String end) {
+    public Builder group(String begin, String sep, String end) {
       info.symbols.add(begin);
+      info.symbols.add(sep);
       info.symbols.add(end);
       info.groupBegin = begin;
+      info.groupSep = sep;
       info.groupEnd = end;
       return this;
     }
@@ -127,7 +131,7 @@ public class ParseInfo {
         } else {
           Function func = functions.get(tok.text);
           if(func != null) {
-            throw new RuntimeException("unhandled case");
+            ops.push(new FunctionOperator(func));
           } else {
             // TODO: real parse exceptions
             throw new RuntimeException("parse error");
@@ -147,7 +151,16 @@ public class ParseInfo {
             ops.pop().reduce(stack);
           }
           ops.pop();
+          if(Integer.MIN_VALUE + 1 == ops.peek().precedence) {
+            // this is a FunctionOperator
+            ops.pop().reduce(stack);
+          }
           state = AFTER_VALUE;
+        } else if(tok.text.equals(groupSep)) {
+          while(Integer.MIN_VALUE < ops.peek().precedence) {
+            ops.pop().reduce(stack);
+          }
+          state = AFTER_OPERATOR;
         } else if(state == AFTER_VALUE) {
           InfixOperator op = infixes.get(tok.text);
           if(op != null) {
