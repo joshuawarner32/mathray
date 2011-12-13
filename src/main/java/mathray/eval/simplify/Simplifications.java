@@ -413,21 +413,25 @@ public class Simplifications {
   };
   
   public static Computation simplify(Computation comp) {
-    try {
-      return new Computation(comp.args, comp.values.transform(new Transformer<Value, Value>() {
-        @Override
-        public Value transform(Value in) {
-          return in.accept(visitor).toValue();
-        }
-      }));
-    } catch(ArithmeticException e) {
-      // we can't simplify expressions that have division by zero
-      return comp;
-    }
+    return new Computation(comp.args, comp.values.transform(new Transformer<Value, Value>() {
+      @Override
+      public Value transform(Value in) {
+        return simplify(in);
+      }
+    }));
   }
 
   public static Definition simplify(Definition orig) {
     return simplify(orig.toComputation()).get(0);
+  }
+
+  public static Value simplify(Value v) {
+    try {
+      return v.accept(visitor).toValue();
+    } catch(ArithmeticException e) {
+      // we can't simplify expressions that have division by zero
+      return v;
+    }
   }
 
 }
