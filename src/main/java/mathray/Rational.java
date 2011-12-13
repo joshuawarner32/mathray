@@ -24,7 +24,7 @@ public class Rational extends Value {
       num = -num;
       denom = -denom;
     }
-    long fact = gcd(num, denom);
+    long fact = gcd(Math.abs(num), denom);
     return new Rational(num / fact, denom / fact);
   }
   

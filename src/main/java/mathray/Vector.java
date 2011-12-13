@@ -18,6 +18,11 @@ public final class Vector<T> implements Iterable<T> {
   
   public Vector(T... items) {
     this.items = items.clone();
+    for(int i = 0; i < items.length; i++) {
+      if(items[i] == null) {
+        throw new NullPointerException();
+      }
+    }
   }
   
   private Vector() {}

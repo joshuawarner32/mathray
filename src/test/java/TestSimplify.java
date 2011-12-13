@@ -65,8 +65,9 @@ public class TestSimplify {
   
   @Test
   public void testAddNegative() {
-    assertSimplifiesTo(def(args(x), add(x, num(-3))), def(args(x), sub(x, num(3))));
-    assertSimplifiesTo(def(args(x), add(x, neg(y))), def(args(x), sub(x, y)));
+    //assertSimplifiesTo(def(args(x), add(x, num(-3))), def(args(x), sub(x, num(3))));
+    //assertSimplifiesTo(def(args(x), add(x, neg(y))), def(args(x), sub(x, y)));
+    assertSimplifiesTo(def(args(x), neg(add(num(1, 2), num(-2)))), def(args(x), num(3, 2)));    
   }
   
   @Test

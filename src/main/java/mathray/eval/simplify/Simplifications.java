@@ -57,10 +57,6 @@ public class Simplifications {
       return false;
     }
     
-    public Value toNegativeValue() {
-      return neg(toValue());
-    }
-    
     public Value toReciprocalValue() {
       return div(num(1), toValue());
     }
@@ -133,11 +129,6 @@ public class Simplifications {
     }
     
     @Override
-    public Value toNegativeValue() {
-      return value.negative();
-    }
-    
-    @Override
     public Value toReciprocalValue() {
       return value.reciprocal();
     }
@@ -205,7 +196,7 @@ public class Simplifications {
           return num(1);
         }
       }
-      return pow(base.toValue(), power.toNegativeValue());
+      return pow(base.toValue(), power.exprNeg().toValue());
     }
   }
   
@@ -314,11 +305,6 @@ public class Simplifications {
     }
     
     @Override
-    public Value toNegativeValue() {
-      return toValue(true);
-    }
-    
-    @Override
     public Value toValue() {
       return toValue(false);
     }
@@ -348,17 +334,17 @@ public class Simplifications {
     @Override
     public Value toValue() {
       Value ret = null;
-      List<Value> negs = new LinkedList<Value>();
+      List<Expr> negs = new LinkedList<Expr>();
       if(!offset.equals(num(0))) {
         if(offset.isNegative()) {
-          negs.add(offset.negative());
+          negs.add(new ConstExpr(offset.negative()));
         } else {
           ret = offset;
         }
       }
       for(Expr expr : terms) {
         if(expr.isNegative()) {
-          negs.add(expr.toNegativeValue());
+          negs.add(expr.exprNeg());
         } else {
           if(ret == null) {
             ret = expr.toValue();
@@ -367,11 +353,15 @@ public class Simplifications {
           }
         }
       }
-      if(ret == null && !offset.equals(num(0))) {
-        ret = neg(negs.remove(0));
+      if(ret == null) {
+        if(offset.equals(num(0))) {
+          ret = negs.remove(0).exprNeg().toValue();
+        } else {
+          ret = offset;
+        }
       }
-      for(Value v : negs) {
-        ret = sub(ret, v);
+      for(Expr e : negs) {
+        ret = sub(ret, e.toValue());
       }
       return ret;
     }
