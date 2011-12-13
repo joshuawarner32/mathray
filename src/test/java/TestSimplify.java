@@ -1,5 +1,4 @@
 
-import static mathray.NamedConstants.*;
 import static mathray.Expressions.*;
 import static org.junit.Assert.assertEquals;
 import mathray.Definition;

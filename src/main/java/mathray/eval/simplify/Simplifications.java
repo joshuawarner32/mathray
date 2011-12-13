@@ -218,14 +218,6 @@ public class Simplifications {
     }
   }
 
-  private static Value constAdd(Rational r, Value v) {
-    if(r.equals(num(0))) {
-      return v;
-    } else {
-      return add(r, v);
-    }
-  }
-  
   private static class ProductExpr extends Expr {
     private final Rational coeff;
     private final Vector<Expr> factors;
