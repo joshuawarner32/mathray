@@ -58,6 +58,11 @@ public class MachineEvaluator {
           return Math.sinh(args.get(0));
         }
       })
+      .register(ASIN, new Impl<Double>() {
+        public Double call(Vector<Double> args) {
+          return Math.asin(args.get(0));
+        }
+      })
       .register(COS, new Impl<Double>() {
         public Double call(Vector<Double> args) {
           return Math.cos(args.get(0));
@@ -68,6 +73,11 @@ public class MachineEvaluator {
           return Math.cosh(args.get(0));
         }
       })
+      .register(ACOS, new Impl<Double>() {
+        public Double call(Vector<Double> args) {
+          return Math.acos(args.get(0));
+        }
+      })
       .register(TAN, new Impl<Double>() {
         public Double call(Vector<Double> args) {
           return Math.tan(args.get(0));
@@ -76,6 +86,16 @@ public class MachineEvaluator {
       .register(TANH, new Impl<Double>() {
         public Double call(Vector<Double> args) {
           return Math.tanh(args.get(0));
+        }
+      })
+      .register(ATAN, new Impl<Double>() {
+        public Double call(Vector<Double> args) {
+          return Math.atan(args.get(0));
+        }
+      })
+      .register(ATAN2, new Impl<Double>() {
+        public Double call(Vector<Double> args) {
+          return Math.atan2(args.get(0), args.get(1));
         }
       })
       .register(LOG, new Impl<Double>() {
