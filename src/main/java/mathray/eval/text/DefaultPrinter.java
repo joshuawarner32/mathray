@@ -17,6 +17,20 @@ public class DefaultPrinter {
     .infix("/", 20, Associativity.LEFT, DIV)
     .infix("^", 30, Associativity.RIGHT, POW)
     .prefix("-", 25, NEG)
+    .function(SIN)
+    .function(SINH)
+    .function(ASIN)
+    .function(COS)
+    .function(COSH)
+    .function(ACOS)
+    .function(TAN)
+    .function(TANH)
+    .function(ATAN)
+    .function(ATAN2)
+    .function(SQRT)
+    .function(LOG)
+    .function(MIN)
+    .function(MAX)
     .build();
   
   public static String toString(Definition def) {
@@ -36,6 +50,10 @@ public class DefaultPrinter {
   
   public static String toString(Value value) {
     return parser.unparse(value);
+  }
+  
+  public static Value parse(String text) {
+    return parser.parse(text);
   }
 
 }

@@ -16,6 +16,7 @@ import mathray.Symbol;
 import mathray.eval.Impl;
 import mathray.eval.Visitor;
 import mathray.eval.text.InfixOperator.Associativity;
+import mathray.eval.text.ParseInfo.Builder;
 
 public class ParseInfo {
   
@@ -83,6 +84,10 @@ public class ParseInfo {
     public Builder function(String name, Function function) {
       info.functions.put(name, function);
       return this;
+    }
+
+    public Builder function(Function func) {
+      return function(func.name, func);
     }
   }
   
