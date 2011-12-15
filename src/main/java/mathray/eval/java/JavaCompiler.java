@@ -17,6 +17,33 @@ import static mathray.Functions.*;
 
 public class JavaCompiler {
   
+  public static Impl<JavaValue> staticCall1(final MethodGenerator mgen, final String className, final String name) {
+    return new Impl<JavaValue>() {
+      @Override
+      public JavaValue call(Vector<JavaValue> args) {
+        return mgen.callStatic(className, name, JavaArityGenerator.getArityDesc(1), args.get(0));
+      }
+    };
+  }
+  
+  public static Impl<JavaValue> staticCall2(final MethodGenerator mgen, final String className, final String name) {
+    return new Impl<JavaValue>() {
+      @Override
+      public JavaValue call(Vector<JavaValue> args) {
+        return mgen.callStatic(className, name, JavaArityGenerator.getArityDesc(2), args.get(0), args.get(1));
+      }
+    };
+  }
+  
+  public static Impl<JavaValue> binOp(final MethodGenerator mgen, final int op) {
+    return new Impl<JavaValue>() {
+      @Override
+      public JavaValue call(Vector<JavaValue> args) {
+        return mgen.binOp(op, args.get(0), args.get(1));
+      }
+    };
+  }
+  
   public static FunctionD compile(final Computation comp) {
     
     ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionD.class.getName().replace('.', '/')});
@@ -29,54 +56,29 @@ public class JavaCompiler {
       
       private Environment<JavaValue> env = 
         Environment.<JavaValue>builder()
-          .register(ADD, new Impl<JavaValue>() {
+          .register(ADD, binOp(mgen, Opcodes.DADD))
+          .register(ADD, binOp(mgen, Opcodes.DSUB))
+          .register(ADD, binOp(mgen, Opcodes.DMUL))
+          .register(ADD, binOp(mgen, Opcodes.DDIV))
+          .register(SQRT, staticCall1(mgen, "java/lang/Math", "sqrt"))
+          .register(SIN, staticCall1(mgen, "java/lang/Math", "sin"))
+          .register(SINH, staticCall1(mgen, "java/lang/Math", "sinh"))
+          .register(ASIN, staticCall1(mgen, "java/lang/Math", "asin"))
+          .register(COS, staticCall1(mgen, "java/lang/Math", "cos"))
+          .register(COSH, staticCall1(mgen, "java/lang/Math", "cosh"))
+          .register(ACOS, staticCall1(mgen, "java/lang/Math", "acos"))
+          .register(TAN, staticCall1(mgen, "java/lang/Math", "tan"))
+          .register(TANH, staticCall1(mgen, "java/lang/Math", "tanh"))
+          .register(ATAN, staticCall1(mgen, "java/lang/Math", "atan"))
+          .register(LOG, staticCall1(mgen, "java/lang/Math", "log"))
+          .register(POW, staticCall2(mgen, "java/lang/Math", "pow"))
+          .register(MIN, staticCall2(mgen, "java/lang/Math", "min"))
+          .register(MAX, staticCall2(mgen, "java/lang/Math", "max"))
+          .register(UP, staticCall1(mgen, "java/lang/Math", "nextUp"))
+          .register(DOWN, new Impl<JavaValue>() {
+            @Override
             public JavaValue call(Vector<JavaValue> args) {
-              return mgen.binOp(Opcodes.DADD, args.get(0), args.get(1));
-            }
-          })
-          .register(SUB, new Impl<JavaValue>() {
-            public JavaValue call(Vector<JavaValue> args) {
-              return mgen.binOp(Opcodes.DSUB, args.get(0), args.get(1));
-            }
-          })
-          .register(MUL, new Impl<JavaValue>() {
-            public JavaValue call(Vector<JavaValue> args) {
-              return mgen.binOp(Opcodes.DMUL, args.get(0), args.get(1));
-            }
-          })
-          .register(DIV, new Impl<JavaValue>() {
-            public JavaValue call(Vector<JavaValue> args) {
-              return mgen.binOp(Opcodes.DDIV, args.get(0), args.get(1));
-            }
-          })
-          .register(SQRT, new Impl<JavaValue>() {
-            public JavaValue call(Vector<JavaValue> args) {
-              return mgen.callStatic("java/lang/Math", "sqrt", "(D)D", args.get(0));
-            }
-          })
-          .register(SIN, new Impl<JavaValue>() {
-            public JavaValue call(Vector<JavaValue> args) {
-              return mgen.callStatic("java/lang/Math", "sin", "(D)D", args.get(0));
-            }
-          })
-          .register(COS, new Impl<JavaValue>() {
-            public JavaValue call(Vector<JavaValue> args) {
-              return mgen.callStatic("java/lang/Math", "cos", "(D)D", args.get(0));
-            }
-          })
-          .register(POW, new Impl<JavaValue>() {
-            public JavaValue call(Vector<JavaValue> args) {
-              return mgen.callStatic("java/lang/Math", "pow", "(DD)D", args.get(0), args.get(1));
-            }
-          })
-          .register(MIN, new Impl<JavaValue>() {
-            public JavaValue call(Vector<JavaValue> args) {
-              return mgen.callStatic("java/lang/Math", "min", "(DD)D", args.get(0), args.get(1));
-            }
-          })
-          .register(MAX, new Impl<JavaValue>() {
-            public JavaValue call(Vector<JavaValue> args) {
-              return mgen.callStatic("java/lang/Math", "max", "(DD)D", args.get(0), args.get(1));
+              return mgen.unaryOp(Opcodes.DNEG, mgen.callStatic("java/lang/Math", "nextUp", "(D)D", mgen.unaryOp(Opcodes.DNEG, args.get(0))));
             }
           })
           .build();
