@@ -17,7 +17,30 @@ import static mathray.Functions.*;
 
 public class JavaCompiler {
   
-  public static Impl<JavaValue> staticCall1(final MethodGenerator mgen, final String className, final String name) {
+  public static final PrologEpilog FUNCTION_D = new PrologEpilog() {
+    
+    @Override
+    public MethodGenerator begin(ClassGenerator gen, Computation comp) {
+      return gen.method(false, "call", "([D[D)V");
+    }
+    
+    @Override
+    public JavaValue loadParam(MethodGenerator mgen, int index) {
+      return mgen.aload(mgen.arg(0), index);
+    }
+    
+    @Override
+    public void storeRet(MethodGenerator mgen, int index, JavaValue value) {
+      mgen.astore(mgen.arg(1), index, value);
+    }
+    
+    @Override
+    public void end(MethodGenerator mgen) {
+      mgen.ret();
+    }
+  };
+  
+  private static Impl<JavaValue> staticCall1(final MethodGenerator mgen, final String className, final String name) {
     return new Impl<JavaValue>() {
       @Override
       public JavaValue call(Vector<JavaValue> args) {
@@ -26,7 +49,7 @@ public class JavaCompiler {
     };
   }
   
-  public static Impl<JavaValue> staticCall2(final MethodGenerator mgen, final String className, final String name) {
+  private static Impl<JavaValue> staticCall2(final MethodGenerator mgen, final String className, final String name) {
     return new Impl<JavaValue>() {
       @Override
       public JavaValue call(Vector<JavaValue> args) {
@@ -35,7 +58,7 @@ public class JavaCompiler {
     };
   }
   
-  public static Impl<JavaValue> binOp(final MethodGenerator mgen, final int op) {
+  private static Impl<JavaValue> binOp(final MethodGenerator mgen, final int op) {
     return new Impl<JavaValue>() {
       @Override
       public JavaValue call(Vector<JavaValue> args) {
@@ -46,20 +69,22 @@ public class JavaCompiler {
   
   public static FunctionD compile(final Computation comp) {
     
+    PrologEpilog ctx = FUNCTION_D;
+    
     ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionD.class.getName().replace('.', '/')});
-    final MethodGenerator mgen = gen.method(false, "call", "([D[D)V");
+    final MethodGenerator mgen = ctx.begin(gen, comp);
     final JavaValue[] args = new JavaValue[comp.args.size()];
     for(int i = 0; i < args.length; i++) {
-      args[i] = mgen.aload(mgen.arg(0), i);
+      args[i] = ctx.loadParam(mgen, i);
     }
     Visitor<JavaValue> v = new Visitor<JavaValue>() {
       
       private Environment<JavaValue> env = 
         Environment.<JavaValue>builder()
           .register(ADD, binOp(mgen, Opcodes.DADD))
-          .register(ADD, binOp(mgen, Opcodes.DSUB))
-          .register(ADD, binOp(mgen, Opcodes.DMUL))
-          .register(ADD, binOp(mgen, Opcodes.DDIV))
+          .register(SUB, binOp(mgen, Opcodes.DSUB))
+          .register(MUL, binOp(mgen, Opcodes.DMUL))
+          .register(DIV, binOp(mgen, Opcodes.DDIV))
           .register(SQRT, staticCall1(mgen, "java/lang/Math", "sqrt"))
           .register(SIN, staticCall1(mgen, "java/lang/Math", "sin"))
           .register(SINH, staticCall1(mgen, "java/lang/Math", "sinh"))
@@ -100,9 +125,9 @@ public class JavaCompiler {
 
     };
     for(int i = 0; i < comp.values.size(); i++) {
-      mgen.astore(mgen.arg(1), i, comp.values.get(i).accept(v));
+      ctx.storeRet(mgen, i, comp.values.get(i).accept(v));
     }
-    mgen.ret();
+    ctx.end(mgen);
     mgen.end();
     gen.end();
     

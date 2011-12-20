@@ -1,5 +1,6 @@
 package mathray.eval.java;
 
+
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -9,7 +10,9 @@ import org.objectweb.asm.util.CheckClassAdapter;
 
 class ClassGenerator {
   private ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+  
   private ClassVisitor classVisitor = new CheckClassAdapter(cw);
+  //private ClassVisitor classVisitor = new org.objectweb.asm.util.TraceClassVisitor(new java.io.PrintWriter(System.out));
   private String name;
   
   public ClassGenerator(String name, String[] interfaces) {

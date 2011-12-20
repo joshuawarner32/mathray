@@ -1,14 +1,15 @@
 package mathray.eval.java;
 
+import mathray.Computation;
 import mathray.eval.java.ClassGenerator.MethodGenerator;
 
 public interface PrologEpilog {
   
-  public void begin(MethodGenerator mgen);
+  public MethodGenerator begin(ClassGenerator gen, Computation comp);
   
-  public JavaValue loadParam(int index);
+  public JavaValue loadParam(MethodGenerator mgen, int index);
   
-  public void storeRet(int index, JavaValue value);
+  public void storeRet(MethodGenerator mgen, int index, JavaValue value);
   
   public void end(MethodGenerator mgen);
 
