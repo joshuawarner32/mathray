@@ -93,35 +93,41 @@ public class JavaCompiler {
     }
   };
   
-  public static final PrologEpilog D1 = new PrologEpilog() {
-    @Override
-    public MethodGenerator begin(ClassGenerator gen, Computation comp) {
-      return gen.method(false, "call", "(D)D");
-    }
-    
-    @Override
-    public JavaValue arg(MethodGenerator mgen, int index) {
-      if(index < 1) {
-        return mgen.arg(index * 2);
-      } else {
-        throw new RuntimeException("shouldn't happen");
+  private static PrologEpilog Dn_1(final int n) {
+    return new PrologEpilog() {
+      @Override
+      public MethodGenerator begin(ClassGenerator gen, Computation comp) {
+        return gen.method(false, "call", JavaArityGenerator.getArityDesc(n));
       }
-    }
-    
-    @Override
-    public void ret(MethodGenerator mgen, int index, JavaValue value) {
-      if(index == 0) {
-        mgen.ret(value);
-      } else {
-        throw new RuntimeException("shouldn't happen");
+      
+      @Override
+      public JavaValue arg(MethodGenerator mgen, int index) {
+        if(index < n) {
+          return mgen.arg(index * 2);
+        } else {
+          throw new RuntimeException("shouldn't happen");
+        }
       }
-    }
-    
-    @Override
-    public void end(MethodGenerator mgen) {
-      // nothing
-    }
-  };
+      
+      @Override
+      public void ret(MethodGenerator mgen, int index, JavaValue value) {
+        if(index == 0) {
+          mgen.ret(value);
+        } else {
+          throw new RuntimeException("shouldn't happen");
+        }
+      }
+      
+      @Override
+      public void end(MethodGenerator mgen) {
+        // nothing
+      }
+    };
+  }
+  
+  public static final PrologEpilog D1_1 = Dn_1(1); 
+  public static final PrologEpilog D2_1 = Dn_1(2); 
+  public static final PrologEpilog D3_1 = Dn_1(3); 
   
   private static Impl<JavaValue> staticCall1(final MethodGenerator mgen, final String className, final String name) {
     return new Impl<JavaValue>() {
