@@ -10,7 +10,7 @@ import mathray.Rational;
 import mathray.Symbol;
 import mathray.Vector;
 import mathray.concrete.FunctionTypes;
-import mathray.concrete.Vector3;
+import mathray.concrete.VectorD3;
 import mathray.eval.Environment;
 import mathray.eval.Impl;
 import mathray.eval.Visitor;
@@ -47,11 +47,11 @@ public class JavaCompiler {
     
     @Override
     public MethodGenerator begin(ClassGenerator gen, Computation comp) {
-      return gen.method(false, "maybeHasZeroOn", "(L" + Vector3.class.getName() + ";)Z");
+      return gen.method(false, "maybeHasZeroOn", "(L" + VectorD3.class.getName() + ";)Z");
     }
     
     private JavaValue field(MethodGenerator mgen, String name) {
-      return mgen.loadField(mgen.arg(1), Vector3.class.getName(), name, "D");
+      return mgen.loadField(mgen.arg(1), VectorD3.class.getName(), name, "D");
     }
     
     @Override

@@ -4,8 +4,8 @@ package mathray.plot;
 import java.util.Arrays;
 
 import mathray.concrete.FunctionTypes;
-import mathray.concrete.Ray3;
-import mathray.concrete.Vector3;
+import mathray.concrete.RayD3;
+import mathray.concrete.VectorD3;
 
 
 
@@ -14,10 +14,10 @@ public class Plot3D {
   
   private Plot3D() {}
   
-  public static boolean solve(FunctionTypes.ZeroOnRay3 func, Ray3 solution, double max, double error) {
+  public static boolean solve(FunctionTypes.ZeroOnRayD3 func, RayD3 solution, double max, double error) {
     double maxSq = max * max;
     double errorSq = error * error;
-    Vector3 start = solution.point();
+    VectorD3 start = solution.point();
     while(true) {
       while(!func.maybeHasZeroOn(solution)) {
         solution.increment();
