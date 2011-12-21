@@ -1,19 +1,20 @@
 import static mathray.Expressions.*;
 import static org.junit.Assert.assertEquals;
 import mathray.Computation;
-import mathray.FunctionD;
 import mathray.Symbol;
 import mathray.Vector;
+import mathray.concrete.FunctionTypes;
 import mathray.eval.java.JavaCompiler;
 
 import org.junit.Test;
+
 
 
 public class TestJavaCompilerEval {
 
   
   private static void assertCompileEvaluatesTo(Computation comp, Vector<Double> args, Vector<Double> results) {
-    FunctionD func = JavaCompiler.compile(comp);
+    FunctionTypes.D func = JavaCompiler.compile(comp);
     double[] in = new double[args.size()];
     double[] out = new double[results.size()];
     for(int i = 0; i < in.length; i++) {

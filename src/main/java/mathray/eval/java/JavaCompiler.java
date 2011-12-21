@@ -1,13 +1,15 @@
 package mathray.eval.java;
 
+
 import org.objectweb.asm.Opcodes;
+
 
 import mathray.Call;
 import mathray.Computation;
-import mathray.FunctionD;
 import mathray.Rational;
 import mathray.Symbol;
 import mathray.Vector;
+import mathray.concrete.FunctionTypes;
 import mathray.eval.Environment;
 import mathray.eval.Impl;
 import mathray.eval.Visitor;
@@ -18,6 +20,29 @@ import static mathray.Functions.*;
 public class JavaCompiler {
   
   public static final PrologEpilog FUNCTION_D = new PrologEpilog() {
+    
+    @Override
+    public MethodGenerator begin(ClassGenerator gen, Computation comp) {
+      return gen.method(false, "call", "([D[D)V");
+    }
+    
+    @Override
+    public JavaValue loadParam(MethodGenerator mgen, int index) {
+      return mgen.aload(mgen.arg(0), index);
+    }
+    
+    @Override
+    public void storeRet(MethodGenerator mgen, int index, JavaValue value) {
+      mgen.astore(mgen.arg(1), index, value);
+    }
+    
+    @Override
+    public void end(MethodGenerator mgen) {
+      mgen.ret();
+    }
+  };
+  
+  public static final PrologEpilog HAS_SOLUTION3 = new PrologEpilog() {
     
     @Override
     public MethodGenerator begin(ClassGenerator gen, Computation comp) {
@@ -67,11 +92,11 @@ public class JavaCompiler {
     };
   }
   
-  public static FunctionD compile(final Computation comp) {
+  public static FunctionTypes.D compile(final Computation comp) {
     
     PrologEpilog ctx = FUNCTION_D;
     
-    ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionD.class.getName().replace('.', '/')});
+    ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.D.class.getName().replace('.', '/')});
     final MethodGenerator mgen = ctx.begin(gen, comp);
     final JavaValue[] args = new JavaValue[comp.args.size()];
     for(int i = 0; i < args.length; i++) {
@@ -132,7 +157,7 @@ public class JavaCompiler {
     gen.end();
     
     try {
-      return (FunctionD)gen.load().newInstance();
+      return (FunctionTypes.D)gen.load().newInstance();
     } catch (InstantiationException e) {
       throw new RuntimeException(e);
     } catch (IllegalAccessException e) {

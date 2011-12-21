@@ -1,5 +1,6 @@
 package mathray.plot;
 
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -7,13 +8,14 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
+
 import mathray.Definition;
-import mathray.FunctionD;
+import mathray.concrete.FunctionTypes;
 import mathray.eval.java.JavaCompiler;
 
 public class Plotter {
   
-  private static double eval(FunctionD f, double[] in, double[] out, double x) {
+  private static double eval(FunctionTypes.D f, double[] in, double[] out, double x) {
     in[0] = x;
     f.call(in, out);
     return out[0];
@@ -22,7 +24,7 @@ public class Plotter {
   public static BufferedImage simplePlot(Definition def, double min, double max, int width, int height) {
     BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = (Graphics2D)ret.getGraphics();
-    FunctionD f = JavaCompiler.compile(def.toComputation());
+    FunctionTypes.D f = JavaCompiler.compile(def.toComputation());
     double[] in = new double[1];
     double[] out = new double[1];
     double[] vals = new double[width + 1];
@@ -51,7 +53,7 @@ public class Plotter {
     return ret;
   }
 
-  private static void eval2(FunctionD f, double[] in, double[] out, double xa, double xb) {
+  private static void eval2(FunctionTypes.D f, double[] in, double[] out, double xa, double xb) {
     in[0] = xa;
     in[1] = xb;
     f.call(in, out);
@@ -60,7 +62,7 @@ public class Plotter {
   public static BufferedImage intervalPlot(Definition def, double min, double max, int intervals, int width, int height) {
     BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = (Graphics2D)ret.getGraphics();
-    FunctionD f = JavaCompiler.compile(def.toComputation());
+    FunctionTypes.D f = JavaCompiler.compile(def.toComputation());
     double[] in = new double[2];
     double[] out = new double[2];
     double[] vals = new double[intervals * 2];
@@ -96,7 +98,7 @@ public class Plotter {
   }
   
   public static Graph2D graphPlot(Definition def, double xa, double xb, int points) {
-    FunctionD f = JavaCompiler.compile(def.toComputation());
+    FunctionTypes.D f = JavaCompiler.compile(def.toComputation());
     double[] in = new double[1];
     double[] out = new double[1];
     double[] vals = new double[points];
