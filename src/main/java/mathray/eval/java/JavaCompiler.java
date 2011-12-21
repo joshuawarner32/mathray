@@ -10,6 +10,7 @@ import mathray.Rational;
 import mathray.Symbol;
 import mathray.Vector;
 import mathray.concrete.FunctionTypes;
+import mathray.concrete.Vector3;
 import mathray.eval.Environment;
 import mathray.eval.Impl;
 import mathray.eval.Visitor;
@@ -27,12 +28,12 @@ public class JavaCompiler {
     }
     
     @Override
-    public JavaValue loadParam(MethodGenerator mgen, int index) {
+    public JavaValue arg(MethodGenerator mgen, int index) {
       return mgen.aload(mgen.arg(0), index);
     }
     
     @Override
-    public void storeRet(MethodGenerator mgen, int index, JavaValue value) {
+    public void ret(MethodGenerator mgen, int index, JavaValue value) {
       mgen.astore(mgen.arg(1), index, value);
     }
     
@@ -42,26 +43,53 @@ public class JavaCompiler {
     }
   };
   
-  public static final PrologEpilog HAS_SOLUTION3 = new PrologEpilog() {
+  public static final PrologEpilog MAYBE_ZERO_ON_RAY3 = new PrologEpilog() {
     
     @Override
     public MethodGenerator begin(ClassGenerator gen, Computation comp) {
-      return gen.method(false, "call", "([D[D)V");
+      return gen.method(false, "maybeHasZeroOn", "(L" + Vector3.class.getName() + ";)Z");
+    }
+    
+    private JavaValue field(MethodGenerator mgen, String name) {
+      return mgen.loadField(mgen.arg(1), Vector3.class.getName(), name, "D");
     }
     
     @Override
-    public JavaValue loadParam(MethodGenerator mgen, int index) {
-      return mgen.aload(mgen.arg(0), index);
+    public JavaValue arg(MethodGenerator mgen, int index) {
+      switch(index) {
+      case 0:
+        return field(mgen, "x");
+      case 1:
+        return field(mgen, "y");
+      case 2:
+        return field(mgen, "z");
+      case 3:
+        return mgen.binOp(Opcodes.DADD, field(mgen, "x"), field(mgen, "dx"));
+      case 4:
+        return mgen.binOp(Opcodes.DADD, field(mgen, "y"), field(mgen, "dy"));
+      case 5:
+        return mgen.binOp(Opcodes.DADD, field(mgen, "z"), field(mgen, "dz"));
+      default:
+        throw new RuntimeException("shouldn't happen");
+      }
     }
     
     @Override
-    public void storeRet(MethodGenerator mgen, int index, JavaValue value) {
-      mgen.astore(mgen.arg(1), index, value);
+    public void ret(MethodGenerator mgen, int index, JavaValue value) {
+      switch(index) {
+      case 0:
+        //mgen.store(value, aVar);
+      case 1:
+        //mgen.store(value, bVar);
+      default:
+        throw new RuntimeException("shouldn't happen");
+      }
     }
     
     @Override
     public void end(MethodGenerator mgen) {
-      mgen.ret();
+      //mgen.binOp(Opcodes.DCMPG, aVar, 0);
+      //mgen.binOp(Opcodes.DCMPG, 0, bVar);
     }
   };
   
@@ -100,7 +128,7 @@ public class JavaCompiler {
     final MethodGenerator mgen = ctx.begin(gen, comp);
     final JavaValue[] args = new JavaValue[comp.args.size()];
     for(int i = 0; i < args.length; i++) {
-      args[i] = ctx.loadParam(mgen, i);
+      args[i] = ctx.arg(mgen, i);
     }
     Visitor<JavaValue> v = new Visitor<JavaValue>() {
       
@@ -150,7 +178,7 @@ public class JavaCompiler {
 
     };
     for(int i = 0; i < comp.values.size(); i++) {
-      ctx.storeRet(mgen, i, comp.values.get(i).accept(v));
+      ctx.ret(mgen, i, comp.values.get(i).accept(v));
     }
     ctx.end(mgen);
     mgen.end();

@@ -144,6 +144,11 @@ class ClassGenerator {
       methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, className, name, desc);
       return store();
     }
+
+    public JavaValue loadField(JavaValue obj, String class_, String name, String desc) {
+      methodVisitor.visitFieldInsn(Opcodes.GETFIELD, class_, name, desc);
+      return store();
+    }
     
   }
   
