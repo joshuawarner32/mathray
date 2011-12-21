@@ -132,6 +132,11 @@ class ClassGenerator {
       methodVisitor.visitInsn(Opcodes.RETURN);
     }
     
+    public void ret(JavaValue value) {
+      loadD(value);
+      methodVisitor.visitInsn(Opcodes.DRETURN);
+    }
+    
     public void end() {
       methodVisitor.visitMaxs(100, 100);
       methodVisitor.visitEnd();

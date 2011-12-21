@@ -93,6 +93,36 @@ public class JavaCompiler {
     }
   };
   
+  public static final PrologEpilog D1 = new PrologEpilog() {
+    @Override
+    public MethodGenerator begin(ClassGenerator gen, Computation comp) {
+      return gen.method(false, "call", "(D)D");
+    }
+    
+    @Override
+    public JavaValue arg(MethodGenerator mgen, int index) {
+      if(index < 1) {
+        return mgen.arg(index * 2);
+      } else {
+        throw new RuntimeException("shouldn't happen");
+      }
+    }
+    
+    @Override
+    public void ret(MethodGenerator mgen, int index, JavaValue value) {
+      if(index == 0) {
+        mgen.ret(value);
+      } else {
+        throw new RuntimeException("shouldn't happen");
+      }
+    }
+    
+    @Override
+    public void end(MethodGenerator mgen) {
+      // nothing
+    }
+  };
+  
   private static Impl<JavaValue> staticCall1(final MethodGenerator mgen, final String className, final String name) {
     return new Impl<JavaValue>() {
       @Override
