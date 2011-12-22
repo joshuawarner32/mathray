@@ -4,12 +4,12 @@ import mathray.Args;
 import mathray.Call;
 import mathray.Computation;
 import mathray.FunctionRegistrar;
+import mathray.InternalVisitor;
 import mathray.Rational;
 import mathray.Transformer;
 import mathray.Value;
 import mathray.Symbol;
 import mathray.Vector;
-import mathray.eval.Visitor;
 import static mathray.Expressions.*;
 
 public class Splitter {
@@ -47,7 +47,7 @@ public class Splitter {
         }
       }
     });
-    Visitor<Vector<Value>> v = new Visitor<Vector<Value>>() {
+    InternalVisitor<Vector<Value>> v = new InternalVisitor<Vector<Value>>() {
       @Override
       public Vector<Value> symbol(Symbol sym) {
         return bindings.get(args.getIndex(sym));

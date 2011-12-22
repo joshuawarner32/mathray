@@ -3,6 +3,7 @@ package mathray.eval.machine;
 import mathray.Call;
 import mathray.Computation;
 import mathray.Definition;
+import mathray.InternalVisitor;
 import mathray.Rational;
 import mathray.Symbol;
 import mathray.Transformer;
@@ -10,7 +11,6 @@ import mathray.Value;
 import mathray.Vector;
 import mathray.eval.EvalData;
 import mathray.eval.Impl;
-import mathray.eval.Visitor;
 
 import static mathray.Functions.*;
 
@@ -148,7 +148,7 @@ public class MachineEvaluator {
       .build();
   
   public static Vector<Double> eval(final Computation comp, final Vector<Double> params) {
-    final Visitor<Double> v = new Visitor<Double>() {
+    final InternalVisitor<Double> v = new InternalVisitor<Double>() {
       @Override
       public Double call(Call call) {
         return env.defineFunction(call.func).call(call.visitArgs(this));

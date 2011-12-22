@@ -6,6 +6,7 @@ import org.objectweb.asm.Opcodes;
 
 import mathray.Call;
 import mathray.Computation;
+import mathray.InternalVisitor;
 import mathray.Rational;
 import mathray.Symbol;
 import mathray.Vector;
@@ -13,7 +14,6 @@ import mathray.concrete.FunctionTypes;
 import mathray.concrete.VectorD3;
 import mathray.eval.Environment;
 import mathray.eval.Impl;
-import mathray.eval.Visitor;
 import mathray.eval.java.ClassGenerator.MethodGenerator;
 
 import static mathray.Functions.*;
@@ -166,7 +166,7 @@ public class JavaCompiler {
     for(int i = 0; i < args.length; i++) {
       args[i] = ctx.arg(mgen, i);
     }
-    Visitor<JavaValue> v = new Visitor<JavaValue>() {
+    InternalVisitor<JavaValue> v = new InternalVisitor<JavaValue>() {
       
       private Environment<JavaValue> env = 
         Environment.<JavaValue>builder()

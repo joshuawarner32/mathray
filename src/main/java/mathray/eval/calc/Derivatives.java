@@ -3,13 +3,13 @@ package mathray.eval.calc;
 import mathray.Call;
 import mathray.Computation;
 import mathray.FunctionRegistrar;
+import mathray.InternalVisitor;
 import mathray.Rational;
 import mathray.Definition;
 import mathray.Generator;
 import mathray.Value;
 import mathray.Symbol;
 import mathray.Vector;
-import mathray.eval.Visitor;
 
 import static mathray.Expressions.*;
 import static mathray.Functions.*;
@@ -40,7 +40,7 @@ public class Derivatives extends FunctionRegistrar<Computation> {
   }
   
   public Definition transform(Definition def, final Symbol diffVar) {
-    final Visitor<Value> deriver = new Visitor<Value>() {
+    final InternalVisitor<Value> deriver = new InternalVisitor<Value>() {
       @Override
       public Value call(final Call call) {
         final Vector<Value> args = call.visitArgs(this);

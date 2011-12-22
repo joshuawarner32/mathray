@@ -8,15 +8,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import mathray.Call;
 import mathray.Function;
+import mathray.Visitor;
 import mathray.Rational;
 import mathray.Value;
+import mathray.Vector;
 import mathray.Symbol;
 import mathray.eval.Impl;
-import mathray.eval.Visitor;
 import mathray.eval.text.InfixOperator.Associativity;
-import mathray.eval.text.ParseInfo.Builder;
 
 public class ParseInfo {
   
@@ -99,8 +98,8 @@ public class ParseInfo {
     return value.accept(new Visitor<PrecedenceString>() {
 
       @Override
-      public PrecedenceString call(Call call) {
-        return implement(call.func).call(call.visitArgs(this));
+      public PrecedenceString call(Function func, Vector<PrecedenceString> args) {
+        return implement(func).call(args);
       }
 
       @Override

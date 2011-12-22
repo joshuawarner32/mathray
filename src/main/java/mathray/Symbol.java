@@ -1,6 +1,5 @@
 package mathray;
 
-import mathray.eval.Visitor;
 import mathray.eval.text.DefaultPrinter;
 
 public class Symbol extends Value {
@@ -18,7 +17,7 @@ public class Symbol extends Value {
   }
 
   @Override
-  public <T> T accept(Visitor<T> v) {
+  public <T> T accept(InternalVisitor<T> v) {
     return v.symbol(this);
   }
   

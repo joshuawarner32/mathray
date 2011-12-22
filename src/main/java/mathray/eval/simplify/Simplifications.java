@@ -6,13 +6,14 @@ import java.util.List;
 import mathray.Call;
 import mathray.Computation;
 import mathray.Definition;
+import mathray.Function;
+import mathray.Visitor;
 import mathray.Rational;
 import mathray.Expressions;
 import mathray.Transformer;
 import mathray.Value;
 import mathray.Symbol;
 import mathray.Vector;
-import mathray.eval.Visitor;
 
 import static mathray.Functions.*;
 import static mathray.Expressions.*;
@@ -370,28 +371,21 @@ public class Simplifications {
   
   static Visitor<Expr> visitor = new Visitor<Expr>() {
     @Override
-    public Expr call(Call call) {
-      if(call.func == ADD) {
-        Vector<Expr> args = call.visitArgs(this);
+    public Expr call(Function func, Vector<Expr> args) {
+      if(func == ADD) {
         return args.get(0).exprAdd(args.get(1));
-      } else if(call.func == SUB) {
-        Vector<Expr> args = call.visitArgs(this);
+      } else if(func == SUB) {
         return args.get(0).exprAdd(args.get(1).exprNeg());
-      } else if(call.func == MUL) {
-        Vector<Expr> args = call.visitArgs(this);
+      } else if(func == MUL) {
         return args.get(0).exprMul(args.get(1));
-      } else if(call.func == DIV) {
-        Vector<Expr> args = call.visitArgs(this);
+      } else if(func == DIV) {
         return args.get(0).exprMul(args.get(1).exprRecip());
-      } else if(call.func == NEG) {
-        Vector<Expr> args = call.visitArgs(this);
+      } else if(func == NEG) {
         return args.get(0).exprNeg();
-      } else if(call.func == POW) {
-        Vector<Expr> args = call.visitArgs(this);
+      } else if(func == POW) {
         return args.get(0).exprPow(args.get(1));
       } else {
-        Vector<Expr> args = call.visitArgs(this);
-        return new ValueExpr(call.func.call(toValues(args)));
+        return new ValueExpr(func.call(toValues(args)));
       }
     }
     @Override

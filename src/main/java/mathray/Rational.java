@@ -1,6 +1,5 @@
 package mathray;
 
-import mathray.eval.Visitor;
 
 public class Rational extends Value {
   private final long num;
@@ -39,7 +38,7 @@ public class Rational extends Value {
 
 
   @Override
-  public <T> T accept(Visitor<T> v) {
+  public <T> T accept(InternalVisitor<T> v) {
     return v.constant(this);
   }
   

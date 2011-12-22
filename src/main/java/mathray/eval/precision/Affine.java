@@ -7,6 +7,8 @@ import mathray.Args;
 import mathray.Call;
 import mathray.Computation;
 import mathray.Definition;
+import mathray.Function;
+import mathray.Visitor;
 import mathray.Rational;
 import mathray.Transformer;
 import mathray.Value;
@@ -14,7 +16,6 @@ import mathray.Symbol;
 import mathray.Vector;
 import mathray.eval.Environment;
 import mathray.eval.Impl;
-import mathray.eval.Visitor;
 import mathray.eval.precision.AffineContext.AffineTerm;
 
 import static mathray.Functions.*;
@@ -56,16 +57,11 @@ public class Affine {
         return new AffineForm(rat, new HashMap<AffineTerm, Value>());
       }
       @Override
-      public AffineForm call(Call call) {
-        return env.implement(call.func).call(call.visitArgs(this));
+      public AffineForm call(Function func, Vector<AffineForm> args) {
+        return env.implement(func).call(args);
       }
     };
-    return comp.values.transform(new Transformer<Value, AffineForm>() {
-      @Override
-      public AffineForm transform(Value in) {
-        return in.accept(v);
-      }
-    });
+    return comp.accept(v);
   }
 
 }
