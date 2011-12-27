@@ -3,9 +3,9 @@ package mathray.eval.text;
 import java.util.Stack;
 
 import mathray.eval.text.Operator;
+import mathray.util.Vector;
 import mathray.Function;
 import mathray.Value;
-import mathray.Vector;
 
 public class FunctionOperator extends Operator {
 

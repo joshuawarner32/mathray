@@ -1,6 +1,7 @@
 package mathray;
 
 import static mathray.Functions.*;
+import mathray.util.Vector;
 
 public class Expressions {
   

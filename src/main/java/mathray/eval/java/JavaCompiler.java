@@ -6,15 +6,15 @@ import org.objectweb.asm.Opcodes;
 
 import mathray.Call;
 import mathray.Computation;
-import mathray.InternalVisitor;
 import mathray.Rational;
 import mathray.Symbol;
-import mathray.Vector;
 import mathray.concrete.FunctionTypes;
 import mathray.concrete.VectorD3;
 import mathray.eval.Environment;
 import mathray.eval.Impl;
 import mathray.eval.java.ClassGenerator.MethodGenerator;
+import mathray.util.Vector;
+import mathray.visitor.EvaluatingVisitor;
 
 import static mathray.Functions.*;
 
@@ -166,7 +166,7 @@ public class JavaCompiler {
     for(int i = 0; i < args.length; i++) {
       args[i] = ctx.arg(mgen, i);
     }
-    InternalVisitor<JavaValue> v = new InternalVisitor<JavaValue>() {
+    EvaluatingVisitor<JavaValue> v = new EvaluatingVisitor<JavaValue>() {
       
       private Environment<JavaValue> env = 
         Environment.<JavaValue>builder()
@@ -198,8 +198,8 @@ public class JavaCompiler {
           .build();
 
       @Override
-      public JavaValue call(Call call) {
-        return env.implement(call.func).call(call.visitArgs(this));
+      public JavaValue call(Call call, Vector<JavaValue> args) {
+        return env.implement(call.func).call(args);
       }
 
       @Override
@@ -213,8 +213,9 @@ public class JavaCompiler {
       }
 
     };
-    for(int i = 0; i < comp.values.size(); i++) {
-      ctx.ret(mgen, i, comp.values.get(i).accept(v));
+    int i = 0;
+    for(JavaValue val : comp.accept(v)) {
+      ctx.ret(mgen, i++, val);
     }
     ctx.end(mgen);
     mgen.end();

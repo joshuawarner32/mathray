@@ -3,13 +3,13 @@ package mathray.eval.calc;
 import mathray.Call;
 import mathray.Computation;
 import mathray.FunctionRegistrar;
-import mathray.InternalVisitor;
 import mathray.Rational;
 import mathray.Definition;
-import mathray.Generator;
 import mathray.Value;
 import mathray.Symbol;
-import mathray.Vector;
+import mathray.util.Generator;
+import mathray.util.Vector;
+import mathray.visitor.EvaluatingVisitor;
 
 import static mathray.Expressions.*;
 import static mathray.Functions.*;
@@ -36,14 +36,13 @@ public class Derivatives extends FunctionRegistrar<Computation> {
   public static final Derivatives DEFAULT = new Derivatives();
   
   public static Definition derive(Definition def, Symbol diffVar) {
-    return DEFAULT.transform(def, diffVar);
+    return DEFAULT.transform(def.toComputation(), diffVar).get(0);
   }
   
-  public Definition transform(Definition def, final Symbol diffVar) {
-    final InternalVisitor<Value> deriver = new InternalVisitor<Value>() {
+  public Computation transform(Computation comp, final Symbol diffVar) {
+    final EvaluatingVisitor<Value> deriver = new EvaluatingVisitor<Value>() {
       @Override
-      public Value call(final Call call) {
-        final Vector<Value> args = call.visitArgs(this);
+      public Value call(final Call call, final Vector<Value> args) {
         final Computation comp = lookup(call.func);
         final Vector<Value> vals = comp.call(call.args);
         return add(Vector.generate(comp.values.size(), new Generator<Value>() {
@@ -65,6 +64,6 @@ public class Derivatives extends FunctionRegistrar<Computation> {
       }
     };
     
-    return new Definition(def.args, def.value.accept(deriver));
+    return comp.transform(deriver);
   }
 }

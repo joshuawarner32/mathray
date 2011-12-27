@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import mathray.util.Vector;
+
 public class Args implements Iterable<Symbol> {
   
   private Map<Symbol, Integer> syms = new HashMap<Symbol, Integer>();

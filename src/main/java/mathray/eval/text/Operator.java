@@ -1,9 +1,9 @@
 package mathray.eval.text;
 
 import mathray.Value;
-import mathray.Vector;
 import mathray.Function;
 import mathray.eval.Impl;
+import mathray.util.Vector;
 
 import java.util.Stack;
 

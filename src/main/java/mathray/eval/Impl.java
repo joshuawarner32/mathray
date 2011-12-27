@@ -1,6 +1,6 @@
 package mathray.eval;
 
-import mathray.Vector;
+import mathray.util.Vector;
 
 public interface Impl<T> {
   public T call(Vector<T> args);

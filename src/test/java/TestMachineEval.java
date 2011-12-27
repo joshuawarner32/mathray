@@ -9,8 +9,8 @@ import static mathray.Expressions.vector;
 import static org.junit.Assert.assertEquals;
 import mathray.Definition;
 import mathray.Symbol;
-import mathray.Vector;
 import mathray.eval.machine.MachineEvaluator;
+import mathray.util.Vector;
 
 import org.junit.Test;
 

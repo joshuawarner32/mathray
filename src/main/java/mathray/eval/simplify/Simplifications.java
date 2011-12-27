@@ -7,13 +7,13 @@ import mathray.Call;
 import mathray.Computation;
 import mathray.Definition;
 import mathray.Function;
-import mathray.Visitor;
 import mathray.Rational;
 import mathray.Expressions;
-import mathray.Transformer;
+import mathray.util.Transformer;
 import mathray.Value;
 import mathray.Symbol;
-import mathray.Vector;
+import mathray.util.Vector;
+import mathray.visitor.EvaluatingVisitor;
 
 import static mathray.Functions.*;
 import static mathray.Expressions.*;
@@ -369,9 +369,10 @@ public class Simplifications {
     });
   }
   
-  static Visitor<Expr> visitor = new Visitor<Expr>() {
+  static EvaluatingVisitor<Expr> visitor = new EvaluatingVisitor<Expr>() {
     @Override
-    public Expr call(Function func, Vector<Expr> args) {
+    public Expr call(Call call, Vector<Expr> args) {
+      Function func = call.func;
       if(func == ADD) {
         return args.get(0).exprAdd(args.get(1));
       } else if(func == SUB) {

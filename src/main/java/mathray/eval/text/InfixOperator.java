@@ -2,7 +2,7 @@ package mathray.eval.text;
 
 import mathray.Function;
 import mathray.Value;
-import mathray.Vector;
+import mathray.util.Vector;
 
 import java.util.Stack;
 

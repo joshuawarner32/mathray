@@ -1,8 +1,8 @@
 package mathray.eval.text;
 
 import mathray.Function;
-import mathray.Vector;
 import mathray.eval.Impl;
+import mathray.util.Vector;
 
 public class FunctionPrecedenceImplementation implements Impl<PrecedenceString> {
   

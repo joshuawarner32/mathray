@@ -1,6 +1,9 @@
 package mathray;
 
 import mathray.eval.text.DefaultPrinter;
+import mathray.util.Transformer;
+import mathray.util.Vector;
+import mathray.visitor.SimpleVisitor;
 
 public final class Call extends Value {
   
@@ -17,11 +20,11 @@ public final class Call extends Value {
   }
   
   @Override
-  public <T> T accept(InternalVisitor<T> v) {
+  public <T> T accept(SimpleVisitor<T> v) {
     return v.call(this);
   }
   
-  public <T> Vector<T> visitArgs(final InternalVisitor<T> v) {
+  public <T> Vector<T> visitArgs(final SimpleVisitor<T> v) {
     return args.transform(new Transformer<Value, T>() {
       public T transform(Value in) {
         return in.accept(v);

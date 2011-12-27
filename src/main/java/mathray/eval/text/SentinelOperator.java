@@ -3,7 +3,7 @@ package mathray.eval.text;
 import java.util.Stack;
 
 import mathray.Value;
-import mathray.Vector;
+import mathray.util.Vector;
 
 public class SentinelOperator extends Operator {
 

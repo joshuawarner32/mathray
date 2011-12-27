@@ -1,8 +1,8 @@
 package mathray.eval.precision;
 
 import mathray.Value;
-import mathray.Vector;
 import mathray.eval.text.ParseInfo;
+import mathray.util.Vector;
 import static mathray.NamedConstants.*;
 import static mathray.Expressions.*;
 

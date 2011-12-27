@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mathray.Computation;
-import mathray.InternalVisitor;
 import mathray.Value;
 
 public class Usage {

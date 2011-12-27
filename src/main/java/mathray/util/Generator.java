@@ -1,4 +1,4 @@
-package mathray;
+package mathray.util;
 
 public interface Generator<T> {
   

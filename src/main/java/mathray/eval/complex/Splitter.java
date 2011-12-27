@@ -4,12 +4,12 @@ import mathray.Args;
 import mathray.Call;
 import mathray.Computation;
 import mathray.FunctionRegistrar;
-import mathray.InternalVisitor;
 import mathray.Rational;
-import mathray.Transformer;
 import mathray.Value;
 import mathray.Symbol;
-import mathray.Vector;
+import mathray.util.Transformer;
+import mathray.util.Vector;
+import mathray.visitor.EvaluatingVisitor;
 import static mathray.Expressions.*;
 
 public class Splitter {
@@ -47,7 +47,7 @@ public class Splitter {
         }
       }
     });
-    InternalVisitor<Vector<Value>> v = new InternalVisitor<Vector<Value>>() {
+    EvaluatingVisitor<Vector<Value>> v = new EvaluatingVisitor<Vector<Value>>() {
       @Override
       public Vector<Value> symbol(Symbol sym) {
         return bindings.get(args.getIndex(sym));
@@ -59,17 +59,11 @@ public class Splitter {
       }
       
       @Override
-      public Vector<Value> call(Call call) {
+      public Vector<Value> call(Call call, Vector<Vector<Value>> args) {
         return null; // TODO
       }
     };
-    Value[] ret = new Value[newSize * comp.values.size()];
-    i = 0;
-    for(Value val : comp.values) {
-      for(Value v2 : val.accept(v)) {
-        ret[i++] = v2;
-      }
-    }
-    return new Computation(args(nargsarr), vector(ret));
+    Vector<Vector<Value>> ret = comp.accept(v);
+    return new Computation(args(nargsarr), Vector.flatten(ret));
   }
 }

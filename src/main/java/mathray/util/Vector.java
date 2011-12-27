@@ -1,4 +1,4 @@
-package mathray;
+package mathray.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;

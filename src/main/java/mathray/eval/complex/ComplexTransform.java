@@ -5,7 +5,7 @@ import mathray.Computation;
 import mathray.FunctionRegistrar;
 import mathray.Value;
 import mathray.Symbol;
-import mathray.Vector;
+import mathray.util.Vector;
 
 import static mathray.Expressions.*;
 import static mathray.Functions.*;

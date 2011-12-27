@@ -3,6 +3,11 @@ package mathray;
 import java.util.HashMap;
 import java.util.Map;
 
+import mathray.util.Transformer;
+import mathray.util.Vector;
+import mathray.visitor.EvaluatingVisitor;
+import mathray.visitor.SimpleVisitor;
+
 
 public class Computation {
   
@@ -16,7 +21,7 @@ public class Computation {
   }
   
   public Vector<Value> call(final Vector<Value> a) {
-    final InternalVisitor<Value> v = new InternalVisitor<Value>() {
+    final SimpleVisitor<Value> v = new SimpleVisitor<Value>() {
       @Override
       public Value call(Call call) {
         return call.func.call(call.visitArgs(this));
@@ -46,11 +51,11 @@ public class Computation {
     return new Definition(args, values.get(i));
   }
   
-  private static class MyVisitor<T> implements InternalVisitor<T> {
+  private static class MyVisitor<T> implements SimpleVisitor<T> {
     private final Map<Value, T> results = new HashMap<Value, T>();
-    private final Visitor<T> v;
+    private final EvaluatingVisitor<T> v;
     
-    public MyVisitor(Visitor<T> v) {
+    public MyVisitor(EvaluatingVisitor<T> v) {
       this.v = v;
     }
     
@@ -58,7 +63,7 @@ public class Computation {
     public T call(Call call) {
       T ret = results.get(call);
       if(ret == null) {
-        results.put(call, ret = v.call(call.func, call.args.transform(new Transformer<Value, T>() {
+        results.put(call, ret = v.call(call, call.args.transform(new Transformer<Value, T>() {
           @Override
           public T transform(Value in) {
             return in.accept(MyVisitor.this);
@@ -85,9 +90,9 @@ public class Computation {
     }
   }
   
-  public <T> Vector<T> accept(final Visitor<T> v) {
+  public <T> Vector<T> accept(final EvaluatingVisitor<T> v) {
     
-    final InternalVisitor<T> iv = new MyVisitor<T>(v);
+    final SimpleVisitor<T> iv = new MyVisitor<T>(v);
     
     return values.transform(new Transformer<Value, T>() {
       @Override
@@ -95,6 +100,10 @@ public class Computation {
         return in.accept(iv);
       }
     });
+  }
+  
+  public Computation transform(final EvaluatingVisitor<Value> v) {
+    return new Computation(args, accept(v));
   }
 
 }

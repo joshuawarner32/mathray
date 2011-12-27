@@ -1,6 +1,7 @@
 package mathray;
 
 import static mathray.Expressions.*;
+import mathray.util.Vector;
 
 public class Function implements Comparable<Function> {
   

@@ -4,17 +4,17 @@ import static mathray.Expressions.*;
 import static mathray.Functions.*;
 import static mathray.NamedConstants.*;
 import mathray.Args;
+import mathray.Call;
 import mathray.Computation;
 import mathray.Definition;
 import mathray.Expressions;
-import mathray.Function;
-import mathray.Visitor;
 import mathray.Rational;
 import mathray.Value;
 import mathray.Symbol;
-import mathray.Vector;
 import mathray.eval.Environment;
 import mathray.eval.Impl;
+import mathray.util.Vector;
+import mathray.visitor.EvaluatingVisitor;
 
 public class Intervals {
 
@@ -153,11 +153,11 @@ public class Intervals {
       }
     }
     Args nargs = Expressions.args(nargsarr);
-    final Visitor<Interval> v = new Visitor<Interval>() {
+    final EvaluatingVisitor<Interval> v = new EvaluatingVisitor<Interval>() {
 
       @Override
-      public Interval call(Function func, Vector<Interval> args) {
-        return env.implement(func).call(args);
+      public Interval call(Call call, Vector<Interval> args) {
+        return env.implement(call.func).call(args);
       }
       
       @Override

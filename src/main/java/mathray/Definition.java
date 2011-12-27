@@ -2,6 +2,8 @@ package mathray;
 
 import mathray.eval.Impl;
 import mathray.eval.text.DefaultPrinter;
+import mathray.util.Vector;
+import mathray.visitor.SimpleVisitor;
 import static mathray.Expressions.*;
 
 public class Definition implements Impl<Value> {
@@ -16,7 +18,7 @@ public class Definition implements Impl<Value> {
   }
 
   public final Value call(final Vector<Value> a) {
-    final InternalVisitor<Value> v = new InternalVisitor<Value>() {
+    final SimpleVisitor<Value> v = new SimpleVisitor<Value>() {
       @Override
       public Value call(Call call) {
         return call.func.call(call.visitArgs(this));

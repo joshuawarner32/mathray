@@ -2,9 +2,9 @@ import static mathray.Expressions.*;
 import static org.junit.Assert.assertEquals;
 import mathray.Computation;
 import mathray.Symbol;
-import mathray.Vector;
 import mathray.concrete.FunctionTypes;
 import mathray.eval.java.JavaCompiler;
+import mathray.util.Vector;
 
 import org.junit.Test;
 

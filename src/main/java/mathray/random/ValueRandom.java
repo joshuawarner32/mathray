@@ -7,12 +7,12 @@ import java.util.Random;
 import mathray.Args;
 import mathray.Definition;
 import mathray.Function;
-import mathray.Generator;
 import mathray.Rational;
 import mathray.Value;
 import mathray.Symbol;
-import mathray.Vector;
 import mathray.eval.simplify.Simplifications;
+import mathray.util.Generator;
+import mathray.util.Vector;
 
 import static mathray.Expressions.*;
 

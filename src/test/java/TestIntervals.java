@@ -3,9 +3,9 @@ import java.util.Random;
 import mathray.Computation;
 import mathray.Definition;
 import mathray.Symbol;
-import mathray.Vector;
 import mathray.eval.machine.MachineEvaluator;
 import mathray.eval.precision.Intervals;
+import mathray.util.Vector;
 
 import static mathray.Expressions.*;
 import org.junit.Test;

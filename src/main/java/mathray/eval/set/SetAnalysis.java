@@ -4,8 +4,8 @@ import static mathray.Expressions.*;
 import static mathray.Functions.*;
 import mathray.FunctionRegistrar;
 import mathray.Symbol;
-import mathray.Vector;
 import mathray.eval.Impl;
+import mathray.util.Vector;
 
 public class SetAnalysis extends FunctionRegistrar<Impl<MultidimSet>> {
   

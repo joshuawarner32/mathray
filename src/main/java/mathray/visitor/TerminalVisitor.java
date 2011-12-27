@@ -1,4 +1,7 @@
-package mathray;
+package mathray.visitor;
+
+import mathray.Rational;
+import mathray.Symbol;
 
 
 public interface TerminalVisitor<T> {

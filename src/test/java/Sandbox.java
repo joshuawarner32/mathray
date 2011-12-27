@@ -3,9 +3,9 @@ import static org.junit.Assert.*;
 
 import mathray.Definition;
 import mathray.Symbol;
-import mathray.Vector;
 import mathray.eval.precision.Intervals;
 import mathray.eval.simplify.Simplifications;
+import mathray.util.Vector;
 
 import org.junit.Test;
 
