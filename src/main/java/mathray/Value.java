@@ -7,7 +7,7 @@ import mathray.visitor.Visitors;
 
 public abstract class Value implements Comparable<Value> {
   
-  abstract <T> T accept(SimpleVisitor<T> v);
+  public abstract <T> T accept(SimpleVisitor<T> v);
   
   public abstract String toJavaString();
 
