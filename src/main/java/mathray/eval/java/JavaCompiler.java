@@ -1,6 +1,8 @@
 package mathray.eval.java;
 
 
+import java.lang.reflect.Method;
+
 import org.objectweb.asm.Opcodes;
 
 
@@ -20,114 +22,151 @@ import static mathray.Functions.*;
 
 public class JavaCompiler {
   
-  public static final PrologEpilog FUNCTION_D = new PrologEpilog() {
-    
-    @Override
-    public MethodGenerator begin(ClassGenerator gen, Computation comp) {
-      return gen.method(false, "call", "([D[D)V");
-    }
-    
-    @Override
-    public JavaValue arg(MethodGenerator mgen, int index) {
-      return mgen.aload(mgen.arg(0), index);
-    }
-    
-    @Override
-    public void ret(MethodGenerator mgen, int index, JavaValue value) {
-      mgen.astore(mgen.arg(1), index, value);
-    }
-    
-    @Override
-    public void end(MethodGenerator mgen) {
-      mgen.ret();
+  public static final FunctionGenerator FUNCTION_D = new FunctionGenerator() {
+    public Wrapper begin(Computation comp) {
+      final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.D.class.getName().replace('.', '/')});
+      final MethodGenerator mgen = gen.method(false, "call", "([D[D)V");
+      return new Wrapper() {
+        
+        @Override
+        public MethodGenerator getMethodGenerator() {
+          return mgen;
+        }
+        
+        @Override
+        public ClassGenerator getClassGenerator() {
+          return gen;
+        }
+        
+        @Override
+        public JavaValue arg(int index) {
+          return mgen.aload(mgen.arg(0), index);
+        }
+        
+        @Override
+        public void ret(int index, JavaValue value) {
+          mgen.astore(mgen.arg(1), index, value);
+        }
+        
+        @Override
+        public void end() {
+          mgen.ret();
+          mgen.end();
+          gen.end();
+        }
+      };
     }
   };
   
-  public static final PrologEpilog MAYBE_ZERO_ON_RAY3 = new PrologEpilog() {
-    
-    @Override
-    public MethodGenerator begin(ClassGenerator gen, Computation comp) {
-      return gen.method(false, "maybeHasZeroOn", "(L" + VectorD3.class.getName() + ";)Z");
-    }
-    
-    private JavaValue field(MethodGenerator mgen, String name) {
-      return mgen.loadField(mgen.arg(1), VectorD3.class.getName(), name, "D");
-    }
-    
-    @Override
-    public JavaValue arg(MethodGenerator mgen, int index) {
-      switch(index) {
-      case 0:
-        return field(mgen, "x");
-      case 1:
-        return field(mgen, "y");
-      case 2:
-        return field(mgen, "z");
-      case 3:
-        return mgen.binOp(Opcodes.DADD, field(mgen, "x"), field(mgen, "dx"));
-      case 4:
-        return mgen.binOp(Opcodes.DADD, field(mgen, "y"), field(mgen, "dy"));
-      case 5:
-        return mgen.binOp(Opcodes.DADD, field(mgen, "z"), field(mgen, "dz"));
-      default:
-        throw new RuntimeException("shouldn't happen");
-      }
-    }
-    
-    @Override
-    public void ret(MethodGenerator mgen, int index, JavaValue value) {
-      switch(index) {
-      case 0:
-        //mgen.store(value, aVar);
-      case 1:
-        //mgen.store(value, bVar);
-      default:
-        throw new RuntimeException("shouldn't happen");
-      }
-    }
-    
-    @Override
-    public void end(MethodGenerator mgen) {
-      //mgen.binOp(Opcodes.DCMPG, aVar, 0);
-      //mgen.binOp(Opcodes.DCMPG, 0, bVar);
+  public static final FunctionGenerator MAYBE_ZERO_ON_RAY3 = new FunctionGenerator() {
+    final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.ZeroOnRayD3.class.getName().replace('.', '/')});
+    final MethodGenerator mgen = gen.method(false, "maybeHasZeroOn", "(L" + VectorD3.class.getName().replace('.', '/') + ";)Z");
+    public Wrapper begin(Computation comp) {
+      return new Wrapper() {
+        
+        @Override
+        public MethodGenerator getMethodGenerator() {
+          return mgen;
+        }
+        
+        @Override
+        public ClassGenerator getClassGenerator() {
+          return gen;
+        }
+        
+        private JavaValue field(MethodGenerator mgen, String name) {
+          return mgen.loadField(mgen.arg(1), VectorD3.class.getName(), name, "D");
+        }
+        
+        @Override
+        public JavaValue arg(int index) {
+          switch(index) {
+          case 0:
+            return field(mgen, "x");
+          case 1:
+            return field(mgen, "y");
+          case 2:
+            return field(mgen, "z");
+          case 3:
+            return mgen.binOp(Opcodes.DADD, field(mgen, "x"), field(mgen, "dx"));
+          case 4:
+            return mgen.binOp(Opcodes.DADD, field(mgen, "y"), field(mgen, "dy"));
+          case 5:
+            return mgen.binOp(Opcodes.DADD, field(mgen, "z"), field(mgen, "dz"));
+          default:
+            throw new RuntimeException("shouldn't happen");
+          }
+        }
+        
+        @Override
+        public void ret(int index, JavaValue value) {
+          switch(index) {
+          case 0:
+            //mgen.store(value, aVar);
+          case 1:
+            //mgen.store(value, bVar);
+          default:
+            throw new RuntimeException("shouldn't happen");
+          }
+        }
+        
+        @Override
+        public void end() {
+          //mgen.binOp(Opcodes.DCMPG, aVar, 0);
+          //mgen.binOp(Opcodes.DCMPG, 0, bVar);
+          mgen.end();
+          gen.end();
+        }
+      };
     }
   };
   
-  private static PrologEpilog Dn_1(final int n) {
-    return new PrologEpilog() {
-      @Override
-      public MethodGenerator begin(ClassGenerator gen, Computation comp) {
-        return gen.method(false, "call", JavaArityGenerator.getArityDesc(n));
-      }
-      
-      @Override
-      public JavaValue arg(MethodGenerator mgen, int index) {
-        if(index < n) {
-          return mgen.arg(index * 2);
-        } else {
-          throw new RuntimeException("shouldn't happen");
-        }
-      }
-      
-      @Override
-      public void ret(MethodGenerator mgen, int index, JavaValue value) {
-        if(index == 0) {
-          mgen.ret(value);
-        } else {
-          throw new RuntimeException("shouldn't happen");
-        }
-      }
-      
-      @Override
-      public void end(MethodGenerator mgen) {
-        // nothing
+  private static FunctionGenerator Dn_1(final int n) {
+    return new FunctionGenerator() {
+      final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.class.getName().replace('.', '/') + "$D" + n});
+      final MethodGenerator mgen = gen.method(false, "call", JavaArityGenerator.getArityDesc(n));
+      public Wrapper begin(Computation comp) {
+        return new Wrapper() {
+          @Override
+          public MethodGenerator getMethodGenerator() {
+            return mgen;
+          }
+          
+          @Override
+          public ClassGenerator getClassGenerator() {
+            return gen;
+          }
+          
+          @Override
+          public JavaValue arg(int index) {
+            if(index < n) {
+              return mgen.arg(index * 2);
+            } else {
+              throw new RuntimeException("shouldn't happen");
+            }
+          }
+          
+          @Override
+          public void ret(int index, JavaValue value) {
+            if(index == 0) {
+              mgen.ret(value);
+            } else {
+              throw new RuntimeException("shouldn't happen");
+            }
+          }
+          
+          @Override
+          public void end() {
+            // nothing
+          }
+        };
       }
     };
   }
   
-  public static final PrologEpilog D1_1 = Dn_1(1); 
-  public static final PrologEpilog D2_1 = Dn_1(2); 
-  public static final PrologEpilog D3_1 = Dn_1(3); 
+  public static final FunctionGenerator D1_1 = Dn_1(1); 
+  public static final FunctionGenerator D2_1 = Dn_1(2); 
+  public static final FunctionGenerator D3_1 = Dn_1(3); 
   
   private static Impl<JavaValue> staticCall1(final MethodGenerator mgen, final String className, final String name) {
     return new Impl<JavaValue>() {
@@ -158,13 +197,13 @@ public class JavaCompiler {
   
   public static FunctionTypes.D compile(final Computation comp) {
     
-    PrologEpilog ctx = FUNCTION_D;
+    FunctionGenerator ctx = FUNCTION_D;
+    Wrapper wrap = ctx.begin(comp);
     
-    ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.D.class.getName().replace('.', '/')});
-    final MethodGenerator mgen = ctx.begin(gen, comp);
+    final MethodGenerator mgen = wrap.getMethodGenerator();
     final JavaValue[] args = new JavaValue[comp.args.size()];
     for(int i = 0; i < args.length; i++) {
-      args[i] = ctx.arg(mgen, i);
+      args[i] = wrap.arg(i);
     }
     EvaluatingVisitor<JavaValue> v = new EvaluatingVisitor<JavaValue>() {
       
@@ -215,14 +254,13 @@ public class JavaCompiler {
     };
     int i = 0;
     for(JavaValue val : comp.accept(v)) {
-      ctx.ret(mgen, i++, val);
+      wrap.ret(i++, val);
     }
-    ctx.end(mgen);
-    mgen.end();
-    gen.end();
+    wrap.end();
     
     try {
-      return (FunctionTypes.D)gen.load().newInstance();
+      Class<?> cls = wrap.getClassGenerator().load();
+      return (FunctionTypes.D)cls.newInstance();
     } catch (InstantiationException e) {
       throw new RuntimeException(e);
     } catch (IllegalAccessException e) {
