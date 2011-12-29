@@ -1,26 +1,53 @@
 package mathray.eval.java;
 
 
-import java.lang.reflect.Method;
-
 import org.objectweb.asm.Opcodes;
 
 
 import mathray.Call;
 import mathray.Computation;
+import mathray.FunctionRegistrar;
 import mathray.Rational;
 import mathray.Symbol;
+import mathray.Value;
 import mathray.concrete.FunctionTypes;
 import mathray.concrete.VectorD3;
-import mathray.eval.Environment;
-import mathray.eval.Impl;
 import mathray.eval.java.ClassGenerator.MethodGenerator;
 import mathray.util.Vector;
 import mathray.visitor.EvaluatingVisitor;
 
 import static mathray.Functions.*;
 
-public class JavaCompiler {
+public class JavaCompiler extends FunctionRegistrar<JavaImpl> {
+  
+  {
+
+    register(ADD, binOp(Opcodes.DADD));
+    register(SUB, binOp(Opcodes.DSUB));
+    register(MUL, binOp(Opcodes.DMUL));
+    register(DIV, binOp(Opcodes.DDIV));
+    register(SQRT, staticCall1("java/lang/Math", "sqrt"));
+    register(SIN, staticCall1("java/lang/Math", "sin"));
+    register(SINH, staticCall1("java/lang/Math", "sinh"));
+    register(ASIN, staticCall1("java/lang/Math", "asin"));
+    register(COS, staticCall1("java/lang/Math", "cos"));
+    register(COSH, staticCall1("java/lang/Math", "cosh"));
+    register(ACOS, staticCall1("java/lang/Math", "acos"));
+    register(TAN, staticCall1("java/lang/Math", "tan"));
+    register(TANH, staticCall1( "java/lang/Math", "tanh"));
+    register(ATAN, staticCall1("java/lang/Math", "atan"));
+    register(LOG, staticCall1("java/lang/Math", "log"));
+    register(POW, staticCall2("java/lang/Math", "pow"));
+    register(MIN, staticCall2("java/lang/Math", "min"));
+    register(MAX, staticCall2("java/lang/Math", "max"));
+    register(UP, staticCall1("java/lang/Math", "nextUp"));
+    register(DOWN, new JavaImpl() {
+      @Override
+      public JavaValue call(MethodGenerator mgen, Vector<JavaValue> args) {
+        return mgen.unaryOp(Opcodes.DNEG, mgen.callStatic("java/lang/Math", "nextUp", "(D)D", mgen.unaryOp(Opcodes.DNEG, args.get(0))));
+      }
+    });
+  }
   
   public static final FunctionGenerator FUNCTION_D = new FunctionGenerator() {
     public Wrapper begin(Computation comp) {
@@ -168,34 +195,40 @@ public class JavaCompiler {
   public static final FunctionGenerator D2_1 = Dn_1(2); 
   public static final FunctionGenerator D3_1 = Dn_1(3); 
   
-  private static Impl<JavaValue> staticCall1(final MethodGenerator mgen, final String className, final String name) {
-    return new Impl<JavaValue>() {
+  private static JavaImpl staticCall1(final String className, final String name) {
+    return new JavaImpl() {
       @Override
-      public JavaValue call(Vector<JavaValue> args) {
+      public JavaValue call(MethodGenerator mgen, Vector<JavaValue> args) {
         return mgen.callStatic(className, name, JavaArityGenerator.getArityDesc(1), args.get(0));
       }
     };
   }
   
-  private static Impl<JavaValue> staticCall2(final MethodGenerator mgen, final String className, final String name) {
-    return new Impl<JavaValue>() {
+  private static JavaImpl staticCall2(final String className, final String name) {
+    return new JavaImpl() {
       @Override
-      public JavaValue call(Vector<JavaValue> args) {
+      public JavaValue call(MethodGenerator mgen, Vector<JavaValue> args) {
         return mgen.callStatic(className, name, JavaArityGenerator.getArityDesc(2), args.get(0), args.get(1));
       }
     };
   }
   
-  private static Impl<JavaValue> binOp(final MethodGenerator mgen, final int op) {
-    return new Impl<JavaValue>() {
+  private static JavaImpl binOp(final int op) {
+    return new JavaImpl() {
       @Override
-      public JavaValue call(Vector<JavaValue> args) {
+      public JavaValue call(MethodGenerator mgen, Vector<JavaValue> args) {
         return mgen.binOp(op, args.get(0), args.get(1));
       }
     };
   }
   
+  private static final JavaCompiler INSTANCE = new JavaCompiler();
+  
   public static FunctionTypes.D compile(final Computation comp) {
+    return INSTANCE.transform(comp);
+  }
+  
+  public FunctionTypes.D transform(final Computation comp) {
     
     FunctionGenerator ctx = FUNCTION_D;
     Wrapper wrap = ctx.begin(comp);
@@ -205,40 +238,15 @@ public class JavaCompiler {
     for(int i = 0; i < args.length; i++) {
       args[i] = wrap.arg(i);
     }
+    final Usage usage = Usage.generate(comp);
     EvaluatingVisitor<JavaValue> v = new EvaluatingVisitor<JavaValue>() {
-      
-      private Environment<JavaValue> env = 
-        Environment.<JavaValue>builder()
-          .register(ADD, binOp(mgen, Opcodes.DADD))
-          .register(SUB, binOp(mgen, Opcodes.DSUB))
-          .register(MUL, binOp(mgen, Opcodes.DMUL))
-          .register(DIV, binOp(mgen, Opcodes.DDIV))
-          .register(SQRT, staticCall1(mgen, "java/lang/Math", "sqrt"))
-          .register(SIN, staticCall1(mgen, "java/lang/Math", "sin"))
-          .register(SINH, staticCall1(mgen, "java/lang/Math", "sinh"))
-          .register(ASIN, staticCall1(mgen, "java/lang/Math", "asin"))
-          .register(COS, staticCall1(mgen, "java/lang/Math", "cos"))
-          .register(COSH, staticCall1(mgen, "java/lang/Math", "cosh"))
-          .register(ACOS, staticCall1(mgen, "java/lang/Math", "acos"))
-          .register(TAN, staticCall1(mgen, "java/lang/Math", "tan"))
-          .register(TANH, staticCall1(mgen, "java/lang/Math", "tanh"))
-          .register(ATAN, staticCall1(mgen, "java/lang/Math", "atan"))
-          .register(LOG, staticCall1(mgen, "java/lang/Math", "log"))
-          .register(POW, staticCall2(mgen, "java/lang/Math", "pow"))
-          .register(MIN, staticCall2(mgen, "java/lang/Math", "min"))
-          .register(MAX, staticCall2(mgen, "java/lang/Math", "max"))
-          .register(UP, staticCall1(mgen, "java/lang/Math", "nextUp"))
-          .register(DOWN, new Impl<JavaValue>() {
-            @Override
-            public JavaValue call(Vector<JavaValue> args) {
-              return mgen.unaryOp(Opcodes.DNEG, mgen.callStatic("java/lang/Math", "nextUp", "(D)D", mgen.unaryOp(Opcodes.DNEG, args.get(0))));
-            }
-          })
-          .build();
-
       @Override
       public JavaValue call(Call call, Vector<JavaValue> args) {
-        return env.implement(call.func).call(args);
+        JavaValue ret = lookup(call.func).call(mgen, args);
+        if(usage.get(call) > 1) {
+          mgen.store(ret);
+        }
+        return ret;
       }
 
       @Override
@@ -248,7 +256,7 @@ public class JavaCompiler {
 
       @Override
       public JavaValue constant(Rational r) {
-        return mgen.cst(r.toDouble());
+        return mgen.doubleConstant(r.toDouble());
       }
 
     };

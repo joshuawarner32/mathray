@@ -1,9 +1,16 @@
 package mathray.eval.java;
 
-public class JavaValue {
-  final int localVarIndex;
-  
-  public JavaValue(int localVarIndex) {
-    this.localVarIndex = localVarIndex;
-  }
+import mathray.eval.java.ClassGenerator.MethodGenerator;
+
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
+
+public interface JavaValue {
+
+  void load(MethodVisitor m);
+
+  void store(MethodGenerator methodGenerator);
+
+  Type getType();
+
 }

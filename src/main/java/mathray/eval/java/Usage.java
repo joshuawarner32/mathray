@@ -16,12 +16,16 @@ public class Usage {
   
   private Usage() {}
   
-  private void inc(Value value) {
+  public void inc(Value value) {
+    useCounts.put(value, get(value) + 1);
+  }
+  
+  public int get(Value value) {
     Integer count = useCounts.get(value);
     if(count == null) {
-      count = 0;
+      return 0;
     }
-    useCounts.put(value, count + 1);
+    return count;
   }
   
   public static Usage generate(Computation comp) {

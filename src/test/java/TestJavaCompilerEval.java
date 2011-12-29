@@ -2,6 +2,7 @@ import static mathray.Expressions.*;
 import static org.junit.Assert.assertEquals;
 import mathray.Computation;
 import mathray.Symbol;
+import mathray.Value;
 import mathray.concrete.FunctionTypes;
 import mathray.eval.java.JavaCompiler;
 import mathray.util.Vector;
@@ -11,7 +12,9 @@ import org.junit.Test;
 
 
 public class TestJavaCompilerEval {
-
+  
+  private static final Symbol x = sym("x");
+  private static final Symbol y = sym("y");
   
   private static void assertCompileEvaluatesTo(Computation comp, Vector<Double> args, Vector<Double> results) {
     FunctionTypes.D func = JavaCompiler.compile(comp);
@@ -28,20 +31,27 @@ public class TestJavaCompilerEval {
   
   @Test
   public void testJavaCompiler() {
-    Symbol x = sym("x");
-    Symbol y = sym("y");
     
     assertCompileEvaluatesTo(compute(args(x), add(num(2), x)),                   vector(2.0), vector(4.0));
     assertCompileEvaluatesTo(compute(args(x), add(x, add(num(2), num(2)))),      vector(2.0), vector(6.0));
     assertCompileEvaluatesTo(compute(args(x), mul(num(2), add(x, num(2)))),      vector(2.0), vector(8.0));
     assertCompileEvaluatesTo(compute(args(x), add(add(num(2), num(2)), num(2))), vector(2.0), vector(6.0));
     assertCompileEvaluatesTo(compute(args(x), mul(add(num(2), num(2)), x)),      vector(2.0), vector(8.0));
-    assertCompileEvaluatesTo(compute(args(x), sin(x)),                           vector(2.0), vector(0.9092974268256817));
+    assertCompileEvaluatesTo(compute(args(x), sin(x)),                           vector(2.0), vector(Math.sin(2.0)));
     
     assertCompileEvaluatesTo(compute(args(), min(num(1), num(2))),               Vector.<Double>empty(), vector(1.0));
     assertCompileEvaluatesTo(compute(args(), max(num(1), num(2))),               Vector.<Double>empty(), vector(2.0));
-
+  }
+  
+  @Test
+  public void testMultipleReturnValues() {
     assertCompileEvaluatesTo(compute(args(x, y), div(x, y), mul(x, y)),          vector(8.0, 2.0), vector(4.0, 16.0));
+  }
+  
+  @Test
+  public void testMultipleUses() {
+    Value v = sin(x);
+    assertCompileEvaluatesTo(compute(args(x), add(v, v)), vector(2.0), vector(Math.sin(2.0) + Math.sin(2.0)));
   }
   
 }

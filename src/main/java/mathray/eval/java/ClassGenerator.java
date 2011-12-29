@@ -1,6 +1,8 @@
 package mathray.eval.java;
 
 
+import java.util.Stack;
+
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -54,86 +56,96 @@ class ClassGenerator {
   
   public class MethodGenerator {
     
-    private final MethodVisitor methodVisitor;
+    final MethodVisitor methodVisitor;
     private final int[] argIndices;
+    private final Type[] argTypes;
     
-    private int localVarIndex = 0;
+    int localVarIndex = 0;
+    
+    private Stack<JavaValue> stack = new Stack<JavaValue>();
     
     private MethodGenerator(boolean static_, String name, String desc) {
       this.methodVisitor = classVisitor.visitMethod(Opcodes.ACC_PUBLIC | (static_ ? Opcodes.ACC_STATIC : 0), name, desc, null, null);
       methodVisitor.visitCode();
-      Type[] types = Type.getArgumentTypes(desc);
-      argIndices = new int[types.length];
+      argTypes = Type.getArgumentTypes(desc);
+      argIndices = new int[argTypes.length];
       if(!static_) {
         localVarIndex++;
       }
-      for(int i = 0; i < types.length; i++) {
+      for(int i = 0; i < argTypes.length; i++) {
         argIndices[i] = localVarIndex;
-        localVarIndex += types[i].getSize();
+        localVarIndex += argTypes[i].getSize();
       }
     }
     
-    private void loadD(JavaValue value) {
-      methodVisitor.visitVarInsn(Opcodes.DLOAD, value.localVarIndex);
+    private void load(JavaValue... values) {
+      int[] indices = new int[values.length];
+      int min = Integer.MAX_VALUE;
+      int run = 0;
+      for(int i = 0; i < values.length; i++) {
+        indices[i] = stack.indexOf(values[i]);
+        if(indices[i] >= 0 && indices[i] < min) {
+          min = indices[i];
+        }
+        if(i == run + 1 && indices[i] == indices[i - 1] + 1) {
+          run++;
+        }
+      }
+      // TODO: check if we can swap
+      while(stack.size() > min) {
+        store();
+      }
+      for(JavaValue val : values) {
+        stack.push(val);
+        val.load(methodVisitor);
+      }
     }
     
-    private void loadA(JavaValue value) {
-      methodVisitor.visitVarInsn(Opcodes.ALOAD, value.localVarIndex);
-    }
-    
-    private void loadInt(int value) {
-      methodVisitor.visitLdcInsn(value);
-    }
-    
-    private JavaValue store() {
-      int index = localVarIndex;
-      localVarIndex += 2;
-      methodVisitor.visitVarInsn(Opcodes.DSTORE, index);
-      return new JavaValue(index);
+    private void store() {
+      stack.pop().store(this);
     }
     
     public JavaValue binOp(int opcode, JavaValue a, JavaValue b) {
-      loadD(a);
-      loadD(b);
+      load(a, b);
       methodVisitor.visitInsn(opcode);
-      return store();
+      return stack.push(new ComputedValue(-1, a.getType()));
     }
 
     public JavaValue unaryOp(int opcode, JavaValue a) {
-      loadD(a);
+      load(a);
       methodVisitor.visitInsn(opcode);
-      return store();
+      return stack.push(new ComputedValue(-1, a.getType()));
     }
     
     public JavaValue arg(int index) {
-      return new JavaValue(argIndices[index]);
+      return new ComputedValue(argIndices[index], argTypes[index]);
     }
     
     public JavaValue aload(JavaValue array, int index) {
-      loadA(array);
-      loadInt(index);
+      load(array, intConstant(index));
       methodVisitor.visitInsn(Opcodes.DALOAD);
-      return store();
+      return stack.push(new ComputedValue(-1, Type.DOUBLE_TYPE));
     }
     
     public void astore(JavaValue array, int index, JavaValue value) {
-      loadA(array);
-      loadInt(index);
-      loadD(value);
+      load(array, intConstant(index), value);
       methodVisitor.visitInsn(Opcodes.DASTORE);
     }
-
-    public JavaValue cst(double value) {
-      methodVisitor.visitLdcInsn(value);
-      return store();
+    
+    public JavaValue intConstant(int value) {
+      return new IntConstant(value);
     }
     
+    public JavaValue doubleConstant(double value) {
+      return new DoubleConstant(value);
+    }
+
     public void ret() {
       methodVisitor.visitInsn(Opcodes.RETURN);
     }
     
     public void ret(JavaValue value) {
-      loadD(value);
+      load(value);
       methodVisitor.visitInsn(Opcodes.DRETURN);
     }
     
@@ -143,16 +155,23 @@ class ClassGenerator {
     }
 
     public JavaValue callStatic(String className, String name, String desc, JavaValue... args) {
-      for(JavaValue value : args) {
-        loadD(value);
-      }
+      load(args);
       methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, className, name, desc);
-      return store();
+      return stack.push(new ComputedValue(-1, Type.getReturnType(desc)));
     }
 
     public JavaValue loadField(JavaValue obj, String class_, String name, String desc) {
       methodVisitor.visitFieldInsn(Opcodes.GETFIELD, class_, name, desc);
-      return store();
+      return stack.push(new ComputedValue(-1, Type.getType(desc)));
+    }
+
+    public void store(JavaValue value) {
+      int index = stack.indexOf(value);
+      if(index >= 0) {
+        while(stack.size() >= index) {
+          store();
+        }
+      }
     }
     
   }
