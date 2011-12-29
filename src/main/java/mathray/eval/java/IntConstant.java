@@ -49,6 +49,11 @@ class IntConstant implements JavaValue {
   }
   
   @Override
+  public void forceStore(MethodVisitor m, int index) {
+    m.visitVarInsn(Opcodes.ISTORE, index);
+  }
+  
+  @Override
   public Type getType() {
     return Type.INT_TYPE;
   }

@@ -31,6 +31,11 @@ class DoubleConstant implements JavaValue {
   }
   
   @Override
+  public void forceStore(MethodVisitor m, int index) {
+    m.visitVarInsn(Opcodes.DSTORE, index);
+  }
+  
+  @Override
   public Type getType() {
     return Type.DOUBLE_TYPE;
   }

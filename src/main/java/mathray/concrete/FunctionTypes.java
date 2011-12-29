@@ -40,6 +40,21 @@ public class FunctionTypes {
     public boolean maybeHasZeroOn(RayD3 args);
   }
   
+  public interface IntervalOnRayD3 {
+    public void call(RayD3 args, VectorD2 res);
+  }
+  
+  public static ZeroOnRayD3 hasZero(final IntervalOnRayD3 func) {
+    return new ZeroOnRayD3() {
+      @Override
+      public boolean maybeHasZeroOn(RayD3 args) {
+        VectorD2 res = new VectorD2(0, 0);
+        func.call(args, res);
+        return res.x <= 0 && res.y >= 0;
+      }
+    };
+  }
+  
   public interface FillerD {
     public void fill(double[] limits, int[] counts, double[] result);
   }

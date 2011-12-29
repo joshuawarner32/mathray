@@ -54,4 +54,11 @@ public class TestJavaCompilerEval {
     assertCompileEvaluatesTo(compute(args(x), add(v, v)), vector(2.0), vector(Math.sin(2.0) + Math.sin(2.0)));
   }
   
+  @Test
+  public void testSelectSign() {
+    assertCompileEvaluatesTo(compute(args(x), selectSign(x, num(1), num(2), num(3))), vector(-1.0), vector(1.0));
+    assertCompileEvaluatesTo(compute(args(x), selectSign(x, num(1), num(2), num(3))), vector(0.0), vector(2.0));
+    assertCompileEvaluatesTo(compute(args(x), selectSign(x, num(1), num(2), num(3))), vector(1.0), vector(3.0));
+  }
+  
 }

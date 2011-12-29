@@ -173,6 +173,35 @@ class ClassGenerator {
         }
       }
     }
+
+    public ComputedValue allocateLocal(Type type) {
+      int ret = localVarIndex;
+      localVarIndex += type.getSize();
+      return new ComputedValue(ret, type);
+    }
+
+    public void store(JavaValue value, ComputedValue slot) {
+      value.load(methodVisitor);
+      value.forceStore(methodVisitor, slot.localVarIndex);
+    }
+    
+    private class State {
+      private Stack<JavaValue> stack = new Stack<JavaValue>();
+      
+      {
+        for(JavaValue v : MethodGenerator.this.stack) {
+          stack.add(v);
+        }
+      }
+
+      private void restore() {
+        MethodGenerator.this.stack = stack;
+      }
+    }
+    
+    private State save() {
+      return new State();
+    }
     
   }
   

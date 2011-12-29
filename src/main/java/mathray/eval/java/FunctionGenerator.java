@@ -2,8 +2,8 @@ package mathray.eval.java;
 
 import mathray.Computation;
 
-public interface FunctionGenerator {
+public interface FunctionGenerator<T> {
   
-  public Wrapper begin(Computation comp);
+  public Wrapper<T> begin(Computation comp);
 
 }

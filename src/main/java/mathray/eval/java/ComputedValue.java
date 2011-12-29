@@ -8,7 +8,7 @@ import org.objectweb.asm.Type;
 
 public class ComputedValue implements JavaValue {
   
-  private int localVarIndex;
+  int localVarIndex;
   private Type type;
   
   public ComputedValue(int localVarIndex, Type type) {
@@ -27,6 +27,11 @@ public class ComputedValue implements JavaValue {
       m.localVarIndex += 2;
       m.methodVisitor.visitVarInsn(type.getOpcode(Opcodes.ISTORE), localVarIndex);
     }
+  }
+  
+  @Override
+  public void forceStore(MethodVisitor m, int index) {
+    m.visitVarInsn(type.getOpcode(Opcodes.ISTORE), index);
   }
   
   @Override

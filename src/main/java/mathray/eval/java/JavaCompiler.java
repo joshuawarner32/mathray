@@ -2,6 +2,7 @@ package mathray.eval.java;
 
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
 
 import mathray.Call;
@@ -9,10 +10,11 @@ import mathray.Computation;
 import mathray.FunctionRegistrar;
 import mathray.Rational;
 import mathray.Symbol;
-import mathray.Value;
 import mathray.concrete.FunctionTypes;
+import mathray.concrete.FunctionTypes.IntervalOnRayD3;
 import mathray.concrete.VectorD3;
 import mathray.eval.java.ClassGenerator.MethodGenerator;
+import mathray.util.MathEx;
 import mathray.util.Vector;
 import mathray.visitor.EvaluatingVisitor;
 
@@ -47,22 +49,23 @@ public class JavaCompiler extends FunctionRegistrar<JavaImpl> {
         return mgen.unaryOp(Opcodes.DNEG, mgen.callStatic("java/lang/Math", "nextUp", "(D)D", mgen.unaryOp(Opcodes.DNEG, args.get(0))));
       }
     });
+    register(SELECT_SIGN, new JavaImpl() {
+      @Override
+      public JavaValue call(MethodGenerator mgen, Vector<JavaValue> args) {
+        return mgen.callStatic(MathEx.class.getName().replace('.', '/'), "selectSign", "(DDDD)D", args.get(0), args.get(1), args.get(2), args.get(3));
+      }
+    });
   }
   
-  public static final FunctionGenerator FUNCTION_D = new FunctionGenerator() {
-    public Wrapper begin(Computation comp) {
+  public static final FunctionGenerator<FunctionTypes.D> FUNCTION_D = new FunctionGenerator<FunctionTypes.D>() {
+    public Wrapper<FunctionTypes.D> begin(Computation comp) {
       final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.D.class.getName().replace('.', '/')});
       final MethodGenerator mgen = gen.method(false, "call", "([D[D)V");
-      return new Wrapper() {
+      return new Wrapper<FunctionTypes.D>() {
         
         @Override
         public MethodGenerator getMethodGenerator() {
           return mgen;
-        }
-        
-        @Override
-        public ClassGenerator getClassGenerator() {
-          return gen;
         }
         
         @Override
@@ -76,29 +79,27 @@ public class JavaCompiler extends FunctionRegistrar<JavaImpl> {
         }
         
         @Override
-        public void end() {
+        public FunctionTypes.D end() {
           mgen.ret();
           mgen.end();
           gen.end();
+          return load(gen);
         }
       };
     }
   };
   
-  public static final FunctionGenerator MAYBE_ZERO_ON_RAY3 = new FunctionGenerator() {
+  public static final FunctionGenerator<FunctionTypes.ZeroOnRayD3> MAYBE_ZERO_ON_RAY3 = new FunctionGenerator<FunctionTypes.ZeroOnRayD3>() {
     final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.ZeroOnRayD3.class.getName().replace('.', '/')});
     final MethodGenerator mgen = gen.method(false, "maybeHasZeroOn", "(L" + VectorD3.class.getName().replace('.', '/') + ";)Z");
-    public Wrapper begin(Computation comp) {
-      return new Wrapper() {
+    final ComputedValue aVar = mgen.allocateLocal(Type.DOUBLE_TYPE);
+    final ComputedValue bVar = mgen.allocateLocal(Type.DOUBLE_TYPE);
+    public Wrapper<FunctionTypes.ZeroOnRayD3> begin(Computation comp) {
+      return new Wrapper<FunctionTypes.ZeroOnRayD3>() {
         
         @Override
         public MethodGenerator getMethodGenerator() {
           return mgen;
-        }
-        
-        @Override
-        public ClassGenerator getClassGenerator() {
-          return gen;
         }
         
         private JavaValue field(MethodGenerator mgen, String name) {
@@ -129,39 +130,34 @@ public class JavaCompiler extends FunctionRegistrar<JavaImpl> {
         public void ret(int index, JavaValue value) {
           switch(index) {
           case 0:
-            //mgen.store(value, aVar);
+            mgen.store(value, aVar);
           case 1:
-            //mgen.store(value, bVar);
+            mgen.store(value, bVar);
           default:
             throw new RuntimeException("shouldn't happen");
           }
         }
         
         @Override
-        public void end() {
-          //mgen.binOp(Opcodes.DCMPG, aVar, 0);
-          //mgen.binOp(Opcodes.DCMPG, 0, bVar);
+        public FunctionTypes.ZeroOnRayD3 end() {
+          mgen.ret(mgen.callStatic(MathEx.class.getName().replace('.', '/'), "containsZero", "(DD)Z", aVar, bVar));
           mgen.end();
           gen.end();
+          return load(gen);
         }
       };
     }
   };
   
-  private static FunctionGenerator Dn_1(final int n) {
-    return new FunctionGenerator() {
+  private static <T> FunctionGenerator<T> Dn_1(final int n) {
+    return new FunctionGenerator<T>() {
       final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.class.getName().replace('.', '/') + "$D" + n});
       final MethodGenerator mgen = gen.method(false, "call", JavaArityGenerator.getArityDesc(n));
-      public Wrapper begin(Computation comp) {
-        return new Wrapper() {
+      public Wrapper<T> begin(Computation comp) {
+        return new Wrapper<T>() {
           @Override
           public MethodGenerator getMethodGenerator() {
             return mgen;
-          }
-          
-          @Override
-          public ClassGenerator getClassGenerator() {
-            return gen;
           }
           
           @Override
@@ -183,17 +179,19 @@ public class JavaCompiler extends FunctionRegistrar<JavaImpl> {
           }
           
           @Override
-          public void end() {
-            // nothing
+          public T end() {
+            mgen.end();
+            gen.end();
+            return load(gen);
           }
         };
       }
     };
   }
   
-  public static final FunctionGenerator D1_1 = Dn_1(1); 
-  public static final FunctionGenerator D2_1 = Dn_1(2); 
-  public static final FunctionGenerator D3_1 = Dn_1(3); 
+  public static final FunctionGenerator<FunctionTypes.D1_1> D1_1 = Dn_1(1); 
+  public static final FunctionGenerator<FunctionTypes.D2_1> D2_1 = Dn_1(2); 
+  public static final FunctionGenerator<FunctionTypes.D3_1> D3_1 = Dn_1(3); 
   
   private static JavaImpl staticCall1(final String className, final String name) {
     return new JavaImpl() {
@@ -225,13 +223,27 @@ public class JavaCompiler extends FunctionRegistrar<JavaImpl> {
   private static final JavaCompiler INSTANCE = new JavaCompiler();
   
   public static FunctionTypes.D compile(final Computation comp) {
-    return INSTANCE.transform(comp);
+    return INSTANCE.transform(FUNCTION_D, comp);
   }
   
-  public FunctionTypes.D transform(final Computation comp) {
-    
-    FunctionGenerator ctx = FUNCTION_D;
-    Wrapper wrap = ctx.begin(comp);
+  public static <T> T compile(FunctionGenerator<T> ctx, final Computation comp) {
+    return INSTANCE.transform(ctx, comp);
+  }
+  
+  @SuppressWarnings("unchecked")
+  private static <T> T load(ClassGenerator gen) {
+    try {
+      Class<?> cls = gen.load();
+      return (T)cls.newInstance();
+    } catch (InstantiationException e) {
+      throw new RuntimeException(e);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
+  }
+  
+  public <T> T transform(FunctionGenerator<T> ctx, final Computation comp) {
+    Wrapper<T> wrap = ctx.begin(comp);
     
     final MethodGenerator mgen = wrap.getMethodGenerator();
     final JavaValue[] args = new JavaValue[comp.args.size()];
@@ -264,16 +276,7 @@ public class JavaCompiler extends FunctionRegistrar<JavaImpl> {
     for(JavaValue val : comp.accept(v)) {
       wrap.ret(i++, val);
     }
-    wrap.end();
-    
-    try {
-      Class<?> cls = wrap.getClassGenerator().load();
-      return (FunctionTypes.D)cls.newInstance();
-    } catch (InstantiationException e) {
-      throw new RuntimeException(e);
-    } catch (IllegalAccessException e) {
-      throw new RuntimeException(e);
-    }
+    return wrap.end();
   }
 
 }
