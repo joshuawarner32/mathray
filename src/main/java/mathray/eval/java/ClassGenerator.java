@@ -92,11 +92,21 @@ class ClassGenerator {
         }
       }
       // TODO: check if we can swap
-      while(stack.size() > min) {
-        store();
+      if(min == indices[0]) {
+        while(stack.size() > indices[0] + run + 1) {
+          store();
+        }
+        for(int i = 0; i < run + 1; i++) {
+          stack.pop();
+        }
+      } else {
+        while(stack.size() > min) {
+          store();
+        }
+        run = -1;
       }
-      for(JavaValue val : values) {
-        stack.push(val);
+      for(int i = run + 1; i < values.length; i++) {
+        JavaValue val = values[i];
         val.load(methodVisitor);
       }
     }
@@ -146,7 +156,7 @@ class ClassGenerator {
     
     public void ret(JavaValue value) {
       load(value);
-      methodVisitor.visitInsn(Opcodes.DRETURN);
+      methodVisitor.visitInsn(value.getType().getOpcode(Opcodes.IRETURN));
     }
     
     public void end() {
@@ -161,28 +171,19 @@ class ClassGenerator {
     }
 
     public JavaValue loadField(JavaValue obj, String class_, String name, String desc) {
+      load(obj);
       methodVisitor.visitFieldInsn(Opcodes.GETFIELD, class_, name, desc);
       return stack.push(new ComputedValue(-1, Type.getType(desc)));
     }
 
     public void store(JavaValue value) {
-      int index = stack.indexOf(value);
-      if(index >= 0) {
-        while(stack.size() >= index) {
+      int index = stack.lastIndexOf(value);
+      if(value.needsStore() && index >= 0) {
+        while(stack.size() > index) {
           store();
         }
+        
       }
-    }
-
-    public ComputedValue allocateLocal(Type type) {
-      int ret = localVarIndex;
-      localVarIndex += type.getSize();
-      return new ComputedValue(ret, type);
-    }
-
-    public void store(JavaValue value, ComputedValue slot) {
-      value.load(methodVisitor);
-      value.forceStore(methodVisitor, slot.localVarIndex);
     }
     
     private class State {

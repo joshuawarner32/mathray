@@ -2,17 +2,13 @@ package mathray.eval.java;
 
 
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-
-
 import mathray.Call;
 import mathray.Computation;
 import mathray.FunctionRegistrar;
 import mathray.Rational;
 import mathray.Symbol;
 import mathray.concrete.FunctionTypes;
-import mathray.concrete.FunctionTypes.IntervalOnRayD3;
-import mathray.concrete.VectorD3;
+import mathray.concrete.RayD3;
 import mathray.eval.java.ClassGenerator.MethodGenerator;
 import mathray.util.MathEx;
 import mathray.util.Vector;
@@ -90,12 +86,13 @@ public class JavaCompiler extends FunctionRegistrar<JavaImpl> {
   };
   
   public static final FunctionGenerator<FunctionTypes.ZeroOnRayD3> MAYBE_ZERO_ON_RAY3 = new FunctionGenerator<FunctionTypes.ZeroOnRayD3>() {
-    final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.ZeroOnRayD3.class.getName().replace('.', '/')});
-    final MethodGenerator mgen = gen.method(false, "maybeHasZeroOn", "(L" + VectorD3.class.getName().replace('.', '/') + ";)Z");
-    final ComputedValue aVar = mgen.allocateLocal(Type.DOUBLE_TYPE);
-    final ComputedValue bVar = mgen.allocateLocal(Type.DOUBLE_TYPE);
     public Wrapper<FunctionTypes.ZeroOnRayD3> begin(Computation comp) {
+      final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.ZeroOnRayD3.class.getName().replace('.', '/')});
+      final MethodGenerator mgen = gen.method(false, "maybeHasZeroOn", "(L" + RayD3.class.getName().replace('.', '/') + ";)Z");
       return new Wrapper<FunctionTypes.ZeroOnRayD3>() {
+        
+        private JavaValue aVar;
+        private JavaValue bVar;
         
         @Override
         public MethodGenerator getMethodGenerator() {
@@ -103,24 +100,30 @@ public class JavaCompiler extends FunctionRegistrar<JavaImpl> {
         }
         
         private JavaValue field(MethodGenerator mgen, String name) {
-          return mgen.loadField(mgen.arg(1), VectorD3.class.getName(), name, "D");
+          return mgen.loadField(mgen.arg(0), RayD3.class.getName().replace('.', '/'), name, "D");
+        }
+        
+        private JavaValue mm(String name, String method) {
+          JavaValue x = field(mgen, name);
+          JavaValue y = mgen.binOp(Opcodes.DADD, field(mgen, name), field(mgen, "d" + name));
+          return mgen.callStatic("java/lang/Math", method, "(DD)D", x, y);
         }
         
         @Override
         public JavaValue arg(int index) {
           switch(index) {
           case 0:
-            return field(mgen, "x");
+            return mm("x", "min");
           case 1:
-            return field(mgen, "y");
+            return mm("x", "max");
           case 2:
-            return field(mgen, "z");
+            return mm("y", "min");
           case 3:
-            return mgen.binOp(Opcodes.DADD, field(mgen, "x"), field(mgen, "dx"));
+            return mm("y", "max");
           case 4:
-            return mgen.binOp(Opcodes.DADD, field(mgen, "y"), field(mgen, "dy"));
+            return mm("z", "min");
           case 5:
-            return mgen.binOp(Opcodes.DADD, field(mgen, "z"), field(mgen, "dz"));
+            return mm("z", "max");
           default:
             throw new RuntimeException("shouldn't happen");
           }
@@ -130,9 +133,11 @@ public class JavaCompiler extends FunctionRegistrar<JavaImpl> {
         public void ret(int index, JavaValue value) {
           switch(index) {
           case 0:
-            mgen.store(value, aVar);
+            aVar = value;
+            break;
           case 1:
-            mgen.store(value, bVar);
+            bVar = value;
+            break;
           default:
             throw new RuntimeException("shouldn't happen");
           }
@@ -243,13 +248,9 @@ public class JavaCompiler extends FunctionRegistrar<JavaImpl> {
   }
   
   public <T> T transform(FunctionGenerator<T> ctx, final Computation comp) {
-    Wrapper<T> wrap = ctx.begin(comp);
+    final Wrapper<T> wrap = ctx.begin(comp);
     
     final MethodGenerator mgen = wrap.getMethodGenerator();
-    final JavaValue[] args = new JavaValue[comp.args.size()];
-    for(int i = 0; i < args.length; i++) {
-      args[i] = wrap.arg(i);
-    }
     final Usage usage = Usage.generate(comp);
     EvaluatingVisitor<JavaValue> v = new EvaluatingVisitor<JavaValue>() {
       @Override
@@ -263,12 +264,20 @@ public class JavaCompiler extends FunctionRegistrar<JavaImpl> {
 
       @Override
       public JavaValue symbol(Symbol sym) {
-        return args[comp.args.getIndex(sym)];
+        JavaValue ret = wrap.arg(comp.args.getIndex(sym));
+        if(usage.get(sym) > 1) {
+          mgen.store(ret);
+        }
+        return ret;
       }
 
       @Override
       public JavaValue constant(Rational r) {
-        return mgen.doubleConstant(r.toDouble());
+        JavaValue ret = mgen.doubleConstant(r.toDouble());
+        if(usage.get(r) > 1) {
+          mgen.store(ret);
+        }
+        return ret;
       }
 
     };

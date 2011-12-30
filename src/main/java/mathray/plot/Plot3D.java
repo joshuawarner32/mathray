@@ -1,14 +1,8 @@
 package mathray.plot;
 
-
-import java.util.Arrays;
-
 import mathray.concrete.FunctionTypes;
 import mathray.concrete.RayD3;
 import mathray.concrete.VectorD3;
-
-
-
 
 public class Plot3D {
   

@@ -39,4 +39,9 @@ class DoubleConstant implements JavaValue {
   public Type getType() {
     return Type.DOUBLE_TYPE;
   }
+  
+  @Override
+  public boolean needsStore() {
+    return false;
+  }
 }

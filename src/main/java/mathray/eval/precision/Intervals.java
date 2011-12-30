@@ -17,20 +17,38 @@ import mathray.util.Vector;
 import mathray.visitor.EvaluatingVisitor;
 
 public class Intervals {
+  
+  private static boolean useApprox = false;
+  
+  private static Value maybeUp(Value a) {
+    if(useApprox) {
+      return up(a);
+    } else {
+      return a;
+    }
+  }
+  
+  private static Interval approx(Value a, Value b) {
+    if(useApprox) {
+      return Interval.approx(a, b);
+    } else {
+      return Interval.exact(a, b);
+    }
+  }
 
   private static Environment<Interval> env = Environment.<Interval>builder() 
     .register(ADD, new Impl<Interval>() {
       public Interval call(Vector<Interval> args) {
         Interval r = args.get(0);
         Interval o = args.get(1);
-        return new Interval(add(r.a, o.a), add(r.b, o.b));
+        return approx(add(r.a, o.a), add(r.b, o.b));
       }
     })
     .register(SUB, new Impl<Interval>() {
       public Interval call(Vector<Interval> args) {
         Interval r = args.get(0);
         Interval o = args.get(1);
-        return new Interval(sub(r.a, o.b), sub(r.b, o.a));
+        return approx(sub(r.a, o.b), sub(r.b, o.a));
       }
     })
     .register(MUL, new Impl<Interval>() {
@@ -45,7 +63,7 @@ public class Intervals {
         Value m1Max = max(ac, ad);
         Value m2Min = min(bc, bd);
         Value m2Max = max(bc, bd);
-        Interval ret = new Interval(
+        Interval ret = Interval.exact(
             min(m1Min, m2Min),
             max(m1Max, m2Max));
         return ret;
@@ -63,7 +81,7 @@ public class Intervals {
         Value m1Max = max(ac, ad);
         Value m2Min = min(bc, bd);
         Value m2Max = max(bc, bd);
-        Interval ret = new Interval(
+        Interval ret = Interval.exact(
             min(m1Min, m2Min),
             max(m1Max, m2Max));
         return intervalSelectContains(args.get(1), Interval.INFINITE, ret);
@@ -73,16 +91,16 @@ public class Intervals {
       public Interval call(Vector<Interval> args) {
         Interval x = args.get(0);
         Value diff = sub(x.b, x.a);
-        Interval full = new Interval(num(-1), num(1));
+        Interval full = Interval.exact(num(-1), num(1));
         Value va = sin(x.a);
         Value vb = sin(x.b);
         Value da = cos(x.a);
         Value db = cos(x.b);
-        Interval els = new Interval(num(-1), max(va, vb));
-        Interval dbltz = intervalSelectSign(db, new Interval(min(va, vb), num(1)), els, els);
+        Interval els = Interval.exact(num(-1), max(va, vb));
+        Interval dbltz = intervalSelectSign(db, Interval.exact(min(va, vb), num(1)), els, els);
         Value min = min(va, vb);
         Value max = max(va, vb);
-        Interval els2 = new Interval(min, max);
+        Interval els2 = Interval.exact(min, max);
         Interval fallback = intervalSelectSign(mul(da, db), dbltz, els2, els2);
         return intervalSelectSign(sub(diff, TAU), full, full, fallback);
       }
@@ -91,27 +109,53 @@ public class Intervals {
       public Interval call(Vector<Interval> args) {
         Interval a = args.get(0);
         Interval b = args.get(1);
-        return new Interval(max(a.a, b.a), max(a.b, b.b));
+        return Interval.exact(max(a.a, b.a), max(a.b, b.b));
       }
     })
     .register(MAX, new Impl<Interval>() {
       public Interval call(Vector<Interval> args) {
         Interval a = args.get(0);
         Interval b = args.get(1);
-        return new Interval(min(a.a, b.a), min(a.b, b.b));
+        return Interval.exact(min(a.a, b.a), min(a.b, b.b));
       }
     })
     .register(ABS, new Impl<Interval>() {
       public Interval call(Vector<Interval> args) {
         Value aa = abs(args.get(0).a);
         Value ab = abs(args.get(0).b);
-        return new Interval(min(aa, ab), max(aa, ab));
+        return Interval.exact(min(aa, ab), max(aa, ab));
       }
     })
     .register(SQRT, new Impl<Interval>() {
       public Interval call(Vector<Interval> args) {
         Interval r = args.get(0);
-        return new Interval(sqrt(r.a), sqrt(r.b));
+        return approx(sqrt(r.a), sqrt(r.b));
+      }
+    })
+    .register(POW, new Impl<Interval>() {
+      public Interval call(Vector<Interval> args) {
+        Interval a = args.get(0);
+        Interval b = args.get(1);
+        if(b.a.equals(b.b)) {
+          if(b.a instanceof Rational) {
+            Rational r = (Rational)b.a;
+            if(r.isInteger()) {
+              long v = r.num;
+              if(v >= 0) {
+                if(v % 2 == 0) {
+                  Value pa = pow(a.a, r);
+                  Value pb = pow(a.b, r);
+                  Value max = max(pa, pb);
+                  Value min = min(pa, pb);
+                  return intervalSelectContains(a, Interval.exact(num(0), maybeUp(max)), approx(min, max));
+                } else {
+                  return approx(pow(a.a, r), pow(a.b, r));
+                }
+              }
+            }
+          }
+        }
+        throw new RuntimeException("not implemented");
       }
     })
     .build();
@@ -121,11 +165,11 @@ public class Intervals {
   }
   
   private static Interval intervalSelectContains(Interval test, Interval t, Interval f) {
-    return new Interval(selectContains(test, t.a, f.a), selectContains(test, t.b, f.b));
+    return Interval.exact(selectContains(test, t.a, f.a), selectContains(test, t.b, f.b));
   }
   
   private static Interval intervalSelectSign(Value test, Interval n, Interval z, Interval p) {
-    return new Interval(selectSign(test, n.a, z.a, p.a), selectSign(test, n.b, z.b, p.b));
+    return Interval.exact(selectSign(test, n.a, z.a, p.a), selectSign(test, n.b, z.b, p.b));
   }
   
   private Intervals() {}
@@ -144,11 +188,11 @@ public class Intervals {
       if(vars.contains(v)) {
         Symbol vl = new Symbol(v.name + "_a");
         Symbol vh = new Symbol(v.name + "_b");
-        bindings[i++] = new Interval(vl, vh);
+        bindings[i++] = Interval.exact(vl, vh);
         nargsarr[j++] = vl;
         nargsarr[j++] = vh;
       } else {
-        bindings[i++] = new Interval(v, v);
+        bindings[i++] = approx(v, v);
         nargsarr[j++] = v;
       }
     }
@@ -166,12 +210,12 @@ public class Intervals {
         if(index != null) {
           return bindings[index];
         }
-        return new Interval(sym, sym);
+        return approx(sym, sym);
       }
 
       @Override
       public Interval constant(Rational cst) {
-        return new Interval(cst, cst);
+        return Interval.exact(cst, cst);
       }
 
     };

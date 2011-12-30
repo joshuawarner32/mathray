@@ -57,5 +57,10 @@ class IntConstant implements JavaValue {
   public Type getType() {
     return Type.INT_TYPE;
   }
+  
+  @Override
+  public boolean needsStore() {
+    return false;
+  }
 
 }

@@ -38,5 +38,10 @@ public class ComputedValue implements JavaValue {
   public Type getType() {
     return type;
   }
+  
+  @Override
+  public boolean needsStore() {
+    return localVarIndex == -1;
+  }
 
 }

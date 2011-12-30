@@ -4,8 +4,8 @@ import mathray.visitor.SimpleVisitor;
 
 
 public class Rational extends Value {
-  private final long num;
-  private final long denom;
+  public final long num;
+  public final long denom;
   
   
   private Rational(long num, long denom) {

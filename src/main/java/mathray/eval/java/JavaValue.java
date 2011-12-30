@@ -15,4 +15,6 @@ interface JavaValue {
 
   void forceStore(MethodVisitor m, int index);
 
+  boolean needsStore();
+
 }

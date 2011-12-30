@@ -13,9 +13,17 @@ public class Interval {
   
   public static final Interval INFINITE = new Interval(NEG_INF, POS_INF);
   
-  public Interval(Value a, Value b) {
-    this.a = down(a);
-    this.b = up(b);
+  private Interval(Value a, Value b) {
+    this.a = a;
+    this.b = b;
+  }
+  
+  public static Interval exact(Value a, Value b) {
+    return new Interval(a, b);
+  }
+  
+  public static Interval approx(Value a, Value b) {
+    return new Interval(down(a), up(b));
   }
   
   public String toString(ParseInfo parser) {

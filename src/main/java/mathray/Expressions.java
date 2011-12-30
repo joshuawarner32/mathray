@@ -103,6 +103,10 @@ public class Expressions {
     return POW.call(a, b);
   }
   
+  public static Value pow(Value a, long b) {
+    return pow(a, num(b));
+  }
+  
   public static Value neg(Value value) {
     return NEG.call(value);
   }

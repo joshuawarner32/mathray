@@ -13,7 +13,8 @@ import org.junit.runners.Suite.SuiteClasses;
   TestMachineEval.class,
   TestSimplify.class,
   TestComplex.class,
-  TestIntervals.class
+  TestIntervals.class,
+  TestSolve.class
 })
 public class AllTests {
 
