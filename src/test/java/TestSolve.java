@@ -1,6 +1,6 @@
 
 import static mathray.Expressions.*;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 import mathray.Computation;
 import mathray.Symbol;
 import mathray.concrete.FunctionTypes.ZeroOnRayD3;
@@ -26,9 +26,21 @@ public class TestSolve {
     Computation ival = Intervals.intervalize(comp, vars);
     ZeroOnRayD3 f = JavaCompiler.compile(JavaCompiler.MAYBE_ZERO_ON_RAY3, ival);
     double eps = 0.001;
-    Plot3D.solve(f, solution, 100, eps * 2);
+    assertTrue(Plot3D.solve(f, solution, 100, eps * 2));
     
     assertFalse(solution.pointDistanceSq(res) > eps * 2);
+  }
+  
+  public void assertNoSolution(Computation comp, RayD3 solution) {
+    Computation ival = Intervals.intervalize(comp, vars);
+    ZeroOnRayD3 f = JavaCompiler.compile(JavaCompiler.MAYBE_ZERO_ON_RAY3, ival);
+    double eps = 0.001;
+    assertFalse(Plot3D.solve(f, solution, 100, eps * 2));
+  }
+  
+  @Test
+  public void testNoSolution() {
+    assertNoSolution(compute(args(x, y, z), add(x, y, z, num(-1))), new RayD3(0, 10, 0, 0, 1, 0));
   }
   
   @Test
