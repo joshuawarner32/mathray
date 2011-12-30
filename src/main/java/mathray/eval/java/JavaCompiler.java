@@ -4,7 +4,8 @@ package mathray.eval.java;
 import org.objectweb.asm.Opcodes;
 import mathray.Call;
 import mathray.Computation;
-import mathray.FunctionRegistrar;
+import mathray.FunctionSymbolRegistrar;
+import mathray.NamedConstants;
 import mathray.Rational;
 import mathray.Symbol;
 import mathray.concrete.FunctionTypes;
@@ -16,14 +17,19 @@ import mathray.visitor.EvaluatingVisitor;
 
 import static mathray.Functions.*;
 
-public class JavaCompiler extends FunctionRegistrar<JavaImpl> {
+public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
   
   {
+    
+    register(NamedConstants.TAU, 2 * Math.PI);
+    register(NamedConstants.PI, Math.PI);
+    register(NamedConstants.E, Math.E);
 
     register(ADD, binOp(Opcodes.DADD));
     register(SUB, binOp(Opcodes.DSUB));
     register(MUL, binOp(Opcodes.DMUL));
     register(DIV, binOp(Opcodes.DDIV));
+    register(NEG, unaryOp(Opcodes.DNEG));
     register(SQRT, staticCall1("java/lang/Math", "sqrt"));
     register(SIN, staticCall1("java/lang/Math", "sin"));
     register(SINH, staticCall1("java/lang/Math", "sinh"));
@@ -156,9 +162,9 @@ public class JavaCompiler extends FunctionRegistrar<JavaImpl> {
   
   private static <T> FunctionGenerator<T> Dn_1(final int n) {
     return new FunctionGenerator<T>() {
-      final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.class.getName().replace('.', '/') + "$D" + n});
-      final MethodGenerator mgen = gen.method(false, "call", JavaArityGenerator.getArityDesc(n));
       public Wrapper<T> begin(Computation comp) {
+        final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.class.getName().replace('.', '/') + "$D" + n + "_1"});
+        final MethodGenerator mgen = gen.method(false, "call", JavaArityGenerator.getArityDesc(n));
         return new Wrapper<T>() {
           @Override
           public MethodGenerator getMethodGenerator() {
@@ -225,6 +231,15 @@ public class JavaCompiler extends FunctionRegistrar<JavaImpl> {
     };
   }
   
+  private static JavaImpl unaryOp(final int op) {
+    return new JavaImpl() {
+      @Override
+      public JavaValue call(MethodGenerator mgen, Vector<JavaValue> args) {
+        return mgen.unaryOp(op, args.get(0));
+      }
+    };
+  }
+  
   private static final JavaCompiler INSTANCE = new JavaCompiler();
   
   public static FunctionTypes.D compile(final Computation comp) {
@@ -264,7 +279,13 @@ public class JavaCompiler extends FunctionRegistrar<JavaImpl> {
 
       @Override
       public JavaValue symbol(Symbol sym) {
-        JavaValue ret = wrap.arg(comp.args.getIndex(sym));
+        Integer index = comp.args.getIndex(sym);
+        JavaValue ret;
+        if(index != null) {
+          ret = wrap.arg(index);
+        } else {
+          ret = mgen.doubleConstant(lookup(sym));
+        }
         if(usage.get(sym) > 1) {
           mgen.store(ret);
         }
