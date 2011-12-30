@@ -18,15 +18,25 @@ public class AffineForm {
     this.coeffs = new HashMap<AffineContext.AffineTerm, Value>(coeffs);
   }
   
+  AffineForm(Value center) {
+    this.center = center;
+    this.coeffs = new HashMap<AffineContext.AffineTerm, Value>();
+  }
+  
   public AffineForm pairwise(Definition func, Definition id1, Definition id2, AffineForm other) {
-    // TODO: use id1
-    AffineForm ret = new AffineForm(func.call(center, other.center), coeffs);
+    AffineForm ret = new AffineForm(func.call(center, other.center));
     for(Map.Entry<AffineTerm, Value> coeff : other.coeffs.entrySet()) {
-      Value first = ret.coeffs.get(coeff.getKey());
+      Value first = coeffs.get(coeff.getKey());
       if(first == null) {
         ret.coeffs.put(coeff.getKey(), id2.call(coeff.getValue()));
       } else {
         ret.coeffs.put(coeff.getKey(), func.call(first, coeff.getValue()));
+      }
+    }
+    for(Map.Entry<AffineTerm, Value> coeff : coeffs.entrySet()) {
+      Value second = other.coeffs.get(coeff.getKey());
+      if(second == null) {
+        ret.coeffs.put(coeff.getKey(), id1.call(coeff.getValue()));
       }
     }
     return ret;
