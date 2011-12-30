@@ -1,8 +1,9 @@
 
 import static mathray.Expressions.*;
+import static mathray.NamedConstants.*;
 import static org.junit.Assert.assertEquals;
-import mathray.Definition;
 import mathray.Symbol;
+import mathray.Value;
 import mathray.eval.simplify.Simplifications;
 
 import org.junit.Test;
@@ -10,8 +11,8 @@ import org.junit.Test;
 
 public class TestSimplify {
 
-  private static void assertSimplifiesTo(Definition def, Definition result) {
-    assertEquals(result, Simplifications.simplify(def.toComputation()).get(0));
+  private static void assertSimplifiesTo(Value value, Value result) {
+    assertEquals(result, Simplifications.simplify(value));
   }
   
   Symbol x = sym("x");
@@ -20,107 +21,120 @@ public class TestSimplify {
   
   @Test
   public void testIrreducable() {
-    assertSimplifiesTo(def(args(x), x), def(args(x), x));
-    assertSimplifiesTo(def(args(x), num(0)), def(args(x), num(0)));
-    assertSimplifiesTo(def(args(x), num(1, 2)), def(args(x), num(1, 2)));
+    assertSimplifiesTo(x, x);
+    assertSimplifiesTo(num(0), num(0));
+    assertSimplifiesTo(num(1, 2), num(1, 2));
   }
   
   @Test
   public void testRationalReduction() {
-    assertSimplifiesTo(def(args(x), div(num(1), num(2))), def(args(x), num(1, 2)));
+    assertSimplifiesTo(div(num(1), num(2)), num(1, 2));
   }
   
   @Test
   public void testAdditiveIdentity() {
-    assertSimplifiesTo(def(args(x), add(x, num(0))), def(args(x), x));
-    assertSimplifiesTo(def(args(x), add(num(0), x)), def(args(x), x));
-    assertSimplifiesTo(def(args(x), add(num(3), num(0))), def(args(x), num(3)));
-    assertSimplifiesTo(def(args(x), add(num(0), num(3))), def(args(x), num(3)));
+    assertSimplifiesTo(add(x, num(0)), x);
+    assertSimplifiesTo(add(num(0), x), x);
+    assertSimplifiesTo(add(num(3), num(0)), num(3));
+    assertSimplifiesTo(add(num(0), num(3)), num(3));
   }
   
   @Test
   public void testOffsetCompression() {
-    assertSimplifiesTo(def(args(x), add(num(1), num(2), x)), def(args(x), add(num(3), x)));
-    assertSimplifiesTo(def(args(x), add(num(1), x, num(2))), def(args(x), add(num(3), x)));
-    assertSimplifiesTo(def(args(x), add(x, num(1), num(2))), def(args(x), add(num(3), x)));
+    assertSimplifiesTo(add(num(1), num(2), x), add(num(3), x));
+    assertSimplifiesTo(add(num(1), x, num(2)), add(num(3), x));
+    assertSimplifiesTo(add(x, num(1), num(2)), add(num(3), x));
   }
   
   @Test
   public void testMultiplicitiveReassociation() {
-    assertSimplifiesTo(def(args(x), mul(x, mul(y, z))), def(args(x), mul(mul(y, z), x)));
-    assertSimplifiesTo(def(args(x), mul(mul(x, y), z)), def(args(x), mul(mul(x, y), z)));
+    assertSimplifiesTo(mul(x, mul(y, z)), mul(mul(y, z), x));
+    assertSimplifiesTo(mul(mul(x, y), z), mul(mul(x, y), z));
   }
   
   @Test
   public void testAdditiveReassociation() {
-    assertSimplifiesTo(def(args(x), add(x, add(y, z))), def(args(x), add(add(y, z), x)));
-    assertSimplifiesTo(def(args(x), add(add(x, y), z)), def(args(x), add(add(x, y), z)));
+    assertSimplifiesTo(add(x, add(y, z)), add(add(y, z), x));
+    assertSimplifiesTo(add(add(x, y), z), add(add(x, y), z));
   }
   
   @Test
   public void testReorderSubtract() {
-    assertSimplifiesTo(def(args(x), sub(neg(x), num(-3))), def(args(x), sub(num(3), x)));
+    assertSimplifiesTo(sub(neg(x), num(-3)), sub(num(3), x));
   }
   
   @Test
   public void testAddNegative() {
-    //assertSimplifiesTo(def(args(x), add(x, num(-3))), def(args(x), sub(x, num(3))));
-    //assertSimplifiesTo(def(args(x), add(x, neg(y))), def(args(x), sub(x, y)));
-    assertSimplifiesTo(def(args(x), neg(add(num(1, 2), num(-2)))), def(args(x), num(3, 2)));    
+    //assertSimplifiesTo(add(x, num(-3)), sub(x, num(3)));
+    //assertSimplifiesTo(add(x, neg(y)), sub(x, y));
+    assertSimplifiesTo(neg(add(num(1, 2), num(-2))), num(3, 2));    
   }
   
   @Test
   public void testMultiplicitiveIdentity() {
-    assertSimplifiesTo(def(args(x), mul(x, num(1))), def(args(x), x));
-    assertSimplifiesTo(def(args(x), mul(num(1), x)), def(args(x), x));
-    assertSimplifiesTo(def(args(x), mul(num(3), num(1))), def(args(x), num(3)));
-    assertSimplifiesTo(def(args(x), mul(num(1), num(3))), def(args(x), num(3)));
+    assertSimplifiesTo(mul(x, num(1)), x);
+    assertSimplifiesTo(mul(num(1), x), x);
+    assertSimplifiesTo(mul(num(3), num(1)), num(3));
+    assertSimplifiesTo(mul(num(1), num(3)), num(3));
   }
   
   @Test
   public void testMultiplicitiveNulling() {
-    assertSimplifiesTo(def(args(x), mul(x, num(0))), def(args(x), num(0)));
-    assertSimplifiesTo(def(args(x), mul(num(0), x)), def(args(x), num(0)));
-    assertSimplifiesTo(def(args(x), mul(num(3), num(0))), def(args(x), num(0)));
-    assertSimplifiesTo(def(args(x), mul(num(0), num(3))), def(args(x), num(0)));
+    assertSimplifiesTo(mul(x, num(0)), num(0));
+    assertSimplifiesTo(mul(num(0), x), num(0));
+    assertSimplifiesTo(mul(num(3), num(0)), num(0));
+    assertSimplifiesTo(mul(num(0), num(3)), num(0));
   }
   
   @Test
   public void testPowerSpecialCases() {
-    //assertSimplifiesTo(def(args(x), pow(x, num(0))), def(args(x), num(1)));
-    assertSimplifiesTo(def(args(x), pow(x, num(1))), def(args(x), x));
-    assertSimplifiesTo(def(args(x), pow(x, num(-1))), def(args(x), div(num(1), x)));
-    assertSimplifiesTo(def(args(x), pow(x, num(1, 2))), def(args(x), sqrt(x)));
+    //assertSimplifiesTo(pow(x, num(0))), num(1)));
+    assertSimplifiesTo(pow(x, num(1)), x);
+    assertSimplifiesTo(pow(x, num(-1)), div(num(1), x));
+    assertSimplifiesTo(pow(x, num(1, 2)), sqrt(x));
   }
   
   @Test
   public void testCoefficientCompression() {
-    assertSimplifiesTo(def(args(x), mul(num(1), num(2), x)), def(args(x), mul(num(2), x)));
-    assertSimplifiesTo(def(args(x), mul(num(1), x, num(2))), def(args(x), mul(num(2), x)));
-    assertSimplifiesTo(def(args(x), mul(x, num(1), num(2))), def(args(x), mul(num(2), x)));
-    assertSimplifiesTo(def(args(x), sin(mul(num(1), num(-2)))), def(args(x), sin(num(-2))));
+    assertSimplifiesTo(mul(num(1), num(2), x), mul(num(2), x));
+    assertSimplifiesTo(mul(num(1), x, num(2)), mul(num(2), x));
+    assertSimplifiesTo(mul(x, num(1), num(2)), mul(num(2), x));
+    assertSimplifiesTo(sin(mul(num(1), num(-2))), sin(num(-2)));
   }
   
   @Test
   public void testDoubleNegative() {
-    assertSimplifiesTo(def(args(x), sub(num(1), neg(x))), def(args(x), add(num(1), x)));
-    assertSimplifiesTo(def(args(x), sub(x, neg(num(1)))), def(args(x), add(num(1), x)));
-    assertSimplifiesTo(def(args(x), sub(x, num(-1))), def(args(x), add(num(1), x)));
-    assertSimplifiesTo(def(args(x), add(num(1), neg(neg(x)))), def(args(x), add(num(1), x)));
-    assertSimplifiesTo(def(args(x), neg(neg(sin(x)))), def(args(x), sin(x)));
+    assertSimplifiesTo(sub(num(1), neg(x)), add(num(1), x));
+    assertSimplifiesTo(sub(x, neg(num(1))), add(num(1), x));
+    assertSimplifiesTo(sub(x, num(-1)), add(num(1), x));
+    assertSimplifiesTo(add(num(1), neg(neg(x))), add(num(1), x));
+    assertSimplifiesTo(neg(neg(sin(x))), sin(x));
   }
   
   @Test
   public void testRationalReciprocal() {
-    assertSimplifiesTo(def(args(x), div(num(-2), num(1, 4))), def(args(x), num(-8)));
+    assertSimplifiesTo(div(num(-2), num(1, 4)), num(-8));
   }
   
   @Test
   public void testPowers() {
-    assertSimplifiesTo(def(args(x), pow(pow(x, x), num(2))), def(args(x), pow(x, mul(num(2), x))));
-    assertSimplifiesTo(def(args(x), pow(x, pow(x, num(2)))), def(args(x), pow(x, pow(x, num(2)))));
-    assertSimplifiesTo(def(args(x), div(num(1), pow(x, num(2)))), def(args(x), pow(x, num(-2))));
-    assertSimplifiesTo(def(args(x), div(num(1), pow(x, x))), def(args(x), pow(x, neg(x))));
+    assertSimplifiesTo(pow(pow(x, x), num(2)), pow(x, mul(num(2), x)));
+    assertSimplifiesTo(pow(x, pow(x, num(2))), pow(x, pow(x, num(2))));
+    assertSimplifiesTo(div(num(1), pow(x, num(2))), pow(x, num(-2)));
+    assertSimplifiesTo(div(num(1), pow(x, x)), pow(x, neg(x)));
+  }
+  
+  @Test
+  public void testTrigIdentities() {
+    assertSimplifiesTo(sin(num(0)), num(0));
+    assertSimplifiesTo(sin(TAU), num(0));
+    assertSimplifiesTo(sin(mul(num(5), TAU)), num(0));
+    assertSimplifiesTo(sin(mul(TAU, num(5))), num(0));
+
+    assertSimplifiesTo(cos(num(0)), num(1));
+    assertSimplifiesTo(cos(TAU), num(1));
+    assertSimplifiesTo(cos(mul(num(5), TAU)), num(1));
+    assertSimplifiesTo(cos(mul(TAU, num(5))), num(1));
   }
 
 }

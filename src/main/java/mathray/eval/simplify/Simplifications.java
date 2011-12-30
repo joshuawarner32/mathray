@@ -17,8 +17,28 @@ import mathray.visitor.EvaluatingVisitor;
 
 import static mathray.Functions.*;
 import static mathray.Expressions.*;
+import static mathray.NamedConstants.*;
+import static mathray.eval.simplify.Pattern.*;
 
-public class Simplifications {
+public class Simplifications extends PatternRegistry {
+  
+  private static final Simplifications INSTANCE = new Simplifications();
+  
+  {
+    Symbol x = sym("x");
+    
+    register(pattern(args(), sin(num(0)), num(0)));
+    register(pattern(args(), sin(TAU), num(0)));
+    register(pattern(args(x), sin(mul(TAU, x)), num(0), isInteger(x)));
+    register(pattern(args(x), sin(mul(x, TAU)), num(0), isInteger(x)));
+    register(pattern(args(x), sin(neg(x)), neg(sin(x))));
+    
+    register(pattern(args(), cos(num(0)), num(1)));
+    register(pattern(args(), cos(TAU), num(1)));
+    register(pattern(args(x), cos(mul(TAU, x)), num(1), isInteger(x)));
+    register(pattern(args(x), cos(mul(x, TAU)), num(1), isInteger(x)));
+    register(pattern(args(x), cos(neg(x)), cos(x)));
+  }
   
   private static abstract class Expr {
     
@@ -360,16 +380,16 @@ public class Simplifications {
     }
   }
   
-  private static Vector<Value> toValues(Vector<Expr> exprs) {
+  private Vector<Value> toValues(Vector<Expr> exprs) {
     return exprs.transform(new Transformer<Expr, Value>() {
       @Override
       public Value transform(Expr in) {
-        return in.toValue();
+        return process(in.toValue());
       }
     });
   }
   
-  static EvaluatingVisitor<Expr> visitor = new EvaluatingVisitor<Expr>() {
+  private EvaluatingVisitor<Expr> visitor = new EvaluatingVisitor<Expr>() {
     @Override
     public Expr call(Call call, Vector<Expr> args) {
       Function func = call.func;
@@ -386,7 +406,7 @@ public class Simplifications {
       } else if(func == POW) {
         return args.get(0).exprPow(args.get(1));
       } else {
-        return new ValueExpr(func.call(toValues(args)));
+        return new ValueExpr(process(func.call(toValues(args))));
       }
     }
     @Override
@@ -400,19 +420,31 @@ public class Simplifications {
   };
   
   public static Computation simplify(Computation comp) {
+    return INSTANCE.transform(comp);
+  }
+  
+  public static Definition simplify(Definition def) {
+    return INSTANCE.transform(def);
+  }
+  
+  public static Value simplify(Value value) {
+    return INSTANCE.transform(value);
+  }
+  
+  public Computation transform(Computation comp) {
     return new Computation(comp.args, comp.values.transform(new Transformer<Value, Value>() {
       @Override
       public Value transform(Value in) {
-        return simplify(in);
+        return Simplifications.this.transform(in);
       }
     }));
   }
 
-  public static Definition simplify(Definition orig) {
-    return simplify(orig.toComputation()).get(0);
+  public Definition transform(Definition orig) {
+    return transform(orig.toComputation()).get(0);
   }
 
-  public static Value simplify(Value v) {
+  public Value transform(Value v) {
     try {
       return v.accept(visitor).toValue();
     } catch(ArithmeticException e) {
