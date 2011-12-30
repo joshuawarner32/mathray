@@ -16,7 +16,7 @@ public class Main {
     ValueRandom random = new ValueRandom(NamedConstants.ALL, vector(ADD, SUB, MUL, DIV, SIN, SQRT, NEG));
     Symbol x = sym("x");
     Args a = args(x);
-    for(Definition orig : random.randomDefinitions(a, 0.99, 0.5, 0.7)) {
+    for(Definition orig : random.randomDefinitions(a, 0.99, 0.5, 0.2)) {
       System.out.println(orig.toString());
     }
   }

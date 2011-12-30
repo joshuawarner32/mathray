@@ -2,7 +2,6 @@ package mathray.eval.precision;
 
 import mathray.Value;
 import mathray.eval.text.ParseInfo;
-import mathray.util.Vector;
 import static mathray.NamedConstants.*;
 import static mathray.Expressions.*;
 
@@ -28,10 +27,6 @@ public class Interval {
   
   public String toString(ParseInfo parser) {
     return "[" + parser.unparse(a) + ", " + parser.unparse(b) + "]";
-  }
-  
-  public Vector<Value> toVector() {
-    return new Vector<Value>(a, b);
   }
   
 }

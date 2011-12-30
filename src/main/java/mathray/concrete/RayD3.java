@@ -50,4 +50,10 @@ public class RayD3 {
     return new VectorD3(x, y, z);
   }
 
+  public void setP(VectorD3 p) {
+    x = p.x;
+    y = p.y;
+    z = p.z;
+  }
+
 }

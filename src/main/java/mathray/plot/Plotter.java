@@ -15,30 +15,14 @@ import mathray.eval.java.JavaCompiler;
 
 public class Plotter {
   
-  private static double eval(FunctionTypes.D f, double[] in, double[] out, double x) {
-    in[0] = x;
-    f.call(in, out);
-    return out[0];
-  }
-  
-  public static BufferedImage simplePlot(Definition def, double min, double max, int width, int height) {
-    BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-    Graphics2D g = (Graphics2D)ret.getGraphics();
-    FunctionTypes.D f = JavaCompiler.compile(def.toComputation());
-    double[] in = new double[1];
-    double[] out = new double[1];
+  public static void simplePlot(FunctionTypes.D1_1 f, Frame frame, BufferedImage image, Color color) {
+    int width = image.getWidth();
+    int height = image.getHeight();
+    Graphics2D g = (Graphics2D)image.getGraphics();
     double[] vals = new double[width + 1];
-    double minh = Double.POSITIVE_INFINITY;
-    double maxh = Double.NEGATIVE_INFINITY;
     for(int i = 0; i <= width; i++) {
-      double x = (max - min) * i / width + min;
-      double y = vals[i] = eval(f, in, out, x);
-      if(y < minh) {
-        minh = y;
-      }
-      if(y > maxh) {
-        maxh = y;
-      }
+      double x = frame.height() * i / width + frame.xmin;
+      vals[i] = f.call(x);
     }
     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -46,11 +30,10 @@ public class Plotter {
     g.clearRect(0, 0, width, height);
     g.setColor(Color.BLACK);
     for(int i = 0; i < width; i++) {
-      double y1 = (vals[i] - minh) / (maxh - minh) * height;
-      double y2 = (vals[i + 1] - minh) / (maxh - minh) * height;
+      double y1 = (vals[i] - frame.ymin) / (frame.ymax - frame.ymin) * height;
+      double y2 = (vals[i + 1] - frame.ymin) / (frame.ymax - frame.ymin) * height;
       g.draw(new Line2D.Double(i, height - y1, i + 1, height - y2));
     }
-    return ret;
   }
 
   private static void eval2(FunctionTypes.D f, double[] in, double[] out, double xa, double xb) {
@@ -95,31 +78,6 @@ public class Plotter {
       g.fill(new Rectangle2D.Double(xa, height - yb, xb - xa, yb - ya));
     }
     return ret;
-  }
-  
-  public static Graph2D graphPlot(Definition def, double xa, double xb, int points) {
-    FunctionTypes.D f = JavaCompiler.compile(def.toComputation());
-    double[] in = new double[1];
-    double[] out = new double[1];
-    double[] vals = new double[points];
-    double minh = Double.POSITIVE_INFINITY;
-    double maxh = Double.NEGATIVE_INFINITY;
-    for(int i = 0; i < points; i++) {
-      double x = (xb - xa) * i / points + xa;
-      double y = vals[i] = eval(f, in, out, x);
-      if(y < minh) {
-        minh = y;
-      }
-      if(y > maxh) {
-        maxh = y;
-      }
-    }
-    Graph2D.Builder b = Graph2D.builder();
-    for(int i = 0; i < points; i++) {
-      double x = (xb - xa) * i / points + xa;
-      b.point((float)x, (float)vals[i]);
-    }
-    return b.build();
   }
 
 }
