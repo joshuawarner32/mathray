@@ -130,6 +130,7 @@ public class TestSimplify {
     assertSimplifiesTo(sin(TAU), num(0));
     assertSimplifiesTo(sin(mul(num(5), TAU)), num(0));
     assertSimplifiesTo(sin(mul(TAU, num(5))), num(0));
+    assertSimplifiesTo(sin(mul(TAU, x)), sin(mul(TAU, x)));
 
     assertSimplifiesTo(cos(num(0)), num(1));
     assertSimplifiesTo(cos(TAU), num(1));
