@@ -1,6 +1,10 @@
 package mathray;
 
 import static mathray.Functions.*;
+
+import java.util.Arrays;
+import java.util.Iterator;
+
 import mathray.util.Vector;
 
 public class Expressions {
@@ -31,34 +35,16 @@ public class Expressions {
     return new Computation(args, vector(values));
   }
   
-  public static Value fold(Function func, Value... values) {
-    if(values.length < 2) {
-      throw new IllegalArgumentException("length of values must be > 1");
+  public static Value fold(Function func, Iterable<Value> values) {
+    Value ret = null;
+    for(Value v : values) {
+      if(ret == null) {
+        ret = v;
+      } else {
+        ret = func.call(ret, v);
+      }
     }
-    if(func.arity != 2) {
-      throw new IllegalArgumentException("arity of func");
-    }
-    Value res = func.call(vector(values[0], values[1]));
-    for(int i = 2; i < values.length; i++) {
-      res = func.call(vector(res, values[i]));
-    }
-    return res;
-  }
-  
-  public static Value fold(Function func, Vector<Value> values) {
-    if(values.size() < 1) {
-      throw new IllegalArgumentException("length of values must be > 0");
-    } else if(values.size() < 2) {
-      return values.get(0);
-    }
-    if(func.arity != 2) {
-      throw new IllegalArgumentException("arity of func");
-    }
-    Value res = func.call(vector(values.get(0), values.get(1)));
-    for(int i = 2; i < values.size(); i++) {
-      res = func.call(vector(res, values.get(i)));
-    }
-    return res;
+    return ret;
   }
   
   public static Value fold(Function func, Value start, Vector<Value> values) {
@@ -75,28 +61,53 @@ public class Expressions {
     return res;
   }
   
+  public static Iterable<Value> map(final Function func, final Iterable<Value> values) {
+    return new Iterable<Value>() {
+      @Override
+      public Iterator<Value> iterator() {
+        final Iterator<Value> it = values.iterator();
+        return new Iterator<Value>() {
+          @Override
+          public boolean hasNext() {
+            return it.hasNext();
+          }
+          
+          @Override
+          public Value next() {
+            return func.call(it.next());
+          }
+          
+          @Override
+          public void remove() {
+            throw new UnsupportedOperationException();
+          }
+        };
+      }
+    };
+  }
+  
   public static Value add(Value... values) {
+    return fold(ADD, Arrays.asList(values));
+  }
+  
+  public static Value add(Iterable<Value> values) {
     return fold(ADD, values);
   }
   
-  public static Value add(Vector<Value> values) {
-    return fold(ADD, values);
-  }
-  
-  public static Value sub(Value... values) {
-    return fold(SUB, values);
+  public static Value sub(Value a, Value b) {
+    return SUB.call(a, b);
   }
   
   public static Value mul(Value... values) {
-    return fold(MUL, values);
+    return fold(MUL, Arrays.asList(values));
   }
   
   public static Value mul(Vector<Value> values) {
     return fold(MUL, values);
   }
   
-  public static Value div(Value... values) {
-    return fold(DIV, values);
+  public static Value div(Value a, Value b) {
+    return DIV.call(a, b);
   }
   
   public static Value pow(Value a, Value b) {

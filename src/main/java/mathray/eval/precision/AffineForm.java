@@ -3,7 +3,10 @@ package mathray.eval.precision;
 import java.util.HashMap;
 import java.util.Map;
 
+import static mathray.Expressions.*;
+
 import mathray.Definition;
+import mathray.Functions;
 import mathray.Value;
 import mathray.eval.precision.AffineContext.AffineTerm;
 
@@ -48,6 +51,15 @@ public class AffineForm {
       coeff.setValue(def.call(coeff.getValue()));
     }
     return ret;
+  }
+  
+  public Interval toInterval() {
+    Value rad = radius();
+    return Interval.exact(add(center, rad), sub(center, rad));
+  }
+  
+  public Value radius() {
+    return add(map(Functions.ABS, coeffs.values()));
   }
 
 }
