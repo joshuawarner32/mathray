@@ -13,6 +13,8 @@ public class PatternRegistry {
   
   private Map<Function, Set<Pattern>> patterns = new HashMap<Function, Set<Pattern>>();
   
+  private Set<Pattern> general = new HashSet<Pattern>();
+  
   public void register(Pattern pattern) {
     
     if(pattern.match instanceof Call) {
@@ -23,14 +25,14 @@ public class PatternRegistry {
       }
       pats.add(pattern);
     } else {
-      throw new IllegalArgumentException("only calls are (currently) supported in PatternRegistry");
+      general.add(pattern);
     }
     
   }
   
   public Value process(Value value) {
     Value old;
-    do {
+    outer: do {
       old = value;
       if(value instanceof Call) {
         Call c = (Call)value;
@@ -41,12 +43,17 @@ public class PatternRegistry {
           for(Pattern pat : pats) {
             value = pat.process(value);
             if(!value.equals(old)) {
-              continue;
+              continue outer;
             }
           }
         }
       } else {
-        break;
+        for(Pattern pat : general) {
+          value = pat.process(value);
+          if(!value.equals(old)) {
+            continue outer;
+          }
+        }
       }
     } while(!old.equals(value));
     return value;

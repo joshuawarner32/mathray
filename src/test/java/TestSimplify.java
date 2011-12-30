@@ -125,6 +125,11 @@ public class TestSimplify {
   }
   
   @Test
+  public void testPiTau() {
+    assertSimplifiesTo(PI, div(TAU, num(2)));
+  }
+  
+  @Test
   public void testTrigIdentities() {
     assertSimplifiesTo(sin(num(0)), num(0));
     assertSimplifiesTo(sin(TAU), num(0));

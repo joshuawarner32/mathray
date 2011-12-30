@@ -27,6 +27,8 @@ public class Simplifications extends PatternRegistry {
   {
     Symbol x = sym("x");
     
+    register(pattern(args(), PI, div(TAU, num(2))));
+    
     register(pattern(args(), sin(num(0)), num(0)));
     register(pattern(args(), sin(TAU), num(0)));
     register(pattern(args(x), sin(mul(TAU, x)), num(0), isInteger(x)));
@@ -415,7 +417,7 @@ public class Simplifications extends PatternRegistry {
     }
     @Override
     public Expr symbol(Symbol var) {
-      return new ValueExpr(var);
+      return new ValueExpr(process(var));
     }
   };
   
