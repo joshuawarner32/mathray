@@ -68,7 +68,15 @@ public class TestSimplify {
   public void testAddNegative() {
     assertSimplifiesTo(add(x, num(-3)), sub(x, num(3)));
     assertSimplifiesTo(add(x, neg(y)), sub(x, y));
-    assertSimplifiesTo(neg(add(num(1, 2), num(-2))), num(3, 2));    
+    assertSimplifiesTo(neg(add(num(1, 2), num(-2))), num(3, 2));
+    assertSimplifiesTo(add(x, mul(x, num(-3))), sub(x, mul(num(3), x)));
+  }
+  
+  @Test
+  public void testMultiplyReciprocal() {
+    assertSimplifiesTo(mul(x, div(num(1), y)), div(x, y));
+    assertSimplifiesTo(mul(x, div(num(1), y), div(num(1), z)), div(x, mul(y, z)));
+    //assertSimplifiesTo(mul(x, pow(y, num(-1))), div(x, y));
   }
   
   @Test
