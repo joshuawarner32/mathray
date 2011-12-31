@@ -157,5 +157,11 @@ public class TestSimplify {
     Call c = (Call)Simplifications.simplify(add(sin(x), sin(x)));
     assertSame(c.args.get(0), c.args.get(1));
   }
+  
+  @Test
+  public void testSimpleAddFactor() {
+    //assertSimplifiesTo(add(x, x), mul(num(2), x));
+    //assertSimplifiesTo(add(x, x, x), mul(num(3), x));
+  }
 
 }

@@ -17,6 +17,7 @@ import mathray.eval.java.JavaCompiler;
 import mathray.plot.Frame;
 import mathray.plot.Plotter;
 import mathray.random.ValueRandom;
+import mathray.util.Vector;
 import static mathray.Expressions.*;
 import static mathray.Functions.*;
 
@@ -79,7 +80,7 @@ public class Main {
   }
 
   private static void printRandomExpressionForever() {
-    ValueRandom random = new ValueRandom(NamedConstants.ALL, vector(ADD, SUB, MUL, DIV, SIN, SQRT, NEG));
+    ValueRandom random = new ValueRandom(Vector.<Symbol>empty(), vector(ADD, SUB, MUL, DIV, SIN, SQRT, NEG));
     Symbol x = sym("x");
     Args a = args(x);
     for(Definition def : random.randomDefinitions(a, 0.99, 0.5, 0.2)) {
