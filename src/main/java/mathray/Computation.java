@@ -1,12 +1,10 @@
 package mathray;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import mathray.util.Transformer;
 import mathray.util.Vector;
 import mathray.visitor.EvaluatingVisitor;
 import mathray.visitor.SimpleVisitor;
+import mathray.visitor.Visitors;
 
 
 public class Computation {
@@ -51,48 +49,9 @@ public class Computation {
     return new Definition(args, values.get(i));
   }
   
-  private static class MyVisitor<T> implements SimpleVisitor<T> {
-    private final Map<Value, T> results = new HashMap<Value, T>();
-    private final EvaluatingVisitor<T> v;
-    
-    public MyVisitor(EvaluatingVisitor<T> v) {
-      this.v = v;
-    }
-    
-    @Override
-    public T call(Call call) {
-      T ret = results.get(call);
-      if(ret == null) {
-        results.put(call, ret = v.call(call, call.args.transform(new Transformer<Value, T>() {
-          @Override
-          public T transform(Value in) {
-            return in.accept(MyVisitor.this);
-          }
-        })));
-      }
-      return ret;
-    }
-    @Override
-    public T constant(Rational rat) {
-      T ret = results.get(rat);
-      if(ret == null) {
-        results.put(rat, ret = v.constant(rat));
-      }
-      return ret;
-    }
-    @Override
-    public T symbol(Symbol sym) {
-      T ret = results.get(sym);
-      if(ret == null) {
-        results.put(sym, ret = v.symbol(sym));
-      }
-      return ret;
-    }
-  }
-  
   public <T> Vector<T> accept(final EvaluatingVisitor<T> v) {
     
-    final SimpleVisitor<T> iv = new MyVisitor<T>(v);
+    final SimpleVisitor<T> iv = Visitors.cache(v);
     
     return values.transform(new Transformer<Value, T>() {
       @Override
