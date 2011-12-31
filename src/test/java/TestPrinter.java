@@ -2,7 +2,6 @@ import static mathray.Expressions.*;
 import static org.junit.Assert.*;
 import mathray.NamedConstants;
 import mathray.Symbol;
-import mathray.Value;
 import org.junit.Test;
 
 public class TestPrinter {
@@ -10,7 +9,7 @@ public class TestPrinter {
   Symbol x = sym("x");
   Symbol y = sym("y");
   
-  private static void assertPrintsTo(Value val, String str) {
+  private static void assertPrintsTo(Object val, String str) {
     assertEquals(str, val.toString());
   }
   
@@ -61,6 +60,12 @@ public class TestPrinter {
   public void testFunctions() {
     assertPrintsTo(sin(x), "sin(x)");
     assertPrintsTo(max(x, y), "max(x, y)");
+  }
+  
+  @Test
+  public void testDefinition() {
+    assertPrintsTo(def(args(x), sin(x)), "f(x) = sin(x)");
+    assertPrintsTo(def(args(x, y), max(x, y)), "f(x, y) = max(x, y)");
   }
 
 }

@@ -1,13 +1,10 @@
 
 import static mathray.Expressions.*;
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 import mathray.Args;
 import mathray.Definition;
 import mathray.Symbol;
-import mathray.eval.complex.ComplexTransform;
 import mathray.util.Vector;
 
 public class TestComplex {
