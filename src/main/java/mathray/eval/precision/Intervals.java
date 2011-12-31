@@ -96,13 +96,12 @@ public class Intervals {
         Value vb = sin(x.b);
         Value da = cos(x.a);
         Value db = cos(x.b);
-        Interval els = Interval.exact(num(-1), max(va, vb));
-        Interval dbltz = intervalSelectSign(db, Interval.exact(min(va, vb), num(1)), els, els);
+        Interval dbltz = intervalSelectSign(db, Interval.exact(min(va, vb), num(1)), Interval.exact(num(-1), max(va, vb)));
         Value min = min(va, vb);
         Value max = max(va, vb);
-        Interval els2 = Interval.exact(min, max);
-        Interval fallback = intervalSelectSign(mul(da, db), dbltz, els2, els2);
-        return intervalSelectSign(sub(diff, TAU), full, full, fallback);
+        Interval els = intervalSelectSign(sub(diff, div(TAU, num(2))), Interval.exact(min, max), full);
+        Interval fallback = intervalSelectSign(mul(da, db), dbltz, els);
+        return intervalSelectSign(sub(diff, TAU), fallback, full);
       }
     })
     .register(MIN, new Impl<Interval>() {
@@ -161,15 +160,15 @@ public class Intervals {
     .build();
   
   private static Value selectContains(Interval test, Value t, Value f) {
-    return selectSign(mul(test.a, test.b), t, t, f);
+    return selectSign(neg(mul(test.a, test.b)), f, t);
   }
   
   private static Interval intervalSelectContains(Interval test, Interval t, Interval f) {
     return Interval.exact(selectContains(test, t.a, f.a), selectContains(test, t.b, f.b));
   }
   
-  private static Interval intervalSelectSign(Value test, Interval n, Interval z, Interval p) {
-    return Interval.exact(selectSign(test, n.a, z.a, p.a), selectSign(test, n.b, z.b, p.b));
+  private static Interval intervalSelectSign(Value test, Interval n, Interval zp) {
+    return Interval.exact(selectSign(test, n.a, zp.a), selectSign(test, n.b, zp.b));
   }
   
   private Intervals() {}

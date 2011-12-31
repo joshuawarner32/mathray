@@ -4,9 +4,11 @@ import mathray.Call;
 import mathray.Computation;
 import mathray.Definition;
 import mathray.FunctionSymbolRegistrar;
+import mathray.NamedConstants;
 import mathray.Rational;
 import mathray.Symbol;
 import mathray.eval.Impl;
+import mathray.util.MathEx;
 import mathray.util.Vector;
 import mathray.visitor.EvaluatingVisitor;
 
@@ -124,14 +126,7 @@ public class MachineEvaluator extends FunctionSymbolRegistrar<Impl<Double>, Doub
     });
     register(SELECT_SIGN, new Impl<Double>() {
       public Double call(Vector<Double> args) {
-        double test = args.get(0);
-        if(test < 0) {
-          return args.get(1);
-        } else if(test > 0) {
-          return args.get(3);
-        } else {
-          return args.get(2);
-        }
+        return MathEx.selectSign(args.get(0), args.get(1), args.get(2));
       }
     });
     register(UP, new Impl<Double>() {
@@ -144,6 +139,12 @@ public class MachineEvaluator extends FunctionSymbolRegistrar<Impl<Double>, Doub
         return -Math.nextUp(-args.get(0));
       }
     });
+    
+    register(NamedConstants.TAU, MathEx.TAU);
+    register(NamedConstants.PI, Math.PI);
+    register(NamedConstants.E, Math.E);
+    register(NamedConstants.NEG_INF, Double.NEGATIVE_INFINITY);
+    register(NamedConstants.POS_INF, Double.POSITIVE_INFINITY);
   }
     
   public static Vector<Double> eval(final Computation comp, final Vector<Double> params) {

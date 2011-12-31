@@ -5,6 +5,7 @@ import mathray.Definition;
 import mathray.Symbol;
 import mathray.eval.machine.MachineEvaluator;
 import mathray.eval.precision.Intervals;
+import mathray.util.MathEx;
 import mathray.util.Vector;
 
 import static mathray.Expressions.*;
@@ -22,7 +23,7 @@ public class TestIntervals {
     for(int i = 0; i < 100; i++) {
       double x = random.nextDouble() * (max - min) + min;
       double res = MachineEvaluator.eval(def, vector(x));
-      assertTrue(res >= min && res <= max);
+      assertTrue(res >= outMin && res <= outMax);
     }
   }
   
@@ -38,8 +39,20 @@ public class TestIntervals {
 
   @Test
   public void testFuzz() {
-    // TODO: teach MachineEvaluator about tau, etc
     //fuzzFunction(def(args(x), sin(x)));
+  }
+  
+  private static void assertRange(Definition def, double a, double b, double oa, double ob) {
+    Computation inter = Intervals.intervalize(def.toComputation(), vector(x));
+    Vector<Double> res = MachineEvaluator.eval(inter, vector(a, b));
+    assertEquals(vector(oa, ob), res);
+  }
+  
+  @Test
+  public void testSin() {
+    assertRange(def(args(x), sin(x)), 0, MathEx.TAU, -1, 1);
+    assertRange(def(args(x), sin(x)), -10, 10, -1, 1);
+    assertRange(def(args(x), sin(x)), 0.5, MathEx.TAU - 0.5, -1, 1);
   }
   
 }

@@ -134,8 +134,8 @@ public class Expressions {
     return ABS.call(value);
   }
   
-  public static Value selectSign(Value test, Value negative, Value zero, Value positive) {
-    return SELECT_SIGN.call(test, negative, zero, positive);
+  public static Value selectSign(Value test, Value negative, Value zeroOrPositive) {
+    return SELECT_SIGN.call(test, negative, zeroOrPositive);
   }
   
   public static Value sin(Value value) {

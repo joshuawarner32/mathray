@@ -21,7 +21,7 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
   
   {
     
-    register(NamedConstants.TAU, 2 * Math.PI);
+    register(NamedConstants.TAU, MathEx.TAU);
     register(NamedConstants.PI, Math.PI);
     register(NamedConstants.E, Math.E);
 
@@ -54,7 +54,7 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
     register(SELECT_SIGN, new JavaImpl() {
       @Override
       public JavaValue call(MethodGenerator mgen, Vector<JavaValue> args) {
-        return mgen.callStatic(MathEx.class.getName().replace('.', '/'), "selectSign", "(DDDD)D", args.get(0), args.get(1), args.get(2), args.get(3));
+        return mgen.callStatic(MathEx.class.getName().replace('.', '/'), "selectSign", "(DDD)D", args.get(0), args.get(1), args.get(2));
       }
     });
   }

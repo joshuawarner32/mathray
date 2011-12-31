@@ -4,13 +4,13 @@ public class MathEx {
   
   private MathEx() {}
   
-  public static double selectSign(double value, double neg, double zero, double pos) {
+  public static final double TAU = 2 * Math.PI;
+  
+  public static double selectSign(double value, double neg, double zeroOrPos) {
     if(value < 0) {
       return neg;
-    } else if(value > 0) {
-      return pos;
     } else {
-      return zero;
+      return zeroOrPos;
     }
   }
   
