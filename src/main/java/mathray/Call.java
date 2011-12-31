@@ -10,6 +10,8 @@ public final class Call extends Value {
   public final Function func;
   public final Vector<Value> args;
   
+  private int hash = 0;
+  
   public Call(Function func, Vector<Value> args) {
     if(args.size() != func.arity) {
       throw new IllegalArgumentException("function arity does not match");
@@ -34,7 +36,10 @@ public final class Call extends Value {
   
   @Override
   public int hashCode() {
-    return func.hashCode() + args.hashCode();
+    if(hash == 0) {
+      hash = func.hashCode() + args.hashCode();
+    }
+    return hash;
   }
   
   @Override
