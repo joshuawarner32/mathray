@@ -1,7 +1,8 @@
 
 import static mathray.Expressions.*;
 import static mathray.NamedConstants.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+import mathray.Call;
 import mathray.Symbol;
 import mathray.Value;
 import mathray.eval.simplify.Simplifications;
@@ -141,6 +142,12 @@ public class TestSimplify {
     assertSimplifiesTo(cos(TAU), num(1));
     assertSimplifiesTo(cos(mul(num(5), TAU)), num(1));
     assertSimplifiesTo(cos(mul(TAU, num(5))), num(1));
+  }
+  
+  @Test
+  public void testCommonSubexpression() {
+    Call c = (Call)Simplifications.simplify(add(sin(x), sin(x)));
+    assertSame(c.args.get(0), c.args.get(1));
   }
 
 }

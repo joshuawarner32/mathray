@@ -12,7 +12,7 @@ public abstract class Value implements Comparable<Value> {
   public abstract String toJavaString();
 
   public <T> T accept(EvaluatingVisitor<T> v) {
-    return accept(Visitors.cache(Visitors.simple(v)));
+    return accept(Visitors.cache(v));
   }
   
 }

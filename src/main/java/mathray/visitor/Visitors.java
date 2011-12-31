@@ -12,7 +12,7 @@ public class Visitors {
   
   private Visitors() {}
   
-  public static <T> SimpleVisitor<T> cache(final SimpleVisitor<T> v) {
+  public static <T> SimpleVisitor<T> cache(final EvaluatingVisitor<T> v) {
     return new SimpleVisitor<T>() {
       private final Map<Value, T> results = new HashMap<Value, T>();
 
@@ -38,7 +38,7 @@ public class Visitors {
       public T call(Call call) {
         T ret = results.get(call);
         if(ret == null) {
-          results.put(call, ret = v.call(call));
+          results.put(call, ret = v.call(call, call.visitArgs(this)));
         }
         return ret;
       }
@@ -46,25 +46,4 @@ public class Visitors {
     };
   }
   
-  public static <T> SimpleVisitor<T> simple(final EvaluatingVisitor<T> v) {
-    return new SimpleVisitor<T>() {
-
-      @Override
-      public T symbol(Symbol sym) {
-        return v.symbol(sym);
-      }
-
-      @Override
-      public T constant(Rational rat) {
-        return v.constant(rat);
-      }
-
-      @Override
-      public T call(Call call) {
-        return v.call(call, call.visitArgs(this));
-      }
-      
-    };
-  }
-
 }

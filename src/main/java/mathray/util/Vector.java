@@ -89,6 +89,16 @@ public final class Vector<T> implements Iterable<T> {
     return obj instanceof Vector &&
         Arrays.equals(items, ((Vector<T>)obj).items);
   }
+  
+  @Override
+  public int hashCode() {
+    int hash = 0xe56de916;
+    for(T t : items) {
+      hash += t.hashCode();
+      hash *= 17;
+    }
+    return hash;
+  }
 
   @SuppressWarnings("unchecked")
   public static <T> Vector<T> generate(int count, Generator<T> generator) {
