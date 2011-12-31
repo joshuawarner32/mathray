@@ -76,7 +76,7 @@ public class TestSimplify {
   public void testMultiplyReciprocal() {
     assertSimplifiesTo(mul(x, div(num(1), y)), div(x, y));
     assertSimplifiesTo(mul(x, div(num(1), y), div(num(1), z)), div(x, mul(y, z)));
-    //assertSimplifiesTo(mul(x, pow(y, num(-1))), div(x, y));
+    assertSimplifiesTo(mul(x, pow(y, num(-1))), div(x, y));
   }
   
   @Test

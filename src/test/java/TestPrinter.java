@@ -56,5 +56,11 @@ public class TestPrinter {
     assertPrintsTo(neg(x), "-x");
     assertPrintsTo(neg(num(1)), "-1");
   }
+  
+  @Test
+  public void testFunctions() {
+    assertPrintsTo(sin(x), "sin(x)");
+    assertPrintsTo(max(x, y), "max(x, y)");
+  }
 
 }
