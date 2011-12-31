@@ -55,4 +55,12 @@ public class TestIntervals {
     assertRange(def(args(x), sin(x)), 0.5, MathEx.TAU - 0.5, -1, 1);
   }
   
+  @Test
+  public void testAbs() {
+    assertRange(def(args(x), abs(x)), -2, -1, 1, 2);
+    assertRange(def(args(x), abs(x)), -2, 1, 0, 2);
+    assertRange(def(args(x), abs(x)), -1, 2, 0, 2);
+    assertRange(def(args(x), abs(x)), 1, 2, 1, 2);
+  }
+  
 }

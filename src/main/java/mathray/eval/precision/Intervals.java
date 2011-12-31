@@ -122,7 +122,8 @@ public class Intervals {
       public Interval call(Vector<Interval> args) {
         Value aa = abs(args.get(0).a);
         Value ab = abs(args.get(0).b);
-        return Interval.exact(min(aa, ab), max(aa, ab));
+        Value max = max(aa, ab);
+        return intervalSelectContains(args.get(0), Interval.exact(num(0), max), Interval.exact(min(aa, ab), max));
       }
     })
     .register(SQRT, new Impl<Interval>() {
