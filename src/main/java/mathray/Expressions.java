@@ -146,6 +146,10 @@ public class Expressions {
     return SINH.call(value);
   }
   
+  public static Value asin(Value value) {
+    return ASIN.call(value);
+  }
+  
   public static Value cos(Value value) {
     return COS.call(value);
   }
@@ -154,8 +158,24 @@ public class Expressions {
     return COSH.call(value);
   }
   
+  public Value acos(Value value) {
+    return ACOS.call(value);
+  }
+  
   public static Value tan(Value value) {
     return TAN.call(value);
+  }
+  
+  public static Value tanh(Value value) {
+    return TANH.call(value);
+  }
+  
+  public static Value atan(Value value) {
+    return ATAN.call(value);
+  }
+  
+  public static Value atan2(Value a, Value b) {
+    return ATAN2.call(a, b);
   }
   
   public static Value sqrt(Value value) {
