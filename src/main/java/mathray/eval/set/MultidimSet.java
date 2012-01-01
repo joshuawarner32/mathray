@@ -1,12 +1,12 @@
 package mathray.eval.set;
 
-import mathray.Computation;
+import mathray.Multidef;
 import mathray.Function;
 
 public interface MultidimSet {
 
   MultidimSet apply(Function func);
 
-  MultidimSet split(Computation comp);
+  MultidimSet split(Multidef def);
 
 }

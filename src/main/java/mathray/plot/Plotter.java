@@ -45,7 +45,7 @@ public class Plotter {
   public static BufferedImage intervalPlot(Definition def, double min, double max, int intervals, int width, int height) {
     BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = (Graphics2D)ret.getGraphics();
-    FunctionTypes.D f = JavaCompiler.compile(def.toComputation());
+    FunctionTypes.D f = JavaCompiler.compile(def.toMultidef());
     double[] in = new double[2];
     double[] out = new double[2];
     double[] vals = new double[intervals * 2];

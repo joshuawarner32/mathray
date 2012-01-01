@@ -1,7 +1,7 @@
 package mathray.eval.machine;
 
 import mathray.Call;
-import mathray.Computation;
+import mathray.Multidef;
 import mathray.Definition;
 import mathray.FunctionSymbolRegistrar;
 import mathray.NamedConstants;
@@ -147,11 +147,11 @@ public class MachineEvaluator extends FunctionSymbolRegistrar<Impl<Double>, Doub
     register(NamedConstants.POS_INF, Double.POSITIVE_INFINITY);
   }
     
-  public static Vector<Double> eval(final Computation comp, final Vector<Double> params) {
-    return INSTANCE.transform(comp, params);
+  public static Vector<Double> eval(final Multidef def, final Vector<Double> params) {
+    return INSTANCE.transform(def, params);
   }
   
-  public Vector<Double> transform(final Computation comp, final Vector<Double> params) {
+  public Vector<Double> transform(final Multidef def, final Vector<Double> params) {
     final EvaluatingVisitor<Double> v = new EvaluatingVisitor<Double>() {
       @Override
       public Double call(Call call, Vector<Double> args) {
@@ -160,7 +160,7 @@ public class MachineEvaluator extends FunctionSymbolRegistrar<Impl<Double>, Doub
 
       @Override
       public Double symbol(Symbol sym) {
-        Integer ret = comp.args.getIndex(sym);
+        Integer ret = def.args.getIndex(sym);
         if(ret != null) {
           return params.get(ret);
         } else {
@@ -173,11 +173,11 @@ public class MachineEvaluator extends FunctionSymbolRegistrar<Impl<Double>, Doub
         return cst.toDouble();
       }
     };
-    return comp.accept(v);
+    return def.accept(v);
   }
 
   public static double eval(Definition def, Vector<Double> args) {
-    return eval(def.toComputation(), args).get(0);
+    return eval(def.toMultidef(), args).get(0);
   }
 
 }

@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import mathray.Call;
-import mathray.Computation;
+import mathray.Multidef;
 import mathray.Definition;
 import mathray.Function;
 import mathray.Rational;
@@ -431,8 +431,8 @@ public class Simplifications extends PatternRegistry {
     }
   };
   
-  public static Computation simplify(Computation comp) {
-    return INSTANCE.transform(comp);
+  public static Multidef simplify(Multidef def) {
+    return INSTANCE.transform(def);
   }
   
   public static Definition simplify(Definition def) {
@@ -443,8 +443,8 @@ public class Simplifications extends PatternRegistry {
     return INSTANCE.transform(value);
   }
   
-  public Computation transform(Computation comp) {
-    return new Computation(comp.args, comp.values.transform(new Transformer<Value, Value>() {
+  public Multidef transform(Multidef def) {
+    return new Multidef(def.args, def.values.transform(new Transformer<Value, Value>() {
       @Override
       public Value transform(Value in) {
         return Simplifications.this.transform(in);
@@ -453,7 +453,7 @@ public class Simplifications extends PatternRegistry {
   }
 
   public Definition transform(Definition orig) {
-    return transform(orig.toComputation()).get(0);
+    return transform(orig.toMultidef()).get(0);
   }
 
   public Value transform(Value v) {

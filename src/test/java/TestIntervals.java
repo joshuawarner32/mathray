@@ -1,6 +1,6 @@
 import java.util.Random;
 
-import mathray.Computation;
+import mathray.Multidef;
 import mathray.Definition;
 import mathray.Symbol;
 import mathray.eval.machine.MachineEvaluator;
@@ -28,7 +28,7 @@ public class TestIntervals {
   }
   
   private static void fuzzFunction(Definition def) {
-    Computation inter = IntervalTransform.intervalize(def.toComputation(), args(x));
+    Multidef inter = IntervalTransform.intervalize(def.toMultidef(), args(x));
     for(int i = 0; i < 100; i++) {
       double min = 1 / (random.nextDouble() * 2 - 1);
       double max = min + 1 / random.nextDouble();
@@ -43,7 +43,7 @@ public class TestIntervals {
   }
   
   private static void assertRange(Definition def, double a, double b, double oa, double ob) {
-    Computation inter = IntervalTransform.intervalize(def.toComputation(), args(x));
+    Multidef inter = IntervalTransform.intervalize(def.toMultidef(), args(x));
     Vector<Double> res = MachineEvaluator.eval(inter, vector(a, b));
     assertEquals(vector(oa, ob), res);
   }

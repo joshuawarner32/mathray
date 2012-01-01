@@ -5,7 +5,7 @@ import java.util.Map;
 
 import mathray.Args;
 import mathray.Call;
-import mathray.Computation;
+import mathray.Multidef;
 import mathray.Definition;
 import mathray.Rational;
 import mathray.Value;
@@ -40,7 +40,7 @@ public class Affine {
     })
     .build();
   
-  public static Vector<AffineForm> affine(Computation comp, Args args) {
+  public static Vector<AffineForm> affine(Multidef def, Args args) {
     //AffineContext affineContext = new AffineContext();
     
     final EvaluatingVisitor<AffineForm> v = new EvaluatingVisitor<AffineForm>() {
@@ -59,7 +59,7 @@ public class Affine {
         return env.implement(call.func).call(args);
       }
     };
-    return comp.accept(v);
+    return def.accept(v);
   }
 
 }

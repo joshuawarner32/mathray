@@ -10,7 +10,6 @@ import javax.swing.JLabel;
 
 import mathray.Args;
 import mathray.Definition;
-import mathray.NamedConstants;
 import mathray.Symbol;
 import mathray.device.FunctionTypes;
 import mathray.eval.java.JavaCompiler;
@@ -74,7 +73,7 @@ public class Main {
     Graphics2D g = image.createGraphics();
     g.setBackground(Color.WHITE);
     g.clearRect(0, 0, 512, 512);
-    FunctionTypes.D1_1 f = JavaCompiler.compile(JavaCompiler.D1_1, def.toComputation());
+    FunctionTypes.D1_1 f = JavaCompiler.compile(JavaCompiler.D1_1, def.toMultidef());
     Plotter.simplePlot(f, Frame.frameFor(def, -10, 10), image, Color.BLACK);
     show(def.toString(), image);
   }

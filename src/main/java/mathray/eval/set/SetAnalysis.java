@@ -29,7 +29,7 @@ public class SetAnalysis extends FunctionRegistrar<Impl<MultidimSet>> {
     register(SQRT, new Impl<MultidimSet>() {
       @Override
       public MultidimSet call(Vector<MultidimSet> args) {
-        return args.get(0).split(compute(args(x), sqrt(x), neg(sqrt(x))));
+        return args.get(0).split(multidef(args(x), sqrt(x), neg(sqrt(x))));
       }
     });
   }

@@ -2,7 +2,7 @@
 import static mathray.Expressions.*;
 import static org.junit.Assert.*;
 import mathray.Args;
-import mathray.Computation;
+import mathray.Multidef;
 import mathray.Symbol;
 import mathray.concrete.RayD3;
 import mathray.concrete.VectorD3;
@@ -21,8 +21,8 @@ public class TestSolve {
   
   Args args = args(x, y, z);
 
-  private void assertSolvesTo(Computation comp, RayD3 solution, VectorD3 res) {
-    Computation ival = IntervalTransform.intervalize(comp, args);
+  private void assertSolvesTo(Multidef def, RayD3 solution, VectorD3 res) {
+    Multidef ival = IntervalTransform.intervalize(def, args);
     ZeroOnRayD3 f = JavaCompiler.compile(JavaCompiler.MAYBE_ZERO_ON_RAY3, ival);
     double eps = 0.001;
     assertTrue(Plot3D.solve(f, solution, 100, eps * 2));
@@ -30,8 +30,8 @@ public class TestSolve {
     assertFalse(solution.pointDistanceSq(res) > eps * 2);
   }
   
-  public void assertNoSolution(Computation comp, RayD3 solution) {
-    Computation ival = IntervalTransform.intervalize(comp, args);
+  public void assertNoSolution(Multidef def, RayD3 solution) {
+    Multidef ival = IntervalTransform.intervalize(def, args);
     ZeroOnRayD3 f = JavaCompiler.compile(JavaCompiler.MAYBE_ZERO_ON_RAY3, ival);
     double eps = 0.001;
     assertFalse(Plot3D.solve(f, solution, 100, eps * 2));
@@ -39,12 +39,12 @@ public class TestSolve {
   
   @Test
   public void testNoSolution() {
-    assertNoSolution(compute(args, add(x, y, z, num(-1))), new RayD3(0, 10, 0, 0, 1, 0));
+    assertNoSolution(multidef(args, add(x, y, z, num(-1))), new RayD3(0, 10, 0, 0, 1, 0));
   }
   
   @Test
   public void testPlane() {
-    assertSolvesTo(compute(args, add(x, y, z, num(-1))), new RayD3(0, 10, 0, 0, -1, 0), new VectorD3(0, 1, 0));
+    assertSolvesTo(multidef(args, add(x, y, z, num(-1))), new RayD3(0, 10, 0, 0, -1, 0), new VectorD3(0, 1, 0));
   }
   
   /*

@@ -3,7 +3,7 @@ package mathray.eval.java;
 
 import org.objectweb.asm.Opcodes;
 import mathray.Call;
-import mathray.Computation;
+import mathray.Multidef;
 import mathray.FunctionSymbolRegistrar;
 import mathray.NamedConstants;
 import mathray.Rational;
@@ -59,7 +59,7 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
   }
   
   public static final FunctionGenerator<FunctionTypes.D> FUNCTION_D = new FunctionGenerator<FunctionTypes.D>() {
-    public Wrapper<FunctionTypes.D> begin(Computation comp) {
+    public Wrapper<FunctionTypes.D> begin(Multidef def) {
       final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.D.class.getName().replace('.', '/')});
       final MethodGenerator mgen = gen.method(false, "call", "([D[D)V");
       return new Wrapper<FunctionTypes.D>() {
@@ -91,7 +91,7 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
   };
   
   public static final FunctionGenerator<FunctionTypes.ZeroOnRayD3> MAYBE_ZERO_ON_RAY3 = new FunctionGenerator<FunctionTypes.ZeroOnRayD3>() {
-    public Wrapper<FunctionTypes.ZeroOnRayD3> begin(Computation comp) {
+    public Wrapper<FunctionTypes.ZeroOnRayD3> begin(Multidef def) {
       final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.ZeroOnRayD3.class.getName().replace('.', '/')});
       final MethodGenerator mgen = gen.method(false, "maybeHasZeroOn", "(L" + RayD3.class.getName().replace('.', '/') + ";)Z");
       return new Wrapper<FunctionTypes.ZeroOnRayD3>() {
@@ -161,7 +161,7 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
   
   private static <T> FunctionGenerator<T> Dn_1(final int n) {
     return new FunctionGenerator<T>() {
-      public Wrapper<T> begin(Computation comp) {
+      public Wrapper<T> begin(Multidef def) {
         final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.class.getName().replace('.', '/') + "$D" + n + "_1"});
         final MethodGenerator mgen = gen.method(false, "call", JavaArityGenerator.getArityDesc(n));
         return new Wrapper<T>() {
@@ -241,12 +241,12 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
   
   private static final JavaCompiler INSTANCE = new JavaCompiler();
   
-  public static FunctionTypes.D compile(final Computation comp) {
-    return INSTANCE.transform(FUNCTION_D, comp);
+  public static FunctionTypes.D compile(final Multidef def) {
+    return INSTANCE.transform(FUNCTION_D, def);
   }
   
-  public static <T> T compile(FunctionGenerator<T> ctx, final Computation comp) {
-    return INSTANCE.transform(ctx, comp);
+  public static <T> T compile(FunctionGenerator<T> ctx, final Multidef def) {
+    return INSTANCE.transform(ctx, def);
   }
   
   @SuppressWarnings("unchecked")
@@ -261,11 +261,11 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
     }
   }
   
-  public <T> T transform(FunctionGenerator<T> ctx, final Computation comp) {
-    final Wrapper<T> wrap = ctx.begin(comp);
+  public <T> T transform(FunctionGenerator<T> ctx, final Multidef def) {
+    final Wrapper<T> wrap = ctx.begin(def);
     
     final MethodGenerator mgen = wrap.getMethodGenerator();
-    final Usage usage = Usage.generate(comp);
+    final Usage usage = Usage.generate(def);
     EvaluatingVisitor<JavaValue> v = new EvaluatingVisitor<JavaValue>() {
       @Override
       public JavaValue call(Call call, Vector<JavaValue> args) {
@@ -278,7 +278,7 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
 
       @Override
       public JavaValue symbol(Symbol sym) {
-        Integer index = comp.args.getIndex(sym);
+        Integer index = def.args.getIndex(sym);
         JavaValue ret;
         if(index != null) {
           ret = wrap.arg(index);
@@ -302,7 +302,7 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
 
     };
     int i = 0;
-    for(JavaValue val : comp.accept(v)) {
+    for(JavaValue val : def.accept(v)) {
       wrap.ret(i++, val);
     }
     return wrap.end();

@@ -14,7 +14,7 @@ public class TestDerive {
 
 
   private static void assertDerivesTo(Definition def, Symbol x, Definition result) {
-    assertEquals(result, Simplifications.simplify(Derivatives.derive(def, x).toComputation()).get(0));
+    assertEquals(result, Simplifications.simplify(Derivatives.derive(def, x).toMultidef()).get(0));
   }
   
   Symbol x = sym("x");

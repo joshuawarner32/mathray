@@ -4,7 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import mathray.Args;
-import mathray.Computation;
+import mathray.Multidef;
 import mathray.Definition;
 import mathray.Symbol;
 import mathray.eval.machine.MachineEvaluator;
@@ -14,7 +14,7 @@ import mathray.util.Vector;
 public class TestComplex {
   
   private static void assertComplexEvalsTo(Definition def, Vector<Double> input, Vector<Double> output) {
-    Computation comp = ComplexTransform.complexify(def.toComputation(), def.args);
+    Multidef comp = ComplexTransform.complexify(def.toMultidef(), def.args);
     Vector<Double> res = MachineEvaluator.eval(comp, input);
     assertEquals(output, res);
   }

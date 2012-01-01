@@ -1,15 +1,15 @@
 package mathray.domain;
 
-import mathray.Computation;
+import mathray.Multidef;
 
 public class Domain {
   
-  public final Computation comp;
+  public final Multidef def;
   
   private Node rootNode;
   
-  public Domain(Computation comp) {
-    this.comp = comp;
+  public Domain(Multidef def) {
+    this.def = def;
   }
 
 }

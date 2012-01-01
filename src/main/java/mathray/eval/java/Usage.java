@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mathray.Call;
-import mathray.Computation;
+import mathray.Multidef;
 import mathray.Rational;
 import mathray.Symbol;
 import mathray.Value;
@@ -28,7 +28,7 @@ public class Usage {
     return count;
   }
   
-  public static Usage generate(Computation comp) {
+  public static Usage generate(Multidef def) {
     final Usage ret = new Usage();
     
     SimpleVisitor<Void> v = new SimpleVisitor<Void>() {
@@ -54,7 +54,7 @@ public class Usage {
       
     };
     
-    for(Value val : comp.values) {
+    for(Value val : def.values) {
       val.accept(v);
     }
     

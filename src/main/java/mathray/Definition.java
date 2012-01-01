@@ -84,8 +84,8 @@ public class Definition implements Impl<Value> {
     return b.toString();
   }
 
-  public Computation toComputation() {
-    return new Computation(args, vector(value));
+  public Multidef toMultidef() {
+    return new Multidef(args, vector(value));
   }
 
 }

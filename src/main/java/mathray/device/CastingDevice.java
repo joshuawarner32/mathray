@@ -3,12 +3,12 @@ package mathray.device;
 import java.util.HashMap;
 import java.util.Map;
 
-import mathray.Computation;
+import mathray.Multidef;
 
 public class CastingDevice implements Device {
   
   private interface Compiler<T> {
-    public T compile(Computation comp);
+    public T compile(Multidef def);
   }
   
   private final Map<FunctionType<?>, Compiler<?>> compilers = new HashMap<FunctionType<?>, Compiler<?>>();
@@ -20,8 +20,8 @@ public class CastingDevice implements Device {
   
   private <T> void passThrough(final FunctionType<T> type) {
     register(type, new Compiler<T>() {
-      public T compile(Computation comp) {
-        return device.compile(type, comp);
+      public T compile(Multidef def) {
+        return device.compile(type, def);
       }
     });
   }
@@ -34,8 +34,8 @@ public class CastingDevice implements Device {
       if(!device.supports(FunctionTypes.FUNCTION_D)) {
         register(FunctionTypes.FUNCTION_D, new Compiler<FunctionTypes.D>() {
           @Override
-          public FunctionTypes.D compile(Computation comp) {
-            return FunctionTypes.toD(device.compile(FunctionTypes.FUNCTION_F, comp));
+          public FunctionTypes.D compile(Multidef def) {
+            return FunctionTypes.toD(device.compile(FunctionTypes.FUNCTION_F, def));
           }
         });
       }
@@ -46,8 +46,8 @@ public class CastingDevice implements Device {
       if(!device.supports(FunctionTypes.FUNCTION_F)) {
         register(FunctionTypes.FUNCTION_F, new Compiler<FunctionTypes.F>() {
           @Override
-          public FunctionTypes.F compile(Computation comp) {
-            return FunctionTypes.toF(device.compile(FunctionTypes.FUNCTION_D, comp));
+          public FunctionTypes.F compile(Multidef def) {
+            return FunctionTypes.toF(device.compile(FunctionTypes.FUNCTION_D, def));
           }
         });
       }
@@ -64,8 +64,8 @@ public class CastingDevice implements Device {
   }
 
   @Override
-  public <T> T compile(FunctionType<T> type, Computation comp) {
-    return lookup(type).compile(comp);
+  public <T> T compile(FunctionType<T> type, Multidef def) {
+    return lookup(type).compile(def);
   }
 
   @Override

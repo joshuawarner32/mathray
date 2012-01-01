@@ -31,8 +31,8 @@ public class Expressions {
     return new Definition(args, value);
   }
   
-  public static Computation compute(Args args, Value... values) {
-    return new Computation(args, vector(values));
+  public static Multidef multidef(Args args, Value... values) {
+    return new Multidef(args, vector(values));
   }
   
   public static Value fold(Function func, Iterable<Value> values) {

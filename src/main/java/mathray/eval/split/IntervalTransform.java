@@ -4,14 +4,14 @@ import static mathray.Expressions.*;
 import static mathray.Functions.*;
 import static mathray.NamedConstants.*;
 import mathray.Args;
-import mathray.Computation;
+import mathray.Multidef;
 import mathray.Function;
 import mathray.FunctionRegistrar;
 import mathray.Value;
 import mathray.Symbol;
 import mathray.util.Vector;
 
-public class IntervalTransform extends FunctionRegistrar<Computation> {
+public class IntervalTransform extends FunctionRegistrar<Multidef> {
 
   private static final Symbol x = sym("x");
   private static final Symbol xa = sym("xa");
@@ -22,7 +22,7 @@ public class IntervalTransform extends FunctionRegistrar<Computation> {
   private static final Args args1 = args(xa, xb);
   private static final Args args2 = args(xa, xb, ya, yb);
   
-  private static Computation funcMinMax(Function func) {
+  private static Multidef funcMinMax(Function func) {
     Value ac = func.call(xa, ya);
     Value ad = func.call(xa, yb);
     Value bc = func.call(xb, ya);
@@ -33,10 +33,10 @@ public class IntervalTransform extends FunctionRegistrar<Computation> {
     Value m2Min = min(bc, bd);
     Value m2Max = max(bc, bd);
     
-    return compute(args2, min(m1Min, m2Min), max(m1Max, m2Max));
+    return multidef(args2, min(m1Min, m2Min), max(m1Max, m2Max));
   }
   
-  private static Computation makeSinCompute() {
+  private static Multidef makeSinCompute() {
     Value diff = sub(xb, xa);
     Vector<Value> full = vector((Value)num(-1), num(1));
     Value va = sin(xa);
@@ -48,10 +48,10 @@ public class IntervalTransform extends FunctionRegistrar<Computation> {
     Value max = max(va, vb);
     Vector<Value> els = vector(intervalSelectSign(sub(diff, div(TAU, num(2))), vector(min, max), full));
     Vector<Value> fallback = vector(intervalSelectSign(mul(da, db), dbltz, els));
-    return compute(args1, intervalSelectSign(sub(diff, TAU), fallback, full));
+    return multidef(args1, intervalSelectSign(sub(diff, TAU), fallback, full));
   }
   
-  private static Computation makePowCompute() {
+  private static Multidef makePowCompute() {
     // TODO
     /*Interval a = args.get(0);
     Interval b = args.get(1);
@@ -77,23 +77,23 @@ public class IntervalTransform extends FunctionRegistrar<Computation> {
     return null;
   }
   
-  private static Computation makeAbsCompute() {
+  private static Multidef makeAbsCompute() {
     Value aa = abs(xa);
     Value ab = abs(xb);
-    return compute(args1, intervalSelectContains(vector((Value)xa, xb), vector(num(0), max(aa, ab)), vector(min(aa, ab), max(aa, ab))));
+    return multidef(args1, intervalSelectContains(vector((Value)xa, xb), vector(num(0), max(aa, ab)), vector(min(aa, ab), max(aa, ab))));
   }
   
   {
     
-    register(ADD, compute(args2, add(xa, ya), add(xb, yb)));
-    register(SUB, compute(args2, sub(xa, yb), sub(xb, ya)));
+    register(ADD, multidef(args2, add(xa, ya), add(xb, yb)));
+    register(SUB, multidef(args2, sub(xa, yb), sub(xb, ya)));
     register(MUL, funcMinMax(MUL));
     register(DIV, funcMinMax(DIV));
     register(SIN, makeSinCompute());
-    register(MIN, compute(args2, max(xa, ya), max(xb, yb)));
-    register(MAX, compute(args2, min(xa, ya), min(xb, yb)));
+    register(MIN, multidef(args2, max(xa, ya), max(xb, yb)));
+    register(MAX, multidef(args2, min(xa, ya), min(xb, yb)));
     register(ABS, makeAbsCompute());
-    register(SQRT, compute(args1, sqrt(xa), sqrt(xb)));
+    register(SQRT, multidef(args1, sqrt(xa), sqrt(xb)));
     register(POW, makePowCompute());
   }
   
@@ -111,8 +111,8 @@ public class IntervalTransform extends FunctionRegistrar<Computation> {
   
   private static final IntervalTransform INSTANCE = new IntervalTransform();
   
-  public static Computation intervalize(final Computation comp, Args args) {
-    return Splitter.split(comp, INSTANCE, compute(args(x), x, x), args, new SymbolSplitter() {
+  public static Multidef intervalize(final Multidef def, Args args) {
+    return Splitter.split(def, INSTANCE, multidef(args(x), x, x), args, new SymbolSplitter() {
       @Override
       public Vector<Symbol> split(Symbol symbol) {
         return vector(sym(symbol.name + "_a"), sym(symbol.name + "_b"));

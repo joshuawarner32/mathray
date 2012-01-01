@@ -2,7 +2,7 @@ package mathray.eval.split;
 
 import mathray.Args;
 import mathray.Call;
-import mathray.Computation;
+import mathray.Multidef;
 import mathray.FunctionRegistrar;
 import mathray.Rational;
 import mathray.Value;
@@ -14,16 +14,16 @@ import static mathray.Expressions.*;
 
 public class Splitter {
   
-  public static Computation split(Computation comp, final FunctionRegistrar<Computation> env, final Computation splitter, final Args args, SymbolSplitter replacements) {
-    if(!args.isSubsetOf(comp.args)) {
+  public static Multidef split(Multidef def, final FunctionRegistrar<Multidef> env, final Multidef splitter, final Args args, SymbolSplitter replacements) {
+    if(!args.isSubsetOf(def.args)) {
       throw new IllegalArgumentException();
     }
     final int newSize = splitter.values.size();
-    Symbol[] nargsarr = new Symbol[args.size() * (newSize - 1) + comp.args.size()];
-    final Vector<Value>[] bindings = new Vector[comp.args.size()];
+    Symbol[] nargsarr = new Symbol[args.size() * (newSize - 1) + def.args.size()];
+    final Vector<Value>[] bindings = new Vector[def.args.size()];
     int i = 0;
     int j = 0;
-    for(Symbol var : comp.args) {
+    for(Symbol var : def.args) {
       if(args.contains(var)) {
         Vector<Symbol> reps = replacements.split(var);
         for(Symbol v : reps) {
@@ -51,7 +51,7 @@ public class Splitter {
         return env.lookup(call.func).call(Vector.flatten(args));
       }
     };
-    Vector<Vector<Value>> ret = comp.accept(v);
-    return new Computation(args(nargsarr), Vector.flatten(ret));
+    Vector<Vector<Value>> ret = def.accept(v);
+    return new Multidef(args(nargsarr), Vector.flatten(ret));
   }
 }

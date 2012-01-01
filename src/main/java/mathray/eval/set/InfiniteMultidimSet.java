@@ -1,6 +1,6 @@
 package mathray.eval.set;
 
-import mathray.Computation;
+import mathray.Multidef;
 import mathray.Function;
 import mathray.Symbol;
 import mathray.Value;
@@ -25,7 +25,7 @@ public class InfiniteMultidimSet implements MultidimSet {
   }
   
   @Override
-  public MultidimSet split(Computation compute) {
+  public MultidimSet split(Multidef def) {
     return null;
   }
   

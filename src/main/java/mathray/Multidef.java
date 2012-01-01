@@ -7,13 +7,13 @@ import mathray.visitor.SimpleVisitor;
 import mathray.visitor.Visitors;
 
 
-public class Computation {
+public class Multidef {
   
   public final Args args;
   
   public final Vector<Value> values;
   
-  public Computation(Args args, Vector<Value> values) {
+  public Multidef(Args args, Vector<Value> values) {
     this.args = args;
     this.values = values;
   }
@@ -61,8 +61,8 @@ public class Computation {
     });
   }
   
-  public Computation transform(final EvaluatingVisitor<Value> v) {
-    return new Computation(args, accept(v));
+  public Multidef transform(final EvaluatingVisitor<Value> v) {
+    return new Multidef(args, accept(v));
   }
 
 }
