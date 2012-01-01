@@ -1,7 +1,5 @@
 package mathray.eval.java;
 
-import mathray.eval.java.ClassGenerator.MethodGenerator;
-
 public interface Wrapper<T> {
   
   public MethodGenerator getMethodGenerator();

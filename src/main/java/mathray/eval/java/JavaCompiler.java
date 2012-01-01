@@ -10,7 +10,6 @@ import mathray.Rational;
 import mathray.Symbol;
 import mathray.concrete.FunctionTypes;
 import mathray.concrete.RayD3;
-import mathray.eval.java.ClassGenerator.MethodGenerator;
 import mathray.util.MathEx;
 import mathray.util.Vector;
 import mathray.visitor.EvaluatingVisitor;
