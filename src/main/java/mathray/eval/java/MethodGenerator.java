@@ -17,7 +17,7 @@ public class MethodGenerator {
   
   int localVarIndex = 0;
   
-  private Stack<JavaValue> stack = new Stack<JavaValue>();
+  private State state = new State();
   
   MethodGenerator(boolean static_, String name, String desc, ClassVisitor classVisitor) {
     this.methodVisitor = classVisitor.visitMethod(Opcodes.ACC_PUBLIC | (static_ ? Opcodes.ACC_STATIC : 0), name, desc, null, null);
@@ -38,7 +38,7 @@ public class MethodGenerator {
     int min = Integer.MAX_VALUE;
     int run = 0;
     for(int i = 0; i < values.length; i++) {
-      indices[i] = stack.indexOf(values[i]);
+      indices[i] = state.stack.lastIndexOf(values[i]);
       if(indices[i] >= 0 && indices[i] < min) {
         min = indices[i];
       }
@@ -48,14 +48,14 @@ public class MethodGenerator {
     }
     // TODO: check if we can swap
     if(min == indices[0]) {
-      while(stack.size() > indices[0] + run + 1) {
+      while(state.stack.size() > indices[0] + run + 1) {
         store();
       }
       for(int i = 0; i < run + 1; i++) {
-        stack.pop();
+        state.stack.pop();
       }
     } else {
-      while(stack.size() > min) {
+      while(state.stack.size() > min) {
         store();
       }
       run = -1;
@@ -67,19 +67,19 @@ public class MethodGenerator {
   }
   
   private void store() {
-    stack.pop().store(this);
+    state.stack.pop().store(this);
   }
   
   public JavaValue binOp(int opcode, JavaValue a, JavaValue b) {
     load(a, b);
     methodVisitor.visitInsn(opcode);
-    return stack.push(new ComputedValue(-1, a.getType()));
+    return state.stack.push(new ComputedValue(-1, a.getType()));
   }
 
   public JavaValue unaryOp(int opcode, JavaValue a) {
     load(a);
     methodVisitor.visitInsn(opcode);
-    return stack.push(new ComputedValue(-1, a.getType()));
+    return state.stack.push(new ComputedValue(-1, a.getType()));
   }
   
   public JavaValue arg(int index) {
@@ -89,7 +89,7 @@ public class MethodGenerator {
   public JavaValue aload(JavaValue array, int index) {
     load(array, intConstant(index));
     methodVisitor.visitInsn(Opcodes.DALOAD);
-    return stack.push(new ComputedValue(-1, Type.DOUBLE_TYPE));
+    return state.stack.push(new ComputedValue(-1, Type.DOUBLE_TYPE));
   }
   
   public void astore(JavaValue array, int index, JavaValue value) {
@@ -122,44 +122,43 @@ public class MethodGenerator {
   public JavaValue callStatic(String className, String name, String desc, JavaValue... args) {
     load(args);
     methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, className, name, desc);
-    return stack.push(new ComputedValue(-1, Type.getReturnType(desc)));
+    return state.stack.push(new ComputedValue(-1, Type.getReturnType(desc)));
   }
 
   public JavaValue loadField(JavaValue obj, String class_, String name, String desc) {
     load(obj);
     methodVisitor.visitFieldInsn(Opcodes.GETFIELD, class_, name, desc);
-    return stack.push(new ComputedValue(-1, Type.getType(desc)));
+    return state.stack.push(new ComputedValue(-1, Type.getType(desc)));
   }
 
   public void store(JavaValue value) {
-    int index = stack.lastIndexOf(value);
+    int index = state.stack.lastIndexOf(value);
     if(value.needsStore() && index >= 0) {
-      while(stack.size() > index) {
+      while(state.stack.size() > index) {
         store();
       }
       
     }
   }
   
-  private class State {
+  public class State {
     private Stack<JavaValue> stack = new Stack<JavaValue>();
     private List<JavaValue> locals = new ArrayList<JavaValue>();
     
     public State() {}
     
     public State(State old) {
-      for(JavaValue v : old.stack) {
-        stack.add(v);
-      }
-    }
-
-    private void restore() {
-      MethodGenerator.this.stack = stack;
+      stack.addAll(old.stack);
+      locals.addAll(old.locals);
     }
   }
   
-  private State save() {
-    return new State();
+  public State save() {
+    return new State(state);
+  }
+  
+  public void restore(State state) {
+    this.state = state;
   }
   
 }
