@@ -26,6 +26,8 @@ public class Simplifications extends PatternRegistry {
   
   {
     Symbol x = sym("x");
+    Symbol y = sym("y");
+    Symbol z = sym("z");
     
     register(pattern(args(), PI, div(TAU, num(2))));
     
@@ -40,6 +42,11 @@ public class Simplifications extends PatternRegistry {
     register(pattern(args(x), cos(mul(TAU, x)), num(1), isInteger(x)));
     register(pattern(args(x), cos(mul(x, TAU)), num(1), isInteger(x)));
     register(pattern(args(x), cos(neg(x)), cos(x)));
+    
+    register(pattern(args(x), abs(neg(x)), abs(x)));
+    register(pattern(args(x), abs(abs(x)), abs(x)));
+    register(pattern(args(x, y), selectSign(abs(x), y, z), y));
+    register(pattern(args(x, y), selectSign(neg(abs(x)), y, z), z));
   }
   
   private static abstract class Expr {
