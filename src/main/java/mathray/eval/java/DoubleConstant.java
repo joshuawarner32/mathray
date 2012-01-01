@@ -13,18 +13,18 @@ class DoubleConstant implements JavaValue {
   }
   
   @Override
-  public void load(MethodVisitor m) {
+  public void load(MethodGenerator m) {
     if(value == 0) {
-      m.visitInsn(Opcodes.DCONST_0);
+      m.methodVisitor.visitInsn(Opcodes.DCONST_0);
     } else if(value == 1) {
-      m.visitInsn(Opcodes.DCONST_1);
+      m.methodVisitor.visitInsn(Opcodes.DCONST_1);
     } else {
-      m.visitLdcInsn(value);
+      m.methodVisitor.visitLdcInsn(value);
     }
   }
 
   @Override
-  public void store(MethodGenerator methodGenerator) {
+  public void store(MethodGenerator m) {
     // do nothing
   }
   

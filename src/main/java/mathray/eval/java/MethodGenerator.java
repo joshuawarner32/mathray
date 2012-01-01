@@ -12,24 +12,20 @@ import org.objectweb.asm.Type;
 public class MethodGenerator {
   
   final MethodVisitor methodVisitor;
-  private final int[] argIndices;
-  private final Type[] argTypes;
-  
-  int localVarIndex = 0;
+  private final MethodArg[] args;
   
   private State state = new State();
   
   MethodGenerator(boolean static_, String name, String desc, ClassVisitor classVisitor) {
     this.methodVisitor = classVisitor.visitMethod(Opcodes.ACC_PUBLIC | (static_ ? Opcodes.ACC_STATIC : 0), name, desc, null, null);
     methodVisitor.visitCode();
-    argTypes = Type.getArgumentTypes(desc);
-    argIndices = new int[argTypes.length];
+    Type[] argTypes = Type.getArgumentTypes(desc);
+    args = new MethodArg[argTypes.length];
     if(!static_) {
-      localVarIndex++;
+      state.locals.add(null);
     }
     for(int i = 0; i < argTypes.length; i++) {
-      argIndices[i] = localVarIndex;
-      localVarIndex += argTypes[i].getSize();
+      findOrAllocLocalIndex(args[i] = new MethodArg(argTypes[i]));
     }
   }
   
@@ -62,7 +58,7 @@ public class MethodGenerator {
     }
     for(int i = run + 1; i < values.length; i++) {
       JavaValue val = values[i];
-      val.load(methodVisitor);
+      val.load(this);
     }
   }
   
@@ -73,23 +69,23 @@ public class MethodGenerator {
   public JavaValue binOp(int opcode, JavaValue a, JavaValue b) {
     load(a, b);
     methodVisitor.visitInsn(opcode);
-    return state.stack.push(new ComputedValue(-1, a.getType()));
+    return state.stack.push(new ComputedValue(a.getType()));
   }
 
   public JavaValue unaryOp(int opcode, JavaValue a) {
     load(a);
     methodVisitor.visitInsn(opcode);
-    return state.stack.push(new ComputedValue(-1, a.getType()));
+    return state.stack.push(new ComputedValue(a.getType()));
   }
   
   public JavaValue arg(int index) {
-    return new ComputedValue(argIndices[index], argTypes[index]);
+    return args[index];
   }
   
   public JavaValue aload(JavaValue array, int index) {
     load(array, intConstant(index));
     methodVisitor.visitInsn(Opcodes.DALOAD);
-    return state.stack.push(new ComputedValue(-1, Type.DOUBLE_TYPE));
+    return state.stack.push(new ComputedValue(Type.DOUBLE_TYPE));
   }
   
   public void astore(JavaValue array, int index, JavaValue value) {
@@ -122,13 +118,13 @@ public class MethodGenerator {
   public JavaValue callStatic(String className, String name, String desc, JavaValue... args) {
     load(args);
     methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, className, name, desc);
-    return state.stack.push(new ComputedValue(-1, Type.getReturnType(desc)));
+    return state.stack.push(new ComputedValue(Type.getReturnType(desc)));
   }
 
   public JavaValue loadField(JavaValue obj, String class_, String name, String desc) {
     load(obj);
     methodVisitor.visitFieldInsn(Opcodes.GETFIELD, class_, name, desc);
-    return state.stack.push(new ComputedValue(-1, Type.getType(desc)));
+    return state.stack.push(new ComputedValue(Type.getType(desc)));
   }
 
   public void store(JavaValue value) {
@@ -159,6 +155,22 @@ public class MethodGenerator {
   
   public void restore(State state) {
     this.state = state;
+  }
+
+  public int getLocalIndex(JavaValue value) {
+    return state.locals.indexOf(value);
+  }
+
+  public int findOrAllocLocalIndex(JavaValue value) {
+    int index = state.locals.indexOf(value);
+    if(index == -1) {
+      index = state.locals.size();
+      state.locals.add(value);
+      if(value.getType().getSize() == 2) {
+        state.locals.add(null);
+      }
+    }
+    return index;
   }
   
 }

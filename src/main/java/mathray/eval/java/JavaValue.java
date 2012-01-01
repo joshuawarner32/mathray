@@ -5,9 +5,9 @@ import org.objectweb.asm.Type;
 
 interface JavaValue {
 
-  void load(MethodVisitor m);
+  void load(MethodGenerator m);
 
-  void store(MethodGenerator methodGenerator);
+  void store(MethodGenerator m);
 
   Type getType();
 

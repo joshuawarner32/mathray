@@ -13,31 +13,31 @@ class IntConstant implements JavaValue {
   }
   
   @Override
-  public void load(MethodVisitor m) {
+  public void load(MethodGenerator m) {
     switch(value) {
     case -1:
-      m.visitInsn(Opcodes.ICONST_M1);
+      m.methodVisitor.visitInsn(Opcodes.ICONST_M1);
       break;
     case 0:
-      m.visitInsn(Opcodes.ICONST_0);
+      m.methodVisitor.visitInsn(Opcodes.ICONST_0);
       break;
     case 1:
-      m.visitInsn(Opcodes.ICONST_1);
+      m.methodVisitor.visitInsn(Opcodes.ICONST_1);
       break;
     case 2:
-      m.visitInsn(Opcodes.ICONST_2);
+      m.methodVisitor.visitInsn(Opcodes.ICONST_2);
       break;
     case 3:
-      m.visitInsn(Opcodes.ICONST_3);
+      m.methodVisitor.visitInsn(Opcodes.ICONST_3);
       break;
     case 4:
-      m.visitInsn(Opcodes.ICONST_4);
+      m.methodVisitor.visitInsn(Opcodes.ICONST_4);
       break;
     case 5:
-      m.visitInsn(Opcodes.ICONST_5);
+      m.methodVisitor.visitInsn(Opcodes.ICONST_5);
       break;
     default:
-      m.visitLdcInsn(value);
+      m.methodVisitor.visitLdcInsn(value);
     }
   }
 
