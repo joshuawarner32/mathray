@@ -1,4 +1,4 @@
-package mathray.eval.complex;
+package mathray.eval.split;
 
 import mathray.Args;
 import mathray.Call;
@@ -14,43 +14,31 @@ import static mathray.Expressions.*;
 
 public class Splitter {
   
-  public static Computation split(Computation comp, final FunctionRegistrar<Computation> env, final Computation splitter, final Args args, final Vector<Vector<Symbol>> replacements) {
+  public static Computation split(Computation comp, final FunctionRegistrar<Computation> env, final Computation splitter, final Args args, SymbolSplitter replacements) {
     if(!args.isSubsetOf(comp.args)) {
       throw new IllegalArgumentException();
     }
     final int newSize = splitter.values.size();
-    for(Vector<Symbol> repl : replacements) {
-      if(newSize != repl.size()) {
-        throw new IllegalArgumentException();
-      }
-    }
     Symbol[] nargsarr = new Symbol[args.size() * (newSize - 1) + comp.args.size()];
+    final Vector<Value>[] bindings = new Vector[comp.args.size()];
     int i = 0;
+    int j = 0;
     for(Symbol var : comp.args) {
       if(args.contains(var)) {
-        Vector<Symbol> reps = replacements.get(args.getIndex(var));
+        Vector<Symbol> reps = replacements.split(var);
         for(Symbol v : reps) {
           nargsarr[i++] = v;
         }
+        bindings[j++] = (Vector)reps;
       } else {
         nargsarr[i++] = var;
+        bindings[j++] = splitter.call(vector((Value)var));
       }
     }
-    final Vector<Vector<Value>> bindings = comp.args.toVector().transform(new Transformer<Symbol, Vector<Value>>() {
-      @SuppressWarnings({ "unchecked", "rawtypes" })
-      @Override
-      public Vector<Value> transform(Symbol in) {
-        if(args.contains(in)) {
-          return (Vector) replacements.get(args.getIndex(in));
-        } else {
-          return splitter.call(vector((Value)in));
-        }
-      }
-    });
     EvaluatingVisitor<Vector<Value>> v = new EvaluatingVisitor<Vector<Value>>() {
       @Override
       public Vector<Value> symbol(Symbol sym) {
-        return bindings.get(args.getIndex(sym));
+        return bindings[args.getIndex(sym)];
       }
       
       @Override
@@ -60,7 +48,7 @@ public class Splitter {
       
       @Override
       public Vector<Value> call(Call call, Vector<Vector<Value>> args) {
-        return null; // TODO
+        return env.lookup(call.func).call(Vector.flatten(args));
       }
     };
     Vector<Vector<Value>> ret = comp.accept(v);

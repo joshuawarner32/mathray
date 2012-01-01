@@ -9,6 +9,7 @@ import mathray.Definition;
 import mathray.Functions;
 import mathray.Value;
 import mathray.eval.precision.AffineContext.AffineTerm;
+import mathray.util.Vector;
 
 public class AffineForm {
   
@@ -53,9 +54,9 @@ public class AffineForm {
     return ret;
   }
   
-  public Interval toInterval() {
+  public Vector<Value> toInterval() {
     Value rad = radius();
-    return Interval.exact(add(center, rad), sub(center, rad));
+    return vector(add(center, rad), sub(center, rad));
   }
   
   public Value radius() {

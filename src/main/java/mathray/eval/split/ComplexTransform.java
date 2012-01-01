@@ -1,4 +1,4 @@
-package mathray.eval.complex;
+package mathray.eval.split;
 
 import mathray.Args;
 import mathray.Computation;
@@ -30,8 +30,13 @@ public final class ComplexTransform extends FunctionRegistrar<Computation> {
     register(COS, compute(args(xr, xi), mul(cosh(xi), cos(xr)), neg(mul(sinh(xi), sin(xr)))));
   }
   
-  public Computation complexify(Computation comp, Args args, Vector<Vector<Symbol>> replacements) {
-    return Splitter.split(comp, this, compute(args(x), x, num(0)), args, replacements);
+  public Computation complexify(Computation comp, Args args) {
+    return Splitter.split(comp, this, compute(args(x), x, num(0)), args, new SymbolSplitter() {
+      @Override
+      public Vector<Symbol> split(Symbol symbol) {
+        return vector(sym(symbol.name + "_r"), sym(symbol.name + "_i"));
+      }
+    });
   }
 
 }

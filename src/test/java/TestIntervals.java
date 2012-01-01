@@ -4,7 +4,7 @@ import mathray.Computation;
 import mathray.Definition;
 import mathray.Symbol;
 import mathray.eval.machine.MachineEvaluator;
-import mathray.eval.precision.Intervals;
+import mathray.eval.split.IntervalTransform;
 import mathray.util.MathEx;
 import mathray.util.Vector;
 
@@ -28,7 +28,7 @@ public class TestIntervals {
   }
   
   private static void fuzzFunction(Definition def) {
-    Computation inter = Intervals.intervalize(def.toComputation(), vector(x));
+    Computation inter = IntervalTransform.intervalize(def.toComputation(), args(x));
     for(int i = 0; i < 100; i++) {
       double min = 1 / (random.nextDouble() * 2 - 1);
       double max = min + 1 / random.nextDouble();
@@ -43,7 +43,7 @@ public class TestIntervals {
   }
   
   private static void assertRange(Definition def, double a, double b, double oa, double ob) {
-    Computation inter = Intervals.intervalize(def.toComputation(), vector(x));
+    Computation inter = IntervalTransform.intervalize(def.toComputation(), args(x));
     Vector<Double> res = MachineEvaluator.eval(inter, vector(a, b));
     assertEquals(vector(oa, ob), res);
   }
