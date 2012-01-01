@@ -47,6 +47,9 @@ public class Simplifications extends PatternRegistry {
     register(pattern(args(x), abs(abs(x)), abs(x)));
     register(pattern(args(x, y), selectSign(abs(x), y, z), y));
     register(pattern(args(x, y), selectSign(neg(abs(x)), y, z), z));
+    
+    register(pattern(args(x), sin(abs(x)), abs(sin(x))));
+    register(pattern(args(x), cos(abs(x)), cos(x)));
   }
   
   private static abstract class Expr {
