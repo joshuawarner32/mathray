@@ -34,7 +34,7 @@ public class Functions {
   
   public static final Function ABS = new Function("abs", 1);
   
-  // selectSign(test, ifNegative, ifZero, ifPositive)
+  // selectSign(test, ifNegative, ifZeroOrPositive)
   public static final Function SELECT_SIGN = new Function("selectSign", 3);
   
   // return the next representable number in the target number system 
