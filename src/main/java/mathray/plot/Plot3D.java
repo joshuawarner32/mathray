@@ -1,8 +1,8 @@
 package mathray.plot;
 
-import mathray.concrete.FunctionTypes;
 import mathray.concrete.RayD3;
 import mathray.concrete.VectorD3;
+import mathray.device.FunctionTypes;
 
 public class Plot3D {
   

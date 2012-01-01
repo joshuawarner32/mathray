@@ -12,7 +12,7 @@ import mathray.Args;
 import mathray.Definition;
 import mathray.NamedConstants;
 import mathray.Symbol;
-import mathray.concrete.FunctionTypes;
+import mathray.device.FunctionTypes;
 import mathray.eval.java.JavaCompiler;
 import mathray.plot.Frame;
 import mathray.plot.Plotter;

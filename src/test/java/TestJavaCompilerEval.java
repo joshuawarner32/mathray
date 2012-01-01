@@ -3,7 +3,7 @@ import static org.junit.Assert.assertEquals;
 import mathray.Computation;
 import mathray.Symbol;
 import mathray.Value;
-import mathray.concrete.FunctionTypes;
+import mathray.device.FunctionTypes;
 import mathray.eval.java.JavaCompiler;
 import mathray.util.Vector;
 

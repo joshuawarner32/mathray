@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 
 
 import mathray.Definition;
-import mathray.concrete.FunctionTypes;
+import mathray.device.FunctionTypes;
 import mathray.eval.java.JavaCompiler;
 
 public class Plotter {
