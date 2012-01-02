@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import mathray.Symbol;
+
 public final class Vector<T> implements Iterable<T> {
   
   private T[] items;
@@ -160,6 +162,12 @@ public final class Vector<T> implements Iterable<T> {
     Vector<T> ret = new Vector<T>();
     ret.items = Arrays.copyOf(items, items.length + 1);
     ret.items[items.length] = item;
+    return ret;
+  }
+
+  public static <T> Vector<T> unsafe(T[] items) {
+    Vector<T> ret = new Vector<T>();
+    ret.items = items;
     return ret;
   }
 

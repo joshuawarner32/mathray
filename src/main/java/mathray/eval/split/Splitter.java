@@ -38,7 +38,7 @@ public class Splitter {
     EvaluatingVisitor<Vector<Value>> v = new EvaluatingVisitor<Vector<Value>>() {
       @Override
       public Vector<Value> symbol(Symbol sym) {
-        return bindings[args.getIndex(sym)];
+        return bindings[args.indexOf(sym)];
       }
       
       @Override

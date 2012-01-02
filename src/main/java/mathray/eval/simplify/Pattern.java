@@ -33,7 +33,7 @@ public class Pattern {
 
   private boolean match(Value[] matches, Value match, Value value) {
     if(match instanceof Symbol) {
-      Integer index = args.getIndex((Symbol)match);
+      Integer index = args.indexOf((Symbol)match);
       if(index != null) {
         if(matches[index] == null) {
           matches[index] = value;
@@ -88,7 +88,7 @@ public class Pattern {
   public static Test isInteger(final Symbol x) {
     return new Test() {
       public boolean check(Args args, Value[] matches) {
-        Integer i = args.getIndex(x);
+        Integer i = args.indexOf(x);
         if(i == null) {
           return false;
         }

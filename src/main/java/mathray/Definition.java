@@ -25,7 +25,7 @@ public class Definition implements Impl<Value> {
       }
       @Override
       public Value symbol(Symbol sym) {
-        Integer index = args.getIndex(sym);
+        Integer index = args.indexOf(sym);
         if(index != null) {
           return a.get(index);
         }

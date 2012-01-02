@@ -1,51 +1,70 @@
 package mathray;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Map;
 
 import mathray.util.Vector;
 
 public class Args implements Iterable<Symbol> {
   
-  private Map<Symbol, Integer> syms = new HashMap<Symbol, Integer>();
+  private final Symbol[] syms;
   
-  public Integer getIndex(Symbol sym) {
-    return syms.get(sym);
+  public int indexOf(Symbol sym) {
+    for(int i = 0; i < syms.length; i++) {
+      if(syms[i] == sym) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   public Symbol get(int index) {
-    for(Map.Entry<Symbol, Integer> entry : syms.entrySet()) {
-      if(entry.getValue() == index) {
-        return entry.getKey();
-      }
-    }
-    throw new IndexOutOfBoundsException();
+    return syms[index];
   }
   
   public Args(Symbol... args) {
+    this.syms = Arrays.copyOf(args, args.length);
     for(int i = 0; i < args.length; i++) {
-      syms.put(args[i], i);
+      if(indexOf(args[i]) < i) {
+        throw new IllegalArgumentException("duplicate Symbol in Args");
+      }
     }
   }
   
   public Args(int count) {
+    this.syms = new Symbol[count];
     for(int i = 0; i < count; i++) {
-      syms.put(Symbol.index(i), i);
+      syms[i] = Symbol.index(i);
     }
   }
 
   public int size() {
-    return syms.size();
+    return syms.length;
   }
 
   public boolean contains(Symbol var) {
-    return syms.get(var) != null;
+    return indexOf(var) != -1;
   }
 
   @Override
   public Iterator<Symbol> iterator() {
-    return syms.keySet().iterator();
+    return new Iterator<Symbol>() {
+      int index = 0;
+      @Override
+      public boolean hasNext() {
+        return index < syms.length;
+      }
+
+      @Override
+      public Symbol next() {
+        return syms[index++];
+      }
+
+      @Override
+      public void remove() {
+        throw new UnsupportedOperationException();
+      }
+    };
   }
   
   @Override
@@ -58,9 +77,8 @@ public class Args implements Iterable<Symbol> {
     return obj instanceof Args && syms.equals(((Args)obj).syms);
   }
 
-  @SuppressWarnings({ "unchecked", "rawtypes" })
   public final Vector<Symbol> toVector() {
-    return new Vector(syms.keySet().toArray());
+    return Vector.unsafe(syms);
   }
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -69,7 +87,12 @@ public class Args implements Iterable<Symbol> {
   }
 
   public final boolean isSubsetOf(Args args) {
-    return args.syms.entrySet().containsAll(syms.entrySet());
+    for(int i = 0; i < syms.length; i++) {
+      if(args.indexOf(syms[i]) == -1) {
+        return false;
+      }
+    }
+    return true;
   }
 
   public String toJavaString() {
