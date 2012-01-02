@@ -47,10 +47,8 @@ public class TestSolve {
     assertSolvesTo(multidef(args, add(x, y, z, num(-1))), new RayD3(0, 10, 0, 0, -1, 0), new VectorD3(0, 1, 0));
   }
   
-  /*
-    TODO: For now, we can't do pow in intervals.
   @Test
   public void testSphere() {
-    assertSolvesTo(compute(args, sub(add(pow(x, 2), pow(y, 2), pow(z, 2)), num(1))), new RayD3(0, 10, 0, 0, -1, 0), new VectorD3(0, 1, 0));
-  }*/
+    assertSolvesTo(multidef(args, sub(add(pow(x, 2), pow(y, 2), pow(z, 2)), num(1))), new RayD3(0, 10, 0, 0, -1, 0), new VectorD3(0, 1, 0));
+  }
 }

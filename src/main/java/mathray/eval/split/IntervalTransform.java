@@ -52,8 +52,10 @@ public class IntervalTransform extends FunctionRegistrar<Multidef> {
   }
   
   private static Multidef makePowCompute() {
-    
-    return null;
+    Value paa = pow(xa, ya);
+    Value pbb = pow(xb, yb);
+    // TODO: handle case where xa < 0 and xb is integer
+    return multidef(args2, intervalSelectSign(xa, vector((Value)NEG_INF, POS_INF), vector(paa, pbb)));
   }
   
   private static Multidef makeAbsCompute() {

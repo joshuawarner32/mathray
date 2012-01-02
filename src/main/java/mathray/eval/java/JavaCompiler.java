@@ -23,6 +23,8 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
     register(NamedConstants.TAU, MathEx.TAU);
     register(NamedConstants.PI, Math.PI);
     register(NamedConstants.E, Math.E);
+    register(NamedConstants.NEG_INF, Double.NEGATIVE_INFINITY);
+    register(NamedConstants.POS_INF, Double.POSITIVE_INFINITY);
 
     register(ADD, binOp(Opcodes.DADD));
     register(SUB, binOp(Opcodes.DSUB));
