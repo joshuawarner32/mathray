@@ -160,8 +160,8 @@ public class MachineEvaluator extends FunctionSymbolRegistrar<Impl<Double>, Doub
 
       @Override
       public Double symbol(Symbol sym) {
-        Integer ret = def.args.indexOf(sym);
-        if(ret != null) {
+        int ret = def.args.indexOf(sym);
+        if(ret != -1) {
           return params.get(ret);
         } else {
           return lookup(sym);

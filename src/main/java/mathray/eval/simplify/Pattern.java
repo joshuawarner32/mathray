@@ -33,8 +33,8 @@ public class Pattern {
 
   private boolean match(Value[] matches, Value match, Value value) {
     if(match instanceof Symbol) {
-      Integer index = args.indexOf((Symbol)match);
-      if(index != null) {
+      int index = args.indexOf((Symbol)match);
+      if(index != -1) {
         if(matches[index] == null) {
           matches[index] = value;
           return true;

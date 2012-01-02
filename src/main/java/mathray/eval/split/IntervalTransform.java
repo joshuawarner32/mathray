@@ -52,28 +52,7 @@ public class IntervalTransform extends FunctionRegistrar<Multidef> {
   }
   
   private static Multidef makePowCompute() {
-    // TODO
-    /*Interval a = args.get(0);
-    Interval b = args.get(1);
-    if(b.a.equals(b.b)) {
-      if(b.a instanceof Rational) {
-        Rational r = (Rational)b.a;
-        if(r.isInteger()) {
-          long v = r.num;
-          if(v >= 0) {
-            if(v % 2 == 0) {
-              Value pa = pow(a.a, r);
-              Value pb = pow(a.b, r);
-              Value max = max(pa, pb);
-              Value min = min(pa, pb);
-              return intervalSelectContains(a, Interval.exact(num(0), maybeUp(max)), approx(min, max));
-            } else {
-              return approx(pow(a.a, r), pow(a.b, r));
-            }
-          }
-        }
-      }
-    }*/
+    
     return null;
   }
   

@@ -32,6 +32,8 @@ public class Functions {
   public static final Function MIN = new Function("min", 2);
   public static final Function MAX = new Function("max", 2);
   
+  public static final Function MOD = new Function("mod", 2);
+  
   public static final Function ABS = new Function("abs", 1);
   
   // selectSign(test, ifNegative, ifZeroOrPositive)

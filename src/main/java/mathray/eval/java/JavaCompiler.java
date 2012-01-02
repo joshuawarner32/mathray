@@ -278,9 +278,9 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
 
       @Override
       public JavaValue symbol(Symbol sym) {
-        Integer index = def.args.indexOf(sym);
+        int index = def.args.indexOf(sym);
         JavaValue ret;
-        if(index != null) {
+        if(index != -1) {
           ret = wrap.arg(index);
         } else {
           ret = mgen.doubleConstant(lookup(sym));

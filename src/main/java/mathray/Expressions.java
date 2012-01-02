@@ -86,6 +86,10 @@ public class Expressions {
     };
   }
   
+  public static Value add(Value a, Value b) {
+    return ADD.call(a, b);
+  }
+  
   public static Value add(Value... values) {
     return fold(ADD, Arrays.asList(values));
   }
@@ -102,7 +106,11 @@ public class Expressions {
     return fold(MUL, Arrays.asList(values));
   }
   
-  public static Value mul(Vector<Value> values) {
+  public static Value mul(Value a, Value b) {
+    return MUL.call(a, b);
+  }
+  
+  public static Value mul(Iterable<Value> values) {
     return fold(MUL, values);
   }
   
@@ -122,12 +130,16 @@ public class Expressions {
     return NEG.call(value);
   }
   
-  public static Value min(Value... values) {
-    return MIN.call(values);
+  public static Value min(Value a, Value b) {
+    return MIN.call(a, b);
   }
   
-  public static Value max(Value... values) {
-    return MAX.call(values);
+  public static Value max(Value a, Value b) {
+    return MAX.call(a, b);
+  }
+  
+  public static Value mod(Value a, Value b) {
+    return MOD.call(a, b);
   }
   
   public static Value abs(Value value) {
