@@ -31,6 +31,7 @@ public final class ComplexTransform extends FunctionRegistrar<Multidef> {
     register(NEG, multidef(args1, neg(xr), neg(xi)));
     register(SIN, multidef(args1, mul(cosh(xi), sin(xr)), mul(sinh(xi), cos(xr))));
     register(COS, multidef(args1, mul(cosh(xi), cos(xr)), neg(mul(sinh(xi), sin(xr)))));
+    register(SQRT, multidef(args1, sqrt(add(pow(xr, 2), pow(xi, 2))), num(0)));
     
     Value sqrtFirst = div(atan2(xi, xr), num(2));
     Value sqrtSecond = pow(add(pow(xi, 2), pow(xr, 2)), num(1, 4));
