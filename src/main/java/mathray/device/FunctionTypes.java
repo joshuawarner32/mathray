@@ -115,5 +115,13 @@ public class FunctionTypes {
   public interface All extends D, F, D1_1, F1_1, D2_1, F2_1, D3_1, F3_1, ZeroOnRayD3, IntervalOnRayD3, FillerD, FillerF, RepeatD, RepeatF {
     
   }
+  
+  public interface ClosureD<T> {
+    public T close(double... args);
+  }
+  
+  public interface ClosureF<T> {
+    public T close(float... args);
+  }
 
 }
