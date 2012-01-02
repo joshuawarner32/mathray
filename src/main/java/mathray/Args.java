@@ -7,7 +7,7 @@ import mathray.util.Vector;
 
 public class Args implements Iterable<Symbol> {
   
-  private final Symbol[] syms;
+  private Symbol[] syms;
   
   public int indexOf(Symbol sym) {
     for(int i = 0; i < syms.length; i++) {
@@ -37,6 +37,8 @@ public class Args implements Iterable<Symbol> {
       syms[i] = Symbol.index(i);
     }
   }
+  
+  private Args() {}
 
   public int size() {
     return syms.length;
@@ -104,6 +106,16 @@ public class Args implements Iterable<Symbol> {
     }
     b.append(")");
     return b.toString();
+  }
+
+  public Args concat(Symbol... nargs) {
+    Symbol[] ns = Arrays.copyOf(syms, syms.length + nargs.length);
+    Args ret = new Args();
+    ret.syms = ns;
+    for(int i = 0; i < nargs.length; i++) {
+      ns[i + syms.length] = nargs[i];
+    }
+    return ret;
   }
 
 }

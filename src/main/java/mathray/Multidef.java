@@ -61,6 +61,32 @@ public class Multidef {
     });
   }
   
+  public Vector<Value> eval(final Args args, final Vector<Value> replacements) {
+    return accept(new EvaluatingVisitor<Value>() {
+
+      @Override
+      public Value symbol(Symbol sym) {
+        int index = args.indexOf(sym);
+        if(index >= 0) {
+          return replacements.get(index);
+        } else {
+          return sym;
+        }
+      }
+
+      @Override
+      public Value constant(Rational rat) {
+        return rat;
+      }
+
+      @Override
+      public Value call(Call call, Vector<Value> args) {
+        return call.func.call(args);
+      }
+      
+    });
+  }
+  
   public Multidef transform(final EvaluatingVisitor<Value> v) {
     return new Multidef(args, accept(v));
   }
