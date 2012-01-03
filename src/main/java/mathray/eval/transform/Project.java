@@ -14,17 +14,22 @@ public class Project {
   public static Multidef project(Multidef def, final Args args) {
     final int count = args.size();
     final Symbol[] nargs = new Symbol[count * count];
+    final Symbol[] center = new Symbol[count];
     for(int i = 0; i < count; i++) {
       for(int j = 0; j < count; j++) {
         nargs[count * i + j] = sym("v_" + i + "_" + j);
       }
     }
-    final Value[] vals = new Value[count];
+    for(int i = 0; i < count; i++) {
+      center[i] = sym("p_" + i);
+    }
+    final Value[] vals = new Value[count + 1];
     Vector<Value> res = def.eval(args, Vector.generate(args.size(), new Generator<Value>() {
       @Override
       public Value generate(int index) {
+        vals[0] = center[index];
         for(int i = 0; i < count; i++) {
-          vals[i] = mul(args.get(i), nargs[count * i + index]);
+          vals[i + 1] = mul(args.get(i), nargs[count * i + index]);
         }
         return add(vals);
       }
