@@ -8,6 +8,7 @@ import mathray.FunctionSymbolRegistrar;
 import mathray.NamedConstants;
 import mathray.Rational;
 import mathray.Symbol;
+import mathray.concrete.BlockD3;
 import mathray.concrete.RayD3;
 import mathray.device.FunctionTypes;
 import mathray.util.MathEx;
@@ -106,13 +107,13 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
           return mgen;
         }
         
-        private JavaValue field(MethodGenerator mgen, String name) {
+        private JavaValue field(String name) {
           return mgen.loadField(mgen.arg(0), RayD3.class.getName().replace('.', '/'), name, "D");
         }
         
         private JavaValue mm(String name, String method) {
-          JavaValue x = field(mgen, name);
-          JavaValue y = mgen.binOp(Opcodes.DADD, field(mgen, name), field(mgen, "d" + name));
+          JavaValue x = field(name);
+          JavaValue y = mgen.binOp(Opcodes.DADD, field(name), field("d" + name));
           return mgen.callStatic("java/lang/Math", method, "(DD)D", x, y);
         }
         
@@ -152,6 +153,69 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
         
         @Override
         public FunctionTypes.ZeroOnRayD3 end() {
+          mgen.ret(mgen.callStatic(MathEx.class.getName().replace('.', '/'), "containsZero", "(DD)Z", aVar, bVar));
+          mgen.end();
+          gen.end();
+          return load(gen);
+        }
+      };
+    }
+  };
+  
+  public static final FunctionGenerator<FunctionTypes.ZeroInBlockD3> MAYBE_ZERO_IN_BLOCKD3 = new FunctionGenerator<FunctionTypes.ZeroInBlockD3>() {
+    public Wrapper<FunctionTypes.ZeroInBlockD3> begin(Multidef def) {
+      final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.ZeroOnRayD3.class.getName().replace('.', '/')});
+      final MethodGenerator mgen = gen.method(false, "maybeHasZeroIn", "(L" + BlockD3.class.getName().replace('.', '/') + ";)Z");
+      return new Wrapper<FunctionTypes.ZeroInBlockD3>() {
+        
+        private JavaValue aVar;
+        private JavaValue bVar;
+        
+        @Override
+        public MethodGenerator getMethodGenerator() {
+          return mgen;
+        }
+        
+        private JavaValue field(String name) {
+          return mgen.loadField(mgen.arg(0), BlockD3.class.getName().replace('.', '/'), name, "D");
+        }
+        
+        @Override
+        public JavaValue arg(int index) {
+          switch(index) {
+          case 0:
+            return field("x0");
+          case 1:
+            return field("x1");
+          case 2:
+            return field("y0");
+          case 3:
+            return field("y1");
+          case 4:
+            return field("z0");
+          case 5:
+            return field("z1");
+          default:
+            throw new RuntimeException("shouldn't happen");
+          }
+        }
+        
+        @Override
+        public void ret(int index, JavaValue value) {
+          switch(index) {
+          case 0:
+            aVar = value;
+            break;
+          case 1:
+            bVar = value;
+            break;
+          default:
+            throw new RuntimeException("shouldn't happen");
+          }
+        }
+        
+        @Override
+        public FunctionTypes.ZeroInBlockD3 end() {
           mgen.ret(mgen.callStatic(MathEx.class.getName().replace('.', '/'), "containsZero", "(DD)Z", aVar, bVar));
           mgen.end();
           gen.end();

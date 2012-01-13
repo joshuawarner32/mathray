@@ -5,6 +5,7 @@ import static mathray.Functions.*;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import mathray.eval.Impl;
 import mathray.util.Vector;
 
 public class Expressions {
@@ -61,7 +62,7 @@ public class Expressions {
     return res;
   }
   
-  public static Iterable<Value> map(final Function func, final Iterable<Value> values) {
+  public static Iterable<Value> map(final Impl<Value> func, final Iterable<Value> values) {
     return new Iterable<Value>() {
       @Override
       public Iterator<Value> iterator() {
@@ -74,7 +75,7 @@ public class Expressions {
           
           @Override
           public Value next() {
-            return func.call(it.next());
+            return func.call(vector(it.next()));
           }
           
           @Override

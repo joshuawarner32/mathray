@@ -23,15 +23,15 @@ public class Project {
     for(int i = 0; i < count; i++) {
       center[i] = sym("p_" + i);
     }
-    final Value[] vals = new Value[count + 1];
+    final Value[] vals = new Value[count];
     Vector<Value> res = def.eval(args, Vector.generate(args.size(), new Generator<Value>() {
       @Override
       public Value generate(int index) {
-        vals[0] = center[index];
-        for(int i = 0; i < count; i++) {
-          vals[i + 1] = mul(args.get(i), nargs[count * i + index]);
+        for(int i = 0; i < count - 1; i++) {
+          vals[i] = mul(args.get(i), nargs[count * i + index]);
         }
-        return add(vals);
+        vals[count] = nargs[count * (count - 1) + index];
+        return add(mul(add(vals), args.get(count - 1)), center[index]);
       }
     }));
     return multidef(def.args.concat(nargs), vals);

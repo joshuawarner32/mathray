@@ -1,9 +1,10 @@
 package mathray;
 
 import static mathray.Expressions.*;
+import mathray.eval.Impl;
 import mathray.util.Vector;
 
-public class Function implements Comparable<Function> {
+public class Function implements Impl<Value>, Comparable<Function> {
   
   public final String name;
   

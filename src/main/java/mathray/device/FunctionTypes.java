@@ -1,5 +1,6 @@
 package mathray.device;
 
+import mathray.concrete.BlockD3;
 import mathray.concrete.RayD3;
 import mathray.concrete.VectorD2;
 
@@ -81,19 +82,8 @@ public class FunctionTypes {
     public boolean maybeHasZeroOn(RayD3 args);
   }
   
-  public interface IntervalOnRayD3 {
-    public void call(RayD3 args, VectorD2 res);
-  }
-  
-  public static ZeroOnRayD3 hasZero(final IntervalOnRayD3 func) {
-    return new ZeroOnRayD3() {
-      @Override
-      public boolean maybeHasZeroOn(RayD3 args) {
-        VectorD2 res = new VectorD2(0, 0);
-        func.call(args, res);
-        return res.x <= 0 && res.y >= 0;
-      }
-    };
+  public interface ZeroInBlockD3 {
+    public boolean maybeHasZeroIn(BlockD3 args);
   }
   
   public interface FillerD {
@@ -112,7 +102,7 @@ public class FunctionTypes {
     public void repeat(float[] args, float[] res);
   }
   
-  public interface All extends D, F, D1_1, F1_1, D2_1, F2_1, D3_1, F3_1, ZeroOnRayD3, IntervalOnRayD3, FillerD, FillerF, RepeatD, RepeatF {
+  public interface All extends D, F, D1_1, F1_1, D2_1, F2_1, D3_1, F3_1, ZeroOnRayD3, ZeroInBlockD3, FillerD, FillerF, RepeatD, RepeatF {
     
   }
   

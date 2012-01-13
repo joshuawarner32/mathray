@@ -1,6 +1,7 @@
 package mathray.device;
 
 import mathray.Multidef;
+import mathray.concrete.BlockD3;
 import mathray.concrete.RayD3;
 import mathray.concrete.VectorD2;
 
@@ -67,12 +68,6 @@ public class Computation implements FunctionTypes.All {
   }
 
   @Override
-  public void call(RayD3 args, VectorD2 res) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
   public void fill(double[] limits, int[] counts, double[] result) {
     // TODO Auto-generated method stub
     
@@ -94,6 +89,12 @@ public class Computation implements FunctionTypes.All {
   public void repeat(float[] args, float[] res) {
     // TODO Auto-generated method stub
     
+  }
+
+  @Override
+  public boolean maybeHasZeroIn(BlockD3 args) {
+    // TODO Auto-generated method stub
+    return false;
   }
 
 }
