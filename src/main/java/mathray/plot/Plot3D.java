@@ -89,14 +89,16 @@ public class Plot3D {
     blockDivide(func, mat, error, max, block);
     double dmin = mat.nonInfiniteMin();
     double dmax = mat.nonInfiniteMax();
+    
+    double middle = mat.get(mat.width / 2, mat.height / 2);
 
     BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     for(int y = 0; y < height; y++) {
       for(int x = 0; x < width; x++) {
         double val = (mat.get(x, y) - dmin) / (dmax - dmin);
-        int r = (int)(val * 256);
-        int g = (int)(val * 256);
-        int b = (int)(val * 256);
+        int r = (int)(val * 255);
+        int g = (int)(val * 255);
+        int b = (int)(val * 255);
         
         ret.setRGB(x, height - 1 - y, (0xff << 24) | (r << 16) | (g << 8) | (b << 0));
       }

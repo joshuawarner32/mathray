@@ -36,14 +36,14 @@ public class Main {
   private static Symbol z = sym("z");
   
   private static void plot3DStuff() {
-    plot3D(def(args(x, y, z), add(x, y, z, num(-5))), 512, 512);
+    plot3D(def(args(x, y, z), add(mul(x, x), mul(y, y), mul(z, z), num(-1))), 512, 512);
   }
   
   private static void plot3D(Definition def, int width, int height) {
     Multidef inter = IntervalTransform.intervalize(def.toMultidef(), def.args);
     System.out.println(inter);
     FunctionTypes.ZeroInBlockD3 func = JavaCompiler.compile(JavaCompiler.MAYBE_ZERO_IN_BLOCKD3, inter);
-    BufferedImage image = Plot3D.plotBlockDepth(func, width, height, 0.01, 100);
+    BufferedImage image = Plot3D.plotBlockDepth(func, width, height, 0.001, 100);
     show("plot", image);
   }
   
