@@ -29,6 +29,11 @@ public class Simplifications extends PatternRegistry {
     Symbol y = sym("y");
     Symbol z = sym("z");
     
+    Symbol test = sym("test");
+    Symbol even = sym("even");
+    Symbol odd = sym("odd");
+    Symbol other = sym("other");
+    
     register(pattern(args(), PI, div(TAU, num(2))));
     
     register(pattern(args(), sin(num(0)), num(0)));
@@ -50,6 +55,10 @@ public class Simplifications extends PatternRegistry {
     
     register(pattern(args(x), sin(abs(x)), abs(sin(x))));
     register(pattern(args(x), cos(abs(x)), cos(x)));
+    
+    register(pattern(args(x, y, z), selectEqual(x, x, y, z), y));
+    register(pattern(args(test, even, odd, other), selectInteger(test, even, odd, other), even, isEven(test)));
+    register(pattern(args(test, even, odd, other), selectInteger(test, even, odd, other), odd, isOdd(test)));
   }
   
   private static abstract class Expr {

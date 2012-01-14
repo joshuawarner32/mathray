@@ -61,6 +61,7 @@ public class Plot3D {
         if(block.width == 0 || block.height == 0) {
           return;
         }
+        int count = 0;
         while(true) {
           if(block.z1 >= max) {
             return;
@@ -70,14 +71,17 @@ public class Plot3D {
             if(block.width == 1 && block.height == 1) {
               if(block.depth() <= error) {
                 block.putOn(mat);
+                break;
               } else {
-                block.z1 = (block.z0 + block.z1) / 2;
-                continue;
+                block.half();
               }
+            } else if(count < 2) {
+              count++;
+              block.half();
             } else {
               split(block);
+              break;
             }
-            break;
           } else {
             block.next();
           }

@@ -59,5 +59,9 @@ public class BlockD3 {
     z0 = z1;
     z1 = z0 + 2 * d;
   }
+
+  public void half() {
+    z1 = (z0 + z1) / 2;
+  }
   
 }

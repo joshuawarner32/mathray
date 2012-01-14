@@ -96,5 +96,29 @@ public class Pattern {
       }
     };
   }
+  
+  public static Test isEven(final Symbol x) {
+    return new Test() {
+      public boolean check(Args args, Value[] matches) {
+        Integer i = args.indexOf(x);
+        if(i == null) {
+          return false;
+        }
+        return matches[i] instanceof Rational && ((Rational)matches[i]).isEven();
+      }
+    };
+  }
+  
+  public static Test isOdd(final Symbol x) {
+    return new Test() {
+      public boolean check(Args args, Value[] matches) {
+        Integer i = args.indexOf(x);
+        if(i == null) {
+          return false;
+        }
+        return matches[i] instanceof Rational && ((Rational)matches[i]).isOdd();
+      }
+    };
+  }
 
 }

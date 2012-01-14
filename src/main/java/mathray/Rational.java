@@ -124,6 +124,10 @@ public class Rational extends Value {
     return denom == 1 && ((num & 1) == 0);
   }
   
+  public boolean isOdd() {
+    return !isEven();
+  }
+  
   public boolean isInteger() {
     return denom == 1;
   }

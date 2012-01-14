@@ -15,6 +15,7 @@ import mathray.Symbol;
 import mathray.device.FunctionTypes;
 import mathray.device.FunctionTypes.ZeroInBlockD3;
 import mathray.eval.java.JavaCompiler;
+import mathray.eval.simplify.Simplifications;
 import mathray.eval.split.IntervalTransform;
 import mathray.eval.text.DefaultPrinter;
 import mathray.eval.text.ParseInfo;
@@ -69,7 +70,7 @@ public class Main {
   }
   
   private static void plot3D(Definition def, int width, int height) {
-    Multidef inter = IntervalTransform.intervalize(def.toMultidef(), def.args);
+    Multidef inter = Simplifications.simplify(IntervalTransform.intervalize(def.toMultidef(), def.args));
     System.out.println(inter);
     FunctionTypes.ZeroInBlockD3 func = JavaCompiler.compile(JavaCompiler.MAYBE_ZERO_IN_BLOCKD3, inter);
     BufferedImage image = Plot3D.plotBlockDepth(func, width, height, 0.001, 100);
