@@ -7,6 +7,7 @@ import mathray.concrete.MatrixD2;
 import mathray.concrete.RayD3;
 import mathray.concrete.VectorD3;
 import mathray.device.FunctionTypes;
+import mathray.util.Stopwatch;
 
 public class Plot3D {
   
@@ -41,11 +42,12 @@ public class Plot3D {
   }
   private static interface Tester {
     public void test(BlockD3 block);
+    public void print();
   }
   
   public static void blockDivide(final FunctionTypes.ZeroInBlockD3 func, final MatrixD2 mat, final double error, final double max, BlockD3 block) {
 
-    new Tester() {
+    Tester tester = new Tester() {
       private void split(BlockD3 block) {
         int xSplit = block.width / 2;
         int ySplit = block.height / 2;
@@ -54,6 +56,7 @@ public class Plot3D {
         test(block.split(block.x,          block.y + ySplit, xSplit,               ySplit));
         test(block.split(block.x + xSplit, block.y + ySplit, block.width - xSplit, block.height - ySplit));
       }
+      int evals = 0;
       public void test(BlockD3 block) {
         if(block.width == 0 || block.height == 0) {
           return;
@@ -62,6 +65,7 @@ public class Plot3D {
           if(block.z1 >= max) {
             return;
           }
+          evals++;
           if(func.maybeHasZeroIn(block)) {
             if(block.width == 1 && block.height == 1) {
               if(block.depth() <= error) {
@@ -79,14 +83,22 @@ public class Plot3D {
           }
         }
       }
-    }.test(block);
+      public void print() {
+        System.out.println("evals: " + evals);
+      }
+    };
+    tester.test(block);
+    tester.print();
   }
   
   public static BufferedImage plotBlockDepth(final FunctionTypes.ZeroInBlockD3 func, int width, int height, double error, double max) {
     MatrixD2 mat = new MatrixD2(width, height);
     mat.putEverywhere(Double.POSITIVE_INFINITY);
     BlockD3 block = new BlockD3(-1, -1, 0, 1, 1, 1, 0, 0, width, height);
+    Stopwatch watch = new Stopwatch();
     blockDivide(func, mat, error, max, block);
+    double time = watch.time() / 1000.0;
+    System.out.println("time: " + time);
     double dmin = mat.nonInfiniteMin();
     double dmax = mat.nonInfiniteMax();
     

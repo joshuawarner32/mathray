@@ -18,6 +18,8 @@ public final class NamedConstants {
   
   public static final Symbol NEG_INF = sym("neg_inf");
   
+  public static final Symbol UNDEF = sym("undef");
+  
   public static final Vector<Symbol> ALL = vector(TAU, E);
 
 }

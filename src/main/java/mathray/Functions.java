@@ -39,6 +39,12 @@ public class Functions {
   // selectSign(test, ifNegative, ifZeroOrPositive)
   public static final Function SELECT_SIGN = new Function("selectSign", 3);
   
+  // selectEqual(a, b, ifEqual, ifNotEqual)
+  public static final Function SELECT_EQUAL = new Function("selectEqual", 4);
+  
+  // selectInteger(test, ifEven, ifOdd, else)
+  public static final Function SELECT_INTEGER = new Function("selectInteger", 4);
+  
   // return the next representable number in the target number system 
   public static final Function UP = new Function("up", 1);
 

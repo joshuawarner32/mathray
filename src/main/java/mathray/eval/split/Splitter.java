@@ -38,7 +38,12 @@ public class Splitter {
     EvaluatingVisitor<Vector<Value>> v = new EvaluatingVisitor<Vector<Value>>() {
       @Override
       public Vector<Value> symbol(Symbol sym) {
-        return bindings[args.indexOf(sym)];
+        int index = args.indexOf(sym);
+        if(index >= 0) {
+          return bindings[index];
+        } else {
+          return vector((Value)sym, sym);
+        }
       }
       
       @Override
@@ -52,6 +57,6 @@ public class Splitter {
       }
     };
     Vector<Vector<Value>> ret = def.accept(v);
-    return new Multidef(args(nargsarr), Vector.flatten(ret));
+    return new Multidef(args(nargsarr), struct(Vector.flatten(ret)));
   }
 }

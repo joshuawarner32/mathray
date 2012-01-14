@@ -85,7 +85,7 @@ public class Definition implements Impl<Value> {
   }
 
   public Multidef toMultidef() {
-    return new Multidef(args, vector(value));
+    return new Multidef(args, struct(value));
   }
 
 }

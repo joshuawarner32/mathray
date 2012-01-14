@@ -36,7 +36,8 @@ public class Main {
   private static Symbol z = sym("z");
   
   private static void plot3DStuff() {
-    plot3D(def(args(x, y, z), add(mul(x, x), mul(y, y), mul(z, z), num(-1))), 512, 512);
+    //plot3D(def(args(x, y, z), add(mul(x, x), mul(y, y), mul(z, z), num(-1))), 512, 512);
+    plot3D(def(args(x, y, z), add(pow(x, 2), pow(y, 2), pow(z, 2), num(-1))), 512, 512);
   }
   
   private static void plot3D(Definition def, int width, int height) {

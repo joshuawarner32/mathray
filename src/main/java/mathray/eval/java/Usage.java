@@ -54,7 +54,7 @@ public class Usage {
       
     };
     
-    for(Value val : def.values) {
+    for(Value val : def.values.toVector()) {
       val.accept(v);
     }
     

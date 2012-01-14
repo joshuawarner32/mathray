@@ -5,15 +5,16 @@ import mathray.util.Vector;
 import mathray.visitor.EvaluatingVisitor;
 import mathray.visitor.SimpleVisitor;
 import mathray.visitor.Visitors;
+import static mathray.Expressions.*;
 
 
 public class Multidef {
   
   public final Args args;
   
-  public final Vector<Value> values;
+  public final Struct values;
   
-  public Multidef(Args args, Vector<Value> values) {
+  public Multidef(Args args, Struct values) {
     this.args = args;
     this.values = values;
   }
@@ -37,7 +38,7 @@ public class Multidef {
         return cst;
       }
     };
-    return values.transform(new Transformer<Value, Value>() {
+    return values.toVector().transform(new Transformer<Value, Value>() {
       @Override
       public Value transform(Value in) {
         return in.accept(v);
@@ -53,7 +54,7 @@ public class Multidef {
     
     final SimpleVisitor<T> iv = Visitors.cache(v);
     
-    return values.transform(new Transformer<Value, T>() {
+    return values.toVector().transform(new Transformer<Value, T>() {
       @Override
       public T transform(Value in) {
         return in.accept(iv);
@@ -88,7 +89,7 @@ public class Multidef {
   }
   
   public Multidef transform(final EvaluatingVisitor<Value> v) {
-    return new Multidef(args, accept(v));
+    return new Multidef(args, struct(accept(v)));
   }
   
   @Override

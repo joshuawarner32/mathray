@@ -26,6 +26,7 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
     register(NamedConstants.E, Math.E);
     register(NamedConstants.NEG_INF, Double.NEGATIVE_INFINITY);
     register(NamedConstants.POS_INF, Double.POSITIVE_INFINITY);
+    register(NamedConstants.UNDEF, Double.NaN);
 
     register(ADD, binOp(Opcodes.DADD));
     register(SUB, binOp(Opcodes.DSUB));
@@ -57,6 +58,18 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
       @Override
       public JavaValue call(MethodGenerator mgen, Vector<JavaValue> args) {
         return mgen.callStatic(MathEx.class.getName().replace('.', '/'), "selectSign", "(DDD)D", args.get(0), args.get(1), args.get(2));
+      }
+    });
+    register(SELECT_EQUAL, new JavaImpl() {
+      @Override
+      public JavaValue call(MethodGenerator mgen, Vector<JavaValue> args) {
+        return mgen.callStatic(MathEx.class.getName().replace('.', '/'), "selectEqual", "(DDDD)D", args.get(0), args.get(1), args.get(2), args.get(3));
+      }
+    });
+    register(SELECT_INTEGER, new JavaImpl() {
+      @Override
+      public JavaValue call(MethodGenerator mgen, Vector<JavaValue> args) {
+        return mgen.callStatic(MathEx.class.getName().replace('.', '/'), "selectInteger", "(DDDD)D", args.get(0), args.get(1), args.get(2), args.get(3));
       }
     });
   }

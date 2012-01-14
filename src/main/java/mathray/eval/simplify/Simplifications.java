@@ -444,12 +444,12 @@ public class Simplifications extends PatternRegistry {
   }
   
   public Multidef transform(Multidef def) {
-    return new Multidef(def.args, def.values.transform(new Transformer<Value, Value>() {
+    return new Multidef(def.args, struct(def.values.toVector().transform(new Transformer<Value, Value>() {
       @Override
       public Value transform(Value in) {
         return Simplifications.this.transform(in);
       }
-    }));
+    })));
   }
 
   public Definition transform(Definition orig) {

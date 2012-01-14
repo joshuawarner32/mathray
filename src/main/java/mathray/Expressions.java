@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import mathray.eval.Impl;
+import mathray.util.Generator;
+import mathray.util.Transformer;
 import mathray.util.Vector;
 
 public class Expressions {
@@ -28,12 +30,49 @@ public class Expressions {
     return new Vector<T>(values);
   }
   
+  public static Struct struct(Value... values) {
+    return struct(vector(values));
+  }
+  
+  public static Struct struct(final Vector<Value> values) {
+    Function func = null;
+    boolean all = true;
+    for(Value val : values) {
+      if(val instanceof Call) {
+        if(func == null) {
+          func = ((Call)val).func;
+        } else if(func != ((Call)val).func) {
+          all = false;
+          break;
+        }
+      } else {
+        all = false;
+        break;
+      }
+    }
+    if(all) {
+      Vector<Struct> args = Vector.generate(func.arity, new Generator<Struct>() {
+        @Override
+        public Struct generate(final int index) {
+          return struct(values.transform(new Transformer<Value, Value>() {
+            @Override
+            public Value transform(Value in) {
+              return ((Call)in).args.get(index);
+            }
+          }));
+        }
+      });
+      return new Multicall(func, args);
+    }
+    return new Multivalue(values);
+  }
+  
   public static Definition def(Args args, Value value) {
     return new Definition(args, value);
   }
   
   public static Multidef multidef(Args args, Value... values) {
-    return new Multidef(args, vector(values));
+    return new Multidef(args, struct(values));
   }
   
   public static Value fold(Function func, Iterable<Value> values) {
@@ -149,6 +188,14 @@ public class Expressions {
   
   public static Value selectSign(Value test, Value negative, Value zeroOrPositive) {
     return SELECT_SIGN.call(test, negative, zeroOrPositive);
+  }
+  
+  public static Value selectEqual(Value a, Value b, Value equal, Value notEqual) {
+    return SELECT_EQUAL.call(a, b, equal, notEqual);
+  }
+  
+  public static Value selectInteger(Value test, Value even, Value odd, Value other) {
+    return SELECT_INTEGER.call(test, even, odd, other);
   }
   
   public static Value sin(Value value) {

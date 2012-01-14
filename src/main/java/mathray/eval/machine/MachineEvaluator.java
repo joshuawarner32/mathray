@@ -129,6 +129,16 @@ public class MachineEvaluator extends FunctionSymbolRegistrar<Impl<Double>, Doub
         return MathEx.selectSign(args.get(0), args.get(1), args.get(2));
       }
     });
+    register(SELECT_EQUAL, new Impl<Double>() {
+      public Double call(Vector<Double> args) {
+        return MathEx.selectEqual(args.get(0), args.get(1), args.get(2), args.get(3));
+      }
+    });
+    register(SELECT_INTEGER, new Impl<Double>() {
+      public Double call(Vector<Double> args) {
+        return MathEx.selectInteger(args.get(0), args.get(1), args.get(2), args.get(3));
+      }
+    });
     register(UP, new Impl<Double>() {
       public Double call(Vector<Double> args) {
         return Math.nextUp(args.get(0));
@@ -145,6 +155,7 @@ public class MachineEvaluator extends FunctionSymbolRegistrar<Impl<Double>, Doub
     register(NamedConstants.E, Math.E);
     register(NamedConstants.NEG_INF, Double.NEGATIVE_INFINITY);
     register(NamedConstants.POS_INF, Double.POSITIVE_INFINITY);
+    register(NamedConstants.UNDEF, Double.NaN);
   }
     
   public static Vector<Double> eval(final Multidef def, final Vector<Double> params) {

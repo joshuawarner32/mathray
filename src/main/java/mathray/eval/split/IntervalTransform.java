@@ -54,8 +54,13 @@ public class IntervalTransform extends FunctionRegistrar<Multidef> {
   private static Multidef makePowCompute() {
     Value paa = pow(xa, ya);
     Value pbb = pow(xb, yb);
-    // TODO: handle case where xa < 0 and xb is integer
-    return multidef(args2, intervalSelectSign(xa, vector((Value)NEG_INF, POS_INF), vector(paa, pbb)));
+    Vector<Value> undef = vector((Value)UNDEF, UNDEF);
+    Vector<Value> mark = vector((Value)num(20), num(85));
+    Vector<Value> even = vector(intervalSelectContains(vector((Value)xa, xb), vector(num(0), max(paa, pbb)), vector(min(paa, pbb), max(paa, pbb))));
+    Vector<Value> odd = vector(paa, pbb);
+    Vector<Value> isel = vector(intervalSelectInteger(ya, even, odd, undef));
+    Vector<Value> equal = vector(intervalSelectEqual(ya, yb, isel, undef));
+    return multidef(args2, intervalSelectSign(xa, equal, vector(paa, pbb)));
   }
   
   private static Multidef makeAbsCompute() {
@@ -88,6 +93,14 @@ public class IntervalTransform extends FunctionRegistrar<Multidef> {
   
   private static Value[] intervalSelectSign(Value test, Vector<Value> n, Vector<Value> zp) {
     return new Value[] {selectSign(test, n.get(0), zp.get(0)), selectSign(test, n.get(1), zp.get(1))};
+  }
+  
+  private static Value[] intervalSelectEqual(Value a, Value b, Vector<Value> eq, Vector<Value> neq) {
+    return new Value[] {selectEqual(a, b, eq.get(0), neq.get(0)), selectEqual(a, b, eq.get(1), neq.get(1))};
+  }
+  
+  private static Value[] intervalSelectInteger(Value a, Vector<Value> even, Vector<Value> odd, Vector<Value> other) {
+    return new Value[] {selectInteger(a, even.get(0), odd.get(0), other.get(0)), selectInteger(a, even.get(1), odd.get(1), other.get(1))};
   }
   
   private static final IntervalTransform INSTANCE = new IntervalTransform();
