@@ -14,6 +14,8 @@ public class MethodGenerator {
   final MethodVisitor methodVisitor;
   private final MethodArg[] args;
   
+  private int maxStack = 0;
+  
   private State state = new State();
   
   MethodGenerator(boolean static_, String name, String desc, ClassVisitor classVisitor) {
@@ -66,16 +68,24 @@ public class MethodGenerator {
     state.stack.pop().store(this);
   }
   
+  private JavaValue push(JavaValue val) {
+    state.stack.push(val);
+    if(state.stack.size() > maxStack) {
+      maxStack = state.stack.size();
+    }
+    return val;
+  }
+  
   public JavaValue binOp(int opcode, JavaValue a, JavaValue b) {
     load(a, b);
     methodVisitor.visitInsn(opcode);
-    return state.stack.push(new ComputedValue(a.getType()));
+    return push(new ComputedValue(a.getType()));
   }
 
   public JavaValue unaryOp(int opcode, JavaValue a) {
     load(a);
     methodVisitor.visitInsn(opcode);
-    return state.stack.push(new ComputedValue(a.getType()));
+    return push(new ComputedValue(a.getType()));
   }
   
   public JavaValue arg(int index) {
@@ -85,7 +95,7 @@ public class MethodGenerator {
   public JavaValue aload(JavaValue array, int index) {
     load(array, intConstant(index));
     methodVisitor.visitInsn(Opcodes.DALOAD);
-    return state.stack.push(new ComputedValue(Type.DOUBLE_TYPE));
+    return push(new ComputedValue(Type.DOUBLE_TYPE));
   }
   
   public void astore(JavaValue array, int index, JavaValue value) {
@@ -111,20 +121,20 @@ public class MethodGenerator {
   }
   
   public void end() {
-    methodVisitor.visitMaxs(100, 100);
+    methodVisitor.visitMaxs(maxStack + 10, state.locals.size());
     methodVisitor.visitEnd();
   }
 
   public JavaValue callStatic(String className, String name, String desc, JavaValue... args) {
     load(args);
     methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, className, name, desc);
-    return state.stack.push(new ComputedValue(Type.getReturnType(desc)));
+    return push(new ComputedValue(Type.getReturnType(desc)));
   }
 
   public JavaValue loadField(JavaValue obj, String class_, String name, String desc) {
     load(obj);
     methodVisitor.visitFieldInsn(Opcodes.GETFIELD, class_, name, desc);
-    return state.stack.push(new ComputedValue(Type.getType(desc)));
+    return push(new ComputedValue(Type.getType(desc)));
   }
 
   public void store(JavaValue value) {

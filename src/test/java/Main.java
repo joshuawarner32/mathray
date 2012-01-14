@@ -16,6 +16,9 @@ import mathray.device.FunctionTypes;
 import mathray.device.FunctionTypes.ZeroInBlockD3;
 import mathray.eval.java.JavaCompiler;
 import mathray.eval.split.IntervalTransform;
+import mathray.eval.text.DefaultPrinter;
+import mathray.eval.text.ParseInfo;
+import mathray.eval.text.InfixOperator.Associativity;
 import mathray.plot.Frame;
 import mathray.plot.Plot3D;
 import mathray.plot.Plotter;
@@ -36,8 +39,33 @@ public class Main {
   private static Symbol z = sym("z");
   
   private static void plot3DStuff() {
+    ParseInfo info = ParseInfo.builder()
+      .group("(", ",", ")")
+      .infix("+", 10, Associativity.LEFT, ADD)
+      .infix("-", 10, Associativity.LEFT, SUB)
+      .infix("*", 20, Associativity.LEFT, MUL)
+      .infix("/", 20, Associativity.LEFT, DIV)
+      .infix("^", 30, Associativity.RIGHT, POW)
+      .prefix("-", 25, NEG)
+      .function(SIN)
+      .function(SINH)
+      .function(ASIN)
+      .function(COS)
+      .function(COSH)
+      .function(ACOS)
+      .function(TAN)
+      .function(TANH)
+      .function(ATAN)
+      .function(ATAN2)
+      .function(SQRT)
+      .function(LOG)
+      .function(MIN)
+      .function(MAX)
+      .sym(x).sym(y).sym(z)
+      .build();
     //plot3D(def(args(x, y, z), add(mul(x, x), mul(y, y), mul(z, z), num(-1))), 512, 512);
-    plot3D(def(args(x, y, z), add(pow(x, 2), pow(y, 2), pow(z, 2), num(-1))), 512, 512);
+    //plot3D(def(args(x, y, z), add(pow(x, 2), pow(y, 2), pow(z, 2), num(-1))), 512, 512);
+    plot3D(def(args(x, y, z), info.parse("x^2+z^2-(1-y)*y^4")), 512, 512);
   }
   
   private static void plot3D(Definition def, int width, int height) {
