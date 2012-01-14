@@ -164,7 +164,7 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
   
   public static final FunctionGenerator<FunctionTypes.ZeroInBlockD3> MAYBE_ZERO_IN_BLOCKD3 = new FunctionGenerator<FunctionTypes.ZeroInBlockD3>() {
     public Wrapper<FunctionTypes.ZeroInBlockD3> begin(Multidef def) {
-      final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.ZeroOnRayD3.class.getName().replace('.', '/')});
+      final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.ZeroInBlockD3.class.getName().replace('.', '/')});
       final MethodGenerator mgen = gen.method(false, "maybeHasZeroIn", "(L" + BlockD3.class.getName().replace('.', '/') + ";)Z");
       return new Wrapper<FunctionTypes.ZeroInBlockD3>() {
         
@@ -267,7 +267,7 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
   
   public static final FunctionGenerator<FunctionTypes.D1_1> D1_1 = Dn_1(1); 
   public static final FunctionGenerator<FunctionTypes.D2_1> D2_1 = Dn_1(2); 
-  public static final FunctionGenerator<FunctionTypes.D3_1> D3_1 = Dn_1(3); 
+  public static final FunctionGenerator<FunctionTypes.D3_1> D3_1 = Dn_1(3);
   
   private static JavaImpl staticCall1(final String className, final String name) {
     return new JavaImpl() {

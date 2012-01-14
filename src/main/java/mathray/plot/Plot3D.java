@@ -1,5 +1,7 @@
 package mathray.plot;
 
+import java.awt.image.BufferedImage;
+
 import mathray.concrete.BlockD3;
 import mathray.concrete.MatrixD2;
 import mathray.concrete.RayD3;
@@ -57,9 +59,17 @@ public class Plot3D {
           return;
         }
         while(true) {
+          if(block.z1 >= max) {
+            return;
+          }
           if(func.maybeHasZeroIn(block)) {
-            if(block.width == 1 && block.height == 1 && block.depth() <= error) {
-              block.putOn(mat);
+            if(block.width == 1 && block.height == 1) {
+              if(block.depth() <= error) {
+                block.putOn(mat);
+              } else {
+                block.z1 = (block.z0 + block.z1) / 2;
+                continue;
+              }
             } else {
               split(block);
             }
@@ -70,6 +80,28 @@ public class Plot3D {
         }
       }
     }.test(block);
+  }
+  
+  public static BufferedImage plotBlockDepth(final FunctionTypes.ZeroInBlockD3 func, int width, int height, double error, double max) {
+    MatrixD2 mat = new MatrixD2(width, height);
+    mat.putEverywhere(Double.POSITIVE_INFINITY);
+    BlockD3 block = new BlockD3(-1, -1, 0, 1, 1, 1, 0, 0, width, height);
+    blockDivide(func, mat, error, max, block);
+    double dmin = mat.nonInfiniteMin();
+    double dmax = mat.nonInfiniteMax();
+
+    BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    for(int y = 0; y < height; y++) {
+      for(int x = 0; x < width; x++) {
+        double val = (mat.get(x, y) - dmin) / (dmax - dmin);
+        int r = (int)(val * 256);
+        int g = (int)(val * 256);
+        int b = (int)(val * 256);
+        
+        ret.setRGB(x, height - 1 - y, (0xff << 24) | (r << 16) | (g << 8) | (b << 0));
+      }
+    }
+    return ret;
   }
   
 }

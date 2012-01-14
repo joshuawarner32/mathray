@@ -90,5 +90,20 @@ public class Multidef {
   public Multidef transform(final EvaluatingVisitor<Value> v) {
     return new Multidef(args, accept(v));
   }
+  
+  @Override
+  public String toString() {
+    StringBuilder b = new StringBuilder();
+    b.append('{');
+    if(values.size() > 0) {
+      b.append(values.get(0));
+    }
+    for(int i = 1; i < values.size(); i++) {
+      b.append(", ");
+      b.append(values.get(i));
+    }
+    b.append('}');
+    return b.toString();
+  }
 
 }

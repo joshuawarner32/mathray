@@ -43,8 +43,8 @@ public class BlockD3 {
   }
 
   public BlockD3 split(int x2, int y2, int width2, int height2) {
-    double nx0 = x0 + (x2 - x) * width2 * (x1 - x0) / width;
-    double ny0 = y0 + (y2 - y) * height2 * (y1 - y0) / height;
+    double nx0 = x0 + (x2 - x) * (x1 - x0) / width;
+    double ny0 = y0 + (y2 - y) * (y1 - y0) / height;
     
     double nx1 = nx0 + (x1 - x0) * width2 / width;
     double ny1 = ny0 + (y1 - y0) * height2 / height;

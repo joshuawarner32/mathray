@@ -22,4 +22,28 @@ public class MatrixD2 {
     Arrays.fill(data, value);
   }
   
+  public double nonInfiniteMax() {
+    double max = Double.NEGATIVE_INFINITY;
+    for(double d : data) {
+      if(d > max && !Double.isInfinite(d) && !Double.isNaN(d)) {
+        max = d;
+      }
+    }
+    return max;
+  }
+  
+  public double nonInfiniteMin() {
+    double min = Double.POSITIVE_INFINITY;
+    for(double d : data) {
+      if(d < min && !Double.isInfinite(d) && !Double.isNaN(d)) {
+        min = d;
+      }
+    }
+    return min;
+  }
+
+  public double get(int x, int y) {
+    return data[x + y * width];
+  }
+  
 }

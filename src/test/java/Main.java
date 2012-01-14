@@ -10,10 +10,14 @@ import javax.swing.JLabel;
 
 import mathray.Args;
 import mathray.Definition;
+import mathray.Multidef;
 import mathray.Symbol;
 import mathray.device.FunctionTypes;
+import mathray.device.FunctionTypes.ZeroInBlockD3;
 import mathray.eval.java.JavaCompiler;
+import mathray.eval.split.IntervalTransform;
 import mathray.plot.Frame;
+import mathray.plot.Plot3D;
 import mathray.plot.Plotter;
 import mathray.random.ValueRandom;
 import mathray.util.Vector;
@@ -23,7 +27,24 @@ import static mathray.Functions.*;
 public class Main {
 
   public static void main(String[] args) {
-    printRandomExpressionForever();
+    //printRandomExpressionForever();
+    plot3DStuff();
+  }
+  
+  private static Symbol x = sym("x");
+  private static Symbol y = sym("y");
+  private static Symbol z = sym("z");
+  
+  private static void plot3DStuff() {
+    plot3D(def(args(x, y, z), add(x, y, z, num(-5))), 512, 512);
+  }
+  
+  private static void plot3D(Definition def, int width, int height) {
+    Multidef inter = IntervalTransform.intervalize(def.toMultidef(), def.args);
+    System.out.println(inter);
+    FunctionTypes.ZeroInBlockD3 func = JavaCompiler.compile(JavaCompiler.MAYBE_ZERO_IN_BLOCKD3, inter);
+    BufferedImage image = Plot3D.plotBlockDepth(func, width, height, 0.01, 100);
+    show("plot", image);
   }
   
   private static void show(String name, BufferedImage image) {
