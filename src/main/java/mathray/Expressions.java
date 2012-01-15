@@ -34,6 +34,10 @@ public class Expressions {
     return struct(vector(values));
   }
   
+  public static <T> Closure<T> closure(Args args, T def) {
+    return new Closure<T>(args, def);
+  }
+  
   public static Struct struct(final Vector<Value> values) {
     Function func = null;
     boolean all = true;

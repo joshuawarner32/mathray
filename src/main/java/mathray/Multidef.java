@@ -107,4 +107,28 @@ public class Multidef {
     return b.toString();
   }
 
+  public Multidef call(final Args args, final Vector<Value> replace) {
+    return transform(new EvaluatingVisitor<Value>() {
+      
+      @Override
+      public Value symbol(Symbol sym) {
+        int index = args.indexOf(sym);
+        if(index >= 0) {
+          return replace.get(index);
+        }
+        return sym;
+      }
+      
+      @Override
+      public Value constant(Rational rat) {
+        return rat;
+      }
+      
+      @Override
+      public Value call(Call call, Vector<Value> args) {
+        return call.func.call(args);
+      }
+    });
+  }
+
 }

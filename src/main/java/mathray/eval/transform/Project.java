@@ -3,7 +3,10 @@ package mathray.eval.transform;
 import static mathray.Expressions.*;
 
 import mathray.Args;
+import mathray.Call;
+import mathray.Closure;
 import mathray.Multidef;
+import mathray.Rational;
 import mathray.Symbol;
 import mathray.Value;
 import mathray.util.Generator;
@@ -11,7 +14,7 @@ import mathray.util.Vector;
 
 public class Project {
   
-  public static Multidef project(Multidef def, final Args args) {
+  public static Closure<Multidef> project(Multidef def, final Args args) {
     final int count = args.size();
     final Symbol[] nargs = new Symbol[count * count];
     final Symbol[] center = new Symbol[count];
@@ -34,7 +37,7 @@ public class Project {
         return add(mul(add(vals), args.get(count - 1)), center[index]);
       }
     }));
-    return multidef(def.args.concat(nargs), vals);
+    return closure(args(nargs), def.call(args, res));
   }
 
 }
