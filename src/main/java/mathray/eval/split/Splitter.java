@@ -17,7 +17,7 @@ public class Splitter {
     if(!args.isSubsetOf(def.args)) {
       throw new IllegalArgumentException();
     }
-    final int newSize = splitter.values.size();
+    final int newSize = splitter.value.size();
     Symbol[] nargsarr = new Symbol[args.size() * (newSize - 1) + def.args.size()];
     final Vector<Value>[] bindings = new Vector[def.args.size()];
     int i = 0;

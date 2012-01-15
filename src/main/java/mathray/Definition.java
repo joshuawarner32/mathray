@@ -6,15 +6,10 @@ import mathray.util.Vector;
 import mathray.visitor.SimpleVisitor;
 import static mathray.Expressions.*;
 
-public class Definition implements Impl<Value> {
-  
-  public final Args args;
-  
-  public final Value value;
+public class Definition extends Closure<Value> implements Impl<Value> {
   
   public Definition(Args args, Value value) {
-    this.args = args;
-    this.value = value;
+    super(args, value);
   }
 
   public final Value call(final Vector<Value> a) {

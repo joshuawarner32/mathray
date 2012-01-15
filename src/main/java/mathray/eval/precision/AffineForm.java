@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static mathray.Expressions.*;
+import static mathray.Functions.*;
 
 import mathray.Definition;
-import mathray.Functions;
 import mathray.Value;
 import mathray.eval.precision.AffineContext.AffineTerm;
 import mathray.util.Vector;
@@ -60,7 +60,7 @@ public class AffineForm {
   }
   
   public Value radius() {
-    return add(map(Functions.ABS, coeffs.values()));
+    return add(zip(ABS.define(), coeffs.values()));
   }
 
 }

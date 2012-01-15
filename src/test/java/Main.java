@@ -64,10 +64,9 @@ public class Main {
   
   private static void plot3D(Definition def, int width, int height) {
     Multidef inter = Simplifications.simplify(IntervalTransform.intervalize(def.toMultidef(), def.args));
-    System.out.println(inter);
     FunctionTypes.ZeroInBlockD3 func = JavaCompiler.compile(JavaCompiler.MAYBE_ZERO_IN_BLOCKD3, inter);
     BufferedImage image = Plot3D.plotBlockDepth(func, width, height, 0.001, 100);
-    UI.show("plot", image);
+    UI.show(def.toString(), image);
   }
   
   private static void process(Definition def) {

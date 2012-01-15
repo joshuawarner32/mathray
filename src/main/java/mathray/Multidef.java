@@ -8,15 +8,10 @@ import mathray.visitor.Visitors;
 import static mathray.Expressions.*;
 
 
-public class Multidef {
+public class Multidef extends Closure<Struct> {
   
-  public final Args args;
-  
-  public final Struct values;
-  
-  public Multidef(Args args, Struct values) {
-    this.args = args;
-    this.values = values;
+  public Multidef(Args args, Struct value) {
+    super(args, value);
   }
   
   public Vector<Value> call(final Vector<Value> a) {
@@ -38,7 +33,7 @@ public class Multidef {
         return cst;
       }
     };
-    return values.toVector().transform(new Transformer<Value, Value>() {
+    return value.toVector().transform(new Transformer<Value, Value>() {
       @Override
       public Value transform(Value in) {
         return in.accept(v);
@@ -47,14 +42,14 @@ public class Multidef {
   }
 
   public Definition get(int i) {
-    return new Definition(args, values.get(i));
+    return new Definition(args, value.get(i));
   }
   
   public <T> Vector<T> accept(final EvaluatingVisitor<T> v) {
     
     final SimpleVisitor<T> iv = Visitors.cache(v);
     
-    return values.toVector().transform(new Transformer<Value, T>() {
+    return value.toVector().transform(new Transformer<Value, T>() {
       @Override
       public T transform(Value in) {
         return in.accept(iv);
@@ -96,12 +91,12 @@ public class Multidef {
   public String toString() {
     StringBuilder b = new StringBuilder();
     b.append('{');
-    if(values.size() > 0) {
-      b.append(values.get(0));
+    if(value.size() > 0) {
+      b.append(value.get(0));
     }
-    for(int i = 1; i < values.size(); i++) {
+    for(int i = 1; i < value.size(); i++) {
       b.append(", ");
-      b.append(values.get(i));
+      b.append(value.get(i));
     }
     b.append('}');
     return b.toString();

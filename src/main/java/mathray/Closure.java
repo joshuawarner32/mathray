@@ -4,11 +4,11 @@ public class Closure<T> {
   
   public final Args args;
   
-  public final T def;
+  public final T value;
   
-  public Closure(Args args, T def) {
+  public Closure(Args args, T value) {
     this.args = args;
-    this.def = def;
+    this.value = value;
   }
 
 }

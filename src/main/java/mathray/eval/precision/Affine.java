@@ -38,6 +38,12 @@ public class Affine {
         return args.get(0).all(NEG.define());
       }
     })
+    .register(MUL, new Impl<AffineForm>() {
+      @Override
+      public AffineForm call(Vector<AffineForm> args) {
+        return null;
+      }
+    })
     .build();
   
   public static Vector<AffineForm> affine(Multidef def, Args args) {

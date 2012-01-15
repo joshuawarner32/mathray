@@ -5,7 +5,6 @@ import static mathray.Functions.*;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import mathray.eval.Impl;
 import mathray.util.Generator;
 import mathray.util.Transformer;
 import mathray.util.Vector;
@@ -105,22 +104,52 @@ public class Expressions {
     return res;
   }
   
-  public static Iterable<Value> map(final Impl<Value> func, final Iterable<Value> values) {
+  // so we don't get superfluous warnings elsewhere
+  @SuppressWarnings("unchecked")
+  public static Iterable<Value> zip(Definition def, Iterable<Value> a) {
+    return zip(def, new Iterable[] {a});
+  }
+
+  // so we don't get superfluous warnings elsewhere
+  @SuppressWarnings("unchecked")
+  public static Iterable<Value> zip(Definition def, Iterable<Value> a, Iterable<Value> b) {
+    return zip(def, new Iterable[] {a, b});
+  }
+  
+  public static Iterable<Value> zip(final Definition def, final Iterable<Value>... lists) {
+    if(lists.length != def.args.size()) {
+      throw new IllegalArgumentException("def arity and lists size do not match");
+    }
     return new Iterable<Value>() {
       @Override
       public Iterator<Value> iterator() {
-        final Iterator<Value> it = values.iterator();
+        @SuppressWarnings("unchecked")
+        final Iterator<Value>[] its = new Iterator[lists.length];
+        for(int i = 0; i < lists.length; i++) {
+          its[i] = lists[i].iterator();
+        }
+        final Value[] vals = new Value[its.length];
         return new Iterator<Value>() {
           @Override
           public boolean hasNext() {
-            return it.hasNext();
+            boolean ret = false;
+            for(Iterator<Value> it : its) {
+              if(ret && !it.hasNext()) {
+                throw new IllegalStateException("Iterator length does not match");
+              }
+              ret = it.hasNext();
+            }
+            return ret;
           }
           
           @Override
           public Value next() {
-            return func.call(vector(it.next()));
+            for(int i = 0; i < its.length; i++) {
+              vals[i] = its[i].next();
+            }
+            return def.call(vals);
           }
-          
+
           @Override
           public void remove() {
             throw new UnsupportedOperationException();

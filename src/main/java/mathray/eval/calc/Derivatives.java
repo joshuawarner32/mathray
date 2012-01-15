@@ -7,7 +7,6 @@ import mathray.Rational;
 import mathray.Definition;
 import mathray.Value;
 import mathray.Symbol;
-import mathray.util.Generator;
 import mathray.util.Vector;
 import mathray.visitor.EvaluatingVisitor;
 
@@ -43,14 +42,7 @@ public class Derivatives extends FunctionRegistrar<Multidef> {
     final EvaluatingVisitor<Value> deriver = new EvaluatingVisitor<Value>() {
       @Override
       public Value call(final Call call, final Vector<Value> args) {
-        final Multidef def = lookup(call.func);
-        final Vector<Value> vals = def.call(call.args);
-        return add(Vector.generate(def.values.size(), new Generator<Value>() {
-          @Override
-          public Value generate(int index) {
-            return mul(vals.get(index), args.get(index));
-          }
-        }));
+        return add(zip(MUL.define(), lookup(call.func).call(call.args), args));
       }
       
       @Override
