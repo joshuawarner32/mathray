@@ -3,10 +3,8 @@ package mathray.eval.transform;
 import static mathray.Expressions.*;
 
 import mathray.Args;
-import mathray.Call;
 import mathray.Closure;
 import mathray.Multidef;
-import mathray.Rational;
 import mathray.Symbol;
 import mathray.Value;
 import mathray.util.Generator;

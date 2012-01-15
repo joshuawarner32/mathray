@@ -7,7 +7,6 @@ import mathray.FunctionRegistrar;
 import mathray.Rational;
 import mathray.Value;
 import mathray.Symbol;
-import mathray.util.Transformer;
 import mathray.util.Vector;
 import mathray.visitor.EvaluatingVisitor;
 import static mathray.Expressions.*;

@@ -3,7 +3,6 @@ package mathray.device;
 import mathray.Multidef;
 import mathray.concrete.BlockD3;
 import mathray.concrete.RayD3;
-import mathray.concrete.VectorD2;
 
 public class Computation implements FunctionTypes.All {
   

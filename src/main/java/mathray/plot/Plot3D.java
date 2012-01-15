@@ -106,8 +106,6 @@ public class Plot3D {
     double dmin = mat.nonInfiniteMin();
     double dmax = mat.nonInfiniteMax();
     
-    double middle = mat.get(mat.width / 2, mat.height / 2);
-
     BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     for(int y = 0; y < height; y++) {
       for(int x = 0; x < width; x++) {

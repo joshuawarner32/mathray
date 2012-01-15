@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import mathray.Symbol;
-
 public final class Vector<T> implements Iterable<T> {
   
   private T[] items;

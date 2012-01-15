@@ -1,5 +1,3 @@
-import java.util.Random;
-
 import mathray.Multidef;
 import mathray.Definition;
 import mathray.Symbol;
@@ -16,32 +14,7 @@ import static org.junit.Assert.*;
 
 public class TestIntervals {
   
-  private static Random random = new Random();
-  
   private static Symbol x = sym("x");
-  
-  private static void assertWithin(Definition def, double min, double max, double outMin, double outMax) {
-    for(int i = 0; i < 100; i++) {
-      double x = random.nextDouble() * (max - min) + min;
-      double res = MachineEvaluator.eval(def, vector(x));
-      assertTrue(res >= outMin && res <= outMax);
-    }
-  }
-  
-  private static void fuzzFunction(Definition def) {
-    Multidef inter = IntervalTransform.intervalize(def.toMultidef(), args(x));
-    for(int i = 0; i < 100; i++) {
-      double min = 1 / (random.nextDouble() * 2 - 1);
-      double max = min + 1 / random.nextDouble();
-      Vector<Double> out = MachineEvaluator.eval(inter, vector(min, max));
-      assertWithin(def, min, max, out.get(0), out.get(1));
-    }
-  }
-
-  @Test
-  public void testFuzz() {
-    //fuzzFunction(def(args(x), sin(x)));
-  }
   
   private static void assertRange(Definition def, double a, double b, double oa, double ob) {
     Multidef inter = IntervalTransform.intervalize(def.toMultidef(), args(x));
