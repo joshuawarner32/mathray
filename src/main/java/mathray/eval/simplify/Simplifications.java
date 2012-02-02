@@ -13,7 +13,7 @@ import mathray.util.Transformer;
 import mathray.Value;
 import mathray.Symbol;
 import mathray.util.Vector;
-import mathray.visitor.EvaluatingVisitor;
+import mathray.visitor.Processor;
 
 import static mathray.Functions.*;
 import static mathray.Expressions.*;
@@ -405,14 +405,14 @@ public class Simplifications extends PatternRegistry {
     return exprs.transform(new Transformer<Expr, Value>() {
       @Override
       public Value transform(Expr in) {
-        return process(in.toValue());
+        return applyPatterns(in.toValue());
       }
     });
   }
   
-  private EvaluatingVisitor<Expr> visitor = new EvaluatingVisitor<Expr>() {
+  private Processor<Expr> visitor = new Processor<Expr>() {
     @Override
-    public Expr call(Call call, Vector<Expr> args) {
+    public Expr process(Call call, Vector<Expr> args) {
       Function func = call.func;
       if(func == ADD) {
         return args.get(0).exprAdd(args.get(1));
@@ -427,16 +427,16 @@ public class Simplifications extends PatternRegistry {
       } else if(func == POW) {
         return args.get(0).exprPow(args.get(1));
       } else {
-        return new ValueExpr(process(func.call(toValues(args))));
+        return new ValueExpr(applyPatterns(func.call(toValues(args))));
       }
     }
     @Override
-    public Expr constant(Rational cst) {
+    public Expr process(Rational cst) {
       return new ConstExpr(cst);
     }
     @Override
-    public Expr symbol(Symbol var) {
-      return new ValueExpr(process(var));
+    public Expr process(Symbol var) {
+      return new ValueExpr(applyPatterns(var));
     }
   };
   

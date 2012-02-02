@@ -1,10 +1,12 @@
 package mathray;
 
+import static mathray.Expressions.*;
+
 import mathray.util.Generator;
 import mathray.util.Transformer;
 import mathray.util.Vector;
 
-public class Multicall implements Struct {
+public class Multicall extends Struct {
   
   public final Function func;
   
@@ -36,12 +38,12 @@ public class Multicall implements Struct {
   
   @Override
   public Value get(final int index) {
-    return func.call(args.transform(new Transformer<Struct, Value>() {
+    return func.call(struct(args.transform(new Transformer<Struct, Value>() {
       @Override
       public Value transform(Struct in) {
         return in.get(index);
       }
-    }));
+    })));
   }
   
   @Override

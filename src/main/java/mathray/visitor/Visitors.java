@@ -1,46 +1,38 @@
 package mathray.visitor;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import mathray.Call;
 import mathray.Rational;
 import mathray.Symbol;
-import mathray.Value;
 
 public class Visitors {
   
   private Visitors() {}
   
-  public static <T> SimpleVisitor<T> cache(final EvaluatingVisitor<T> v) {
-    return new SimpleVisitor<T>() {
-      private final Map<Value, T> results = new HashMap<Value, T>();
-
+  public static <T> Visitor toVisitor(final Processor<T> v, final Context<T> ctx) {
+    return new Visitor() {
       @Override
-      public T symbol(Symbol sym) {
-        T ret = results.get(sym);
+      public void visit(Symbol sym) {
+        T ret = ctx.get(sym);
         if(ret == null) {
-          results.put(sym, ret = v.symbol(sym));
+          ctx.put(sym, ret = v.process(sym));
         }
-        return ret;
       }
 
       @Override
-      public T constant(Rational rat) {
-        T ret = results.get(rat);
+      public void visit(Rational rat) {
+        T ret = ctx.get(rat);
         if(ret == null) {
-          results.put(rat, ret = v.constant(rat));
+          ctx.put(rat, ret = v.process(rat));
         }
-        return ret;
       }
 
       @Override
-      public T call(Call call) {
-        T ret = results.get(call);
+      public void visit(Call call) {
+        T ret = ctx.get(call);
         if(ret == null) {
-          results.put(call, ret = v.call(call, call.visitArgs(this)));
+          call.args.accept(this);
+          ctx.put(call, ret = v.process(call, ctx.getStruct(call.args)));
         }
-        return ret;
       }
       
     };

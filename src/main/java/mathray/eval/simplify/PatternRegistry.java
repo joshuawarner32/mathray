@@ -30,7 +30,7 @@ public class PatternRegistry {
     
   }
   
-  public Value process(Value value) {
+  public Value applyPatterns(Value value) {
     Value old;
     outer: do {
       old = value;

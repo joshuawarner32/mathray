@@ -10,9 +10,9 @@ import org.objectweb.asm.util.CheckClassAdapter;
 class ClassGenerator {
   private ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
   
-  private ClassVisitor classVisitor = new CheckClassAdapter(cw);
-  //private ClassVisitor classVisitor = new org.objectweb.asm.util.TraceClassVisitor(new java.io.PrintWriter(System.out));
-  private String name;
+  final ClassVisitor classVisitor = new CheckClassAdapter(cw);
+  //final ClassVisitor classVisitor = new org.objectweb.asm.util.TraceClassVisitor(new java.io.PrintWriter(System.out));
+  final String name;
   
   public ClassGenerator(String name, String[] interfaces) {
 
@@ -51,11 +51,18 @@ class ClassGenerator {
     
   }
   
-
-  
   public MethodGenerator method(boolean static_, String name, String desc) {
-    MethodGenerator ret = new MethodGenerator(static_, name, desc, classVisitor);
+    MethodGenerator ret = new MethodGenerator(static_, name, desc, this);
     return ret;
+  }
+
+  public JavaField field(boolean static_, String name, String desc) {
+    int acc = Opcodes.ACC_PRIVATE;
+    if(static_) {
+      acc |= Opcodes.ACC_STATIC;
+    }
+    classVisitor.visitField(acc, name, desc, null, null);
+    return new JavaField(this.name, name, desc);
   }
   
   public void end() {

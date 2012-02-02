@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -13,18 +12,22 @@ public class MethodGenerator {
   
   final MethodVisitor methodVisitor;
   private final MethodArg[] args;
+  private final MethodArg thisRef;
   
   private int maxStack = 0;
   
   private State state = new State();
   
-  MethodGenerator(boolean static_, String name, String desc, ClassVisitor classVisitor) {
-    this.methodVisitor = classVisitor.visitMethod(Opcodes.ACC_PUBLIC | (static_ ? Opcodes.ACC_STATIC : 0), name, desc, null, null);
+  MethodGenerator(boolean static_, String name, String desc, ClassGenerator cgen) {
+    this.methodVisitor = cgen.classVisitor.visitMethod(Opcodes.ACC_PUBLIC | (static_ ? Opcodes.ACC_STATIC : 0), name, desc, null, null);
     methodVisitor.visitCode();
     Type[] argTypes = Type.getArgumentTypes(desc);
     args = new MethodArg[argTypes.length];
-    if(!static_) {
+    if(static_) {
+      thisRef = null;
+    } else {
       state.locals.add(null);
+      thisRef = new MethodArg(Type.getType(cgen.name));
     }
     for(int i = 0; i < argTypes.length; i++) {
       findOrAllocLocalIndex(args[i] = new MethodArg(argTypes[i]));
@@ -68,7 +71,7 @@ public class MethodGenerator {
     state.stack.pop().store(this);
   }
   
-  private JavaValue push(JavaValue val) {
+  JavaValue push(JavaValue val) {
     state.stack.push(val);
     if(state.stack.size() > maxStack) {
       maxStack = state.stack.size();
@@ -130,11 +133,13 @@ public class MethodGenerator {
     methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, className, name, desc);
     return push(new ComputedValue(Type.getReturnType(desc)));
   }
-
-  public JavaValue loadField(JavaValue obj, String class_, String name, String desc) {
-    load(obj);
-    methodVisitor.visitFieldInsn(Opcodes.GETFIELD, class_, name, desc);
-    return push(new ComputedValue(Type.getType(desc)));
+  
+  public JavaValue getThis() {
+    if(thisRef != null) {
+      return thisRef;
+    } else {
+      throw new IllegalStateException("accessing this from static method");
+    }
   }
 
   public void store(JavaValue value) {
@@ -181,6 +186,16 @@ public class MethodGenerator {
       }
     }
     return index;
+  }
+
+  public void storeField(JavaValue obj, JavaField field, JavaValue value) {
+    load(obj, value);
+    field.store(this);
+  }
+
+  public JavaValue loadField(JavaValue obj, JavaField field) {
+    load(obj);
+    return field.load(this);
   }
   
 }

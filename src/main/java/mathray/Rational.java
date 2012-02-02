@@ -1,7 +1,6 @@
 package mathray;
 
-import mathray.visitor.SimpleVisitor;
-
+import mathray.visitor.Visitor;
 
 public class Rational extends Value {
   public final long num;
@@ -40,16 +39,8 @@ public class Rational extends Value {
 
 
   @Override
-  public <T> T accept(SimpleVisitor<T> v) {
-    return v.constant(this);
-  }
-  
-  @Override
-  public String toString() {
-    if(denom == 1 || num == 0) {
-      return String.valueOf(num);
-    }
-    return num + "/" + denom;
+  public void accept(Visitor v) {
+    v.visit(this);
   }
   
   @Override
@@ -142,15 +133,6 @@ public class Rational extends Value {
 
   public double toDouble() {
     return num / (double)denom;
-  }
-
-  @Override
-  public String toJavaString() {
-    if(denom == 1) {
-      return "num(" + num + ")";
-    } else {
-      return "num(" + num + ", " + denom + ")";
-    }
   }
 
 }

@@ -8,7 +8,7 @@ import mathray.Definition;
 import mathray.Value;
 import mathray.Symbol;
 import mathray.util.Vector;
-import mathray.visitor.EvaluatingVisitor;
+import mathray.visitor.Processor;
 
 import static mathray.Expressions.*;
 import static mathray.Functions.*;
@@ -39,19 +39,19 @@ public class Derivatives extends FunctionRegistrar<Multidef> {
   }
   
   public Multidef transform(Multidef def, final Symbol diffVar) {
-    final EvaluatingVisitor<Value> deriver = new EvaluatingVisitor<Value>() {
+    final Processor<Value> deriver = new Processor<Value>() {
       @Override
-      public Value call(final Call call, final Vector<Value> args) {
+      public Value process(final Call call, final Vector<Value> args) {
         return add(zip(MUL.define(), lookup(call.func).call(call.args), args));
       }
       
       @Override
-      public Value constant(Rational cst) {
+      public Value process(Rational cst) {
         return num(0);
       }
       
       @Override
-      public Value symbol(Symbol var) {
+      public Value process(Symbol var) {
         return var == diffVar ? num(1) : num(0);
       }
     };

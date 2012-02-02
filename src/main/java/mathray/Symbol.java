@@ -1,7 +1,6 @@
 package mathray;
 
-import mathray.eval.text.DefaultPrinter;
-import mathray.visitor.SimpleVisitor;
+import mathray.visitor.Visitor;
 
 public class Symbol extends Value {
   public final String name;
@@ -11,15 +10,10 @@ public class Symbol extends Value {
   }
   
   // Purposefully not overriding hashCode and equals - we want identity comparisons.
-  
-  @Override
-  public String toString() {
-    return DefaultPrinter.toString(this);
-  }
 
   @Override
-  public <T> T accept(SimpleVisitor<T> v) {
-    return v.symbol(this);
+  public void accept(Visitor v) {
+    v.visit(this);
   }
   
   @Override
@@ -37,11 +31,6 @@ public class Symbol extends Value {
 
   public static Symbol index(int i) {
     return new Symbol("x" + i);
-  }
-
-  @Override
-  public String toJavaString() {
-    return name;
   }
   
 }

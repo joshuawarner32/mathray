@@ -1,18 +1,15 @@
 package mathray;
 
-import mathray.eval.text.DefaultPrinter;
-import mathray.util.Transformer;
-import mathray.util.Vector;
-import mathray.visitor.SimpleVisitor;
+import mathray.visitor.Visitor;
 
 public final class Call extends Value {
   
   public final Function func;
-  public final Vector<Value> args;
+  public final Struct args;
   
   private int hash = 0;
   
-  public Call(Function func, Vector<Value> args) {
+  public Call(Function func, Struct args) {
     if(args.size() != func.arity) {
       throw new IllegalArgumentException("function arity does not match");
     }
@@ -22,16 +19,8 @@ public final class Call extends Value {
   }
   
   @Override
-  public <T> T accept(SimpleVisitor<T> v) {
-    return v.call(this);
-  }
-  
-  public <T> Vector<T> visitArgs(final SimpleVisitor<T> v) {
-    return args.transform(new Transformer<Value, T>() {
-      public T transform(Value in) {
-        return in.accept(v);
-      }
-    });
+  public void accept(Visitor v) {
+    v.visit(this);
   }
   
   @Override
@@ -66,27 +55,6 @@ public final class Call extends Value {
     } else {
       throw new RuntimeException("unhandled case");
     }
-  }
-  
-  @Override
-  public String toString() {
-    return DefaultPrinter.toString(this);
-  }
-
-  @Override
-  public String toJavaString() {
-    StringBuilder b = new StringBuilder();
-    b.append(func.name);
-    b.append("(");
-    if(args.size() > 0) {
-      b.append(args.get(0).toJavaString());
-    }
-    for(int i = 1; i < args.size(); i++) {
-      b.append(", ");
-      b.append(args.get(i).toJavaString());
-    }
-    b.append(")");
-    return b.toString();
   }
 
 }

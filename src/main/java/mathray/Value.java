@@ -1,18 +1,30 @@
 package mathray;
 
-import mathray.visitor.EvaluatingVisitor;
-import mathray.visitor.SimpleVisitor;
+import mathray.eval.text.DefaultPrinter;
+import mathray.eval.text.JavaString;
+import mathray.visitor.Context;
+import mathray.visitor.Processor;
+import mathray.visitor.Visitor;
 import mathray.visitor.Visitors;
 
 
-public abstract class Value implements Comparable<Value> {
+public abstract class Value implements Comparable<Value>, Closable {
   
-  public abstract <T> T accept(SimpleVisitor<T> v);
+  public abstract void accept(Visitor v);
   
-  public abstract String toJavaString();
+  @Override
+  public final String toString() {
+    return DefaultPrinter.toString(this);
+  }
+  
+  public final String toJavaString() {
+    return JavaString.toJavaString(this);
+  }
 
-  public <T> T accept(EvaluatingVisitor<T> v) {
-    return accept(Visitors.cache(v));
+  public <T> T accept(Processor<T> v) {
+    Context<T> ctx = new Context<T>();
+    accept(Visitors.toVisitor(v, ctx));
+    return ctx.get(this);
   }
   
 }

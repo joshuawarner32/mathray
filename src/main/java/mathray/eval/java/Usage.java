@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mathray.Call;
-import mathray.Multidef;
 import mathray.Rational;
 import mathray.Symbol;
 import mathray.Value;
-import mathray.visitor.SimpleVisitor;
+import mathray.visitor.Visitable;
+import mathray.visitor.Visitor;
 
 public class Usage {
 
@@ -28,35 +28,28 @@ public class Usage {
     return count;
   }
   
-  public static Usage generate(Multidef def) {
+  public static Usage generate(Visitable def) {
     final Usage ret = new Usage();
     
-    SimpleVisitor<Void> v = new SimpleVisitor<Void>() {
+    Visitor v = new Visitor() {
 
       @Override
-      public Void symbol(Symbol sym) {
-        return null;
-      }
-
-      @Override
-      public Void constant(Rational rat) {
-        return null;
-      }
-
-      @Override
-      public Void call(Call call) {
-        for(Value arg : call.args) {
+      public void visit(Call call) {
+        for(Value arg : call.args.toVector()) {
           ret.inc(arg);
           arg.accept(this);
         }
-        return null;
       }
+
+      @Override
+      public void visit(Symbol sym) {}
+
+      @Override
+      public void visit(Rational rat) {}
       
     };
     
-    for(Value val : def.value.toVector()) {
-      val.accept(v);
-    }
+    def.accept(v);
     
     return ret;
   }

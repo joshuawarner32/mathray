@@ -10,7 +10,7 @@ import mathray.Symbol;
 import mathray.eval.Impl;
 import mathray.util.MathEx;
 import mathray.util.Vector;
-import mathray.visitor.EvaluatingVisitor;
+import mathray.visitor.Processor;
 
 import static mathray.Functions.*;
 
@@ -163,14 +163,14 @@ public class MachineEvaluator extends FunctionSymbolRegistrar<Impl<Double>, Doub
   }
   
   public Vector<Double> transform(final Multidef def, final Vector<Double> params) {
-    final EvaluatingVisitor<Double> v = new EvaluatingVisitor<Double>() {
+    final Processor<Double> v = new Processor<Double>() {
       @Override
-      public Double call(Call call, Vector<Double> args) {
+      public Double process(Call call, Vector<Double> args) {
         return lookup(call.func).call(args);
       }
 
       @Override
-      public Double symbol(Symbol sym) {
+      public Double process(Symbol sym) {
         int ret = def.args.indexOf(sym);
         if(ret != -1) {
           return params.get(ret);
@@ -180,11 +180,11 @@ public class MachineEvaluator extends FunctionSymbolRegistrar<Impl<Double>, Doub
       }
 
       @Override
-      public Double constant(Rational cst) {
-        return cst.toDouble();
+      public Double process(Rational rat) {
+        return rat.toDouble();
       }
     };
-    return def.accept(v);
+    return def.acceptVector(v);
   }
 
   public static double eval(Definition def, Vector<Double> args) {

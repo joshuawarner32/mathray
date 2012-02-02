@@ -1,10 +1,9 @@
 package mathray;
 
 import static mathray.Expressions.*;
-import mathray.eval.Impl;
 import mathray.util.Vector;
 
-public class Function implements Impl<Value>, Comparable<Function> {
+public class Function implements Comparable<Function> {
   
   public final String name;
   
@@ -22,12 +21,16 @@ public class Function implements Impl<Value>, Comparable<Function> {
     return name + "/" + arity;
   }
   
-  public Call call(Vector<Value> vector) {
-    return new Call(this, vector);
+  public Call call(Struct values) {
+    return new Call(this, values);
+  }
+  
+  public Call call(Vector<Value> values) {
+    return new Call(this, struct(values));
   }
 
   public Call call(Value... values) {
-    return call(Expressions.vector(values));
+    return call(Expressions.struct(values));
   }
 
   public int compareTo(Function func) {
@@ -45,7 +48,7 @@ public class Function implements Impl<Value>, Comparable<Function> {
   public Definition define() {
     if(definition == null) {
       Args args = args(arity);
-      definition = def(args, call(args.toValueVector()));
+      definition = def(args, call(struct(args.toValueVector())));
     }
     return definition;
   }

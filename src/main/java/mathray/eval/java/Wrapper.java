@@ -1,13 +1,21 @@
 package mathray.eval.java;
 
-public interface Wrapper<T> {
+import mathray.Symbol;
+
+public abstract class Wrapper<T> {
   
-  public MethodGenerator getMethodGenerator();
+  public final ClassGenerator cgen;
+  public final MethodGenerator mgen;
   
-  public JavaValue arg(int index);
+  public Wrapper(ClassGenerator cgen, MethodGenerator mgen) {
+    this.cgen = cgen;
+    this.mgen = mgen;
+  }
   
-  public void ret(int index, JavaValue value);
+  public abstract JavaValue symbol(Symbol sym);
   
-  public T end();
+  public abstract void ret(int index, JavaValue value);
+  
+  public abstract T end();
 
 }

@@ -14,7 +14,7 @@ import mathray.eval.Environment;
 import mathray.eval.Impl;
 import mathray.eval.precision.AffineContext.AffineTerm;
 import mathray.util.Vector;
-import mathray.visitor.EvaluatingVisitor;
+import mathray.visitor.Processor;
 
 import static mathray.Functions.*;
 
@@ -49,23 +49,23 @@ public class Affine {
   public static Vector<AffineForm> affine(Multidef def, Args args) {
     //AffineContext affineContext = new AffineContext();
     
-    final EvaluatingVisitor<AffineForm> v = new EvaluatingVisitor<AffineForm>() {
+    final Processor<AffineForm> v = new Processor<AffineForm>() {
       @Override
-      public AffineForm symbol(Symbol sym) {
+      public AffineForm process(Symbol sym) {
         Map<AffineTerm, Value> map = new HashMap<AffineTerm, Value>();
         // TODO: add variance term
         return new AffineForm(sym, map);
       }
       @Override
-      public AffineForm constant(Rational rat) {
+      public AffineForm process(Rational rat) {
         return new AffineForm(rat, new HashMap<AffineTerm, Value>());
       }
       @Override
-      public AffineForm call(Call call, Vector<AffineForm> args) {
+      public AffineForm process(Call call, Vector<AffineForm> args) {
         return env.implement(call.func).call(args);
       }
     };
-    return def.accept(v);
+    return def.acceptVector(v);
   }
 
 }

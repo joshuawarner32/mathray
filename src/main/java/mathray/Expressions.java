@@ -33,7 +33,7 @@ public class Expressions {
     return struct(vector(values));
   }
   
-  public static <T> Closure<T> closure(Args args, T def) {
+  public static <T extends Closable> Closure<T> closure(Args args, T def) {
     return new Closure<T>(args, def);
   }
   
@@ -99,7 +99,7 @@ public class Expressions {
     }
     Value res = start;
     for(int i = 1; i < values.size(); i++) {
-      res = func.call(vector(res, values.get(i)));
+      res = func.call(struct(res, values.get(i)));
     }
     return res;
   }

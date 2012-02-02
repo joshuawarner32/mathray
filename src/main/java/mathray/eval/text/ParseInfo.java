@@ -16,7 +16,7 @@ import mathray.Symbol;
 import mathray.eval.Impl;
 import mathray.eval.text.InfixOperator.Associativity;
 import mathray.util.Vector;
-import mathray.visitor.EvaluatingVisitor;
+import mathray.visitor.Processor;
 
 public class ParseInfo {
   
@@ -96,20 +96,20 @@ public class ParseInfo {
   }
   
   public String unparse(Value value) {
-    return value.accept(new EvaluatingVisitor<PrecedenceString>() {
+    return value.accept(new Processor<PrecedenceString>() {
 
       @Override
-      public PrecedenceString call(Call call, Vector<PrecedenceString> args) {
+      public PrecedenceString process(Call call, Vector<PrecedenceString> args) {
         return implement(call.func).call(args);
       }
 
       @Override
-      public PrecedenceString symbol(Symbol var) {
+      public PrecedenceString process(Symbol var) {
         return new PrecedenceString(var.name, Integer.MAX_VALUE);
       }
 
       @Override
-      public PrecedenceString constant(Rational r) {
+      public PrecedenceString process(Rational r) {
         return new PrecedenceString(r.toString(), Integer.MAX_VALUE);
       }
       

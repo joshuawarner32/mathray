@@ -2,7 +2,7 @@ package mathray;
 
 import mathray.util.Vector;
 
-public class Multivalue implements Struct {
+public class Multivalue extends Struct {
   
   public final Vector<Value> values;
   

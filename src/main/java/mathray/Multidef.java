@@ -2,11 +2,8 @@ package mathray;
 
 import mathray.util.Transformer;
 import mathray.util.Vector;
-import mathray.visitor.EvaluatingVisitor;
-import mathray.visitor.SimpleVisitor;
-import mathray.visitor.Visitors;
+import mathray.visitor.Processor;
 import static mathray.Expressions.*;
-
 
 public class Multidef extends Closure<Struct> {
   
@@ -15,13 +12,13 @@ public class Multidef extends Closure<Struct> {
   }
   
   public Vector<Value> call(final Vector<Value> a) {
-    final SimpleVisitor<Value> v = new SimpleVisitor<Value>() {
+    final Processor<Value> v = new Processor<Value>() {
       @Override
-      public Value call(Call call) {
-        return call.func.call(call.visitArgs(this));
+      public Value process(Call call, Vector<Value> args) {
+        return call.func.call(args);
       }
       @Override
-      public Value symbol(Symbol sym) {
+      public Value process(Symbol sym) {
         int index = args.indexOf(sym);
         if(index != -1) {
           return a.get(index);
@@ -29,8 +26,8 @@ public class Multidef extends Closure<Struct> {
         return sym;
       }
       @Override
-      public Value constant(Rational cst) {
-        return cst;
+      public Value process(Rational rat) {
+        return rat;
       }
     };
     return value.toVector().transform(new Transformer<Value, Value>() {
@@ -45,23 +42,11 @@ public class Multidef extends Closure<Struct> {
     return new Definition(args, value.get(i));
   }
   
-  public <T> Vector<T> accept(final EvaluatingVisitor<T> v) {
-    
-    final SimpleVisitor<T> iv = Visitors.cache(v);
-    
-    return value.toVector().transform(new Transformer<Value, T>() {
-      @Override
-      public T transform(Value in) {
-        return in.accept(iv);
-      }
-    });
-  }
-  
   public Vector<Value> eval(final Args args, final Vector<Value> replacements) {
-    return accept(new EvaluatingVisitor<Value>() {
+    return Vector.<Value>fromIterable(acceptVector(new Processor<Value>() {
 
       @Override
-      public Value symbol(Symbol sym) {
+      public Value process(Symbol sym) {
         int index = args.indexOf(sym);
         if(index >= 0) {
           return replacements.get(index);
@@ -71,20 +56,20 @@ public class Multidef extends Closure<Struct> {
       }
 
       @Override
-      public Value constant(Rational rat) {
+      public Value process(Rational rat) {
         return rat;
       }
 
       @Override
-      public Value call(Call call, Vector<Value> args) {
+      public Value process(Call call, Vector<Value> args) {
         return call.func.call(args);
       }
       
-    });
+    }));
   }
   
-  public Multidef transform(final EvaluatingVisitor<Value> v) {
-    return new Multidef(args, struct(accept(v)));
+  public Multidef transform(Processor<Value> v) {
+    return new Multidef(args, struct(acceptVector(v)));
   }
   
   @Override
@@ -103,10 +88,10 @@ public class Multidef extends Closure<Struct> {
   }
 
   public Multidef call(final Args args, final Vector<Value> replace) {
-    return transform(new EvaluatingVisitor<Value>() {
+    return transform(new Processor<Value>() {
       
       @Override
-      public Value symbol(Symbol sym) {
+      public Value process(Symbol sym) {
         int index = args.indexOf(sym);
         if(index >= 0) {
           return replace.get(index);
@@ -115,15 +100,19 @@ public class Multidef extends Closure<Struct> {
       }
       
       @Override
-      public Value constant(Rational rat) {
+      public Value process(Rational rat) {
         return rat;
       }
       
       @Override
-      public Value call(Call call, Vector<Value> args) {
+      public Value process(Call call, Vector<Value> args) {
         return call.func.call(args);
       }
     });
+  }
+
+  public Vector<Value> call(Struct args) {
+    return call(args.toVector());
   }
 
 }

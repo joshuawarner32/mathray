@@ -36,6 +36,10 @@ public class CameraD3 {
     return new CameraD3(pos, forward, right, nup, width, height);
   }
   
+  public double[] args() {
+    return new double[] {right.x, right.y, right.z, up.x, up.y, up.z, forward.x, forward.y, forward.z, pos.x, pos.y, pos.z};
+  }
+  
   public void ray(double x, double y, RayD3 res) {
     res.setP(pos);
     res.dx = forward.x + (x * width / 2) * right.x + (y * height / 2) * up.x;

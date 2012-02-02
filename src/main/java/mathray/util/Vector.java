@@ -169,4 +169,13 @@ public final class Vector<T> implements Iterable<T> {
     return ret;
   }
 
+  @SuppressWarnings("unchecked")
+  public static <T> Vector<T> fromIterable(Iterable<T> it) {
+    ArrayList<T> ret = new ArrayList<T>();
+    for(T t : it) {
+      ret.add(t);
+    }
+    return Vector.unsafe(ret.toArray((T[])new Object[ret.size()]));
+  }
+
 }

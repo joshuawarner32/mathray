@@ -8,7 +8,7 @@ import mathray.Rational;
 import mathray.Value;
 import mathray.Symbol;
 import mathray.util.Vector;
-import mathray.visitor.EvaluatingVisitor;
+import mathray.visitor.Processor;
 import static mathray.Expressions.*;
 
 public class Splitter {
@@ -34,9 +34,9 @@ public class Splitter {
         bindings[j++] = splitter.call(vector((Value)var));
       }
     }
-    EvaluatingVisitor<Vector<Value>> v = new EvaluatingVisitor<Vector<Value>>() {
+    Processor<Vector<Value>> v = new Processor<Vector<Value>>() {
       @Override
-      public Vector<Value> symbol(Symbol sym) {
+      public Vector<Value> process(Symbol sym) {
         int index = args.indexOf(sym);
         if(index >= 0) {
           return bindings[index];
@@ -46,16 +46,16 @@ public class Splitter {
       }
       
       @Override
-      public Vector<Value> constant(Rational rat) {
+      public Vector<Value> process(Rational rat) {
         return splitter.call(vector((Value)rat));
       }
       
       @Override
-      public Vector<Value> call(Call call, Vector<Vector<Value>> args) {
+      public Vector<Value> process(Call call, Vector<Vector<Value>> args) {
         return env.lookup(call.func).call(Vector.flatten(args));
       }
     };
-    Vector<Vector<Value>> ret = def.accept(v);
+    Vector<Vector<Value>> ret = def.acceptVector(v);
     return new Multidef(args(nargsarr), struct(Vector.flatten(ret)));
   }
 }

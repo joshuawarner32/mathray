@@ -1,9 +1,7 @@
 package mathray.eval.java;
 
-import mathray.Multidef;
-
-public interface FunctionGenerator<T> {
+public interface FunctionGenerator<I, T> {
   
-  public Wrapper<T> begin(Multidef def);
+  public Wrapper<T> begin(I def);
 
 }

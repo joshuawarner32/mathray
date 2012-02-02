@@ -3,7 +3,7 @@ package mathray;
 import mathray.eval.Impl;
 import mathray.eval.text.DefaultPrinter;
 import mathray.util.Vector;
-import mathray.visitor.SimpleVisitor;
+import mathray.visitor.Processor;
 import static mathray.Expressions.*;
 
 public class Definition extends Closure<Value> implements Impl<Value> {
@@ -13,13 +13,13 @@ public class Definition extends Closure<Value> implements Impl<Value> {
   }
 
   public final Value call(final Vector<Value> a) {
-    final SimpleVisitor<Value> v = new SimpleVisitor<Value>() {
+    final Processor<Value> v = new Processor<Value>() {
       @Override
-      public Value call(Call call) {
-        return call.func.call(call.visitArgs(this));
+      public Value process(Call call, Vector<Value> args) {
+        return call.func.call(args);
       }
       @Override
-      public Value symbol(Symbol sym) {
+      public Value process(Symbol sym) {
         int index = args.indexOf(sym);
         if(index != -1) {
           return a.get(index);
@@ -27,7 +27,7 @@ public class Definition extends Closure<Value> implements Impl<Value> {
         return sym;
       }
       @Override
-      public Value constant(Rational cst) {
+      public Value process(Rational cst) {
         return cst;
       }
     };
