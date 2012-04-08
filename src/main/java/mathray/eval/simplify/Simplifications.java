@@ -63,6 +63,8 @@ public class Simplifications extends PatternRegistry {
   
   private static abstract class Expr {
     
+    private Value value;
+    
     public Expr exprMul(Expr expr) {
       if(expr instanceof ProductExpr || expr instanceof ConstExpr) {
         return expr.exprMul(this);
@@ -103,7 +105,14 @@ public class Simplifications extends PatternRegistry {
       return div(num(1), toValue());
     }
     
-    public abstract Value toValue();
+    public abstract Value buildValue();
+    
+    public final Value toValue() {
+      if(value == null) {
+        value = buildValue();
+      }
+      return value;
+    }
   }
   
   private static class ValueExpr extends Expr {
@@ -114,7 +123,7 @@ public class Simplifications extends PatternRegistry {
     }
     
     @Override
-    public Value toValue() {
+    public Value buildValue() {
       return value;
     }
   }
@@ -176,7 +185,7 @@ public class Simplifications extends PatternRegistry {
     }
     
     @Override
-    public Value toValue() {
+    public Value buildValue() {
       return value;
     }
   }
@@ -210,7 +219,7 @@ public class Simplifications extends PatternRegistry {
     }
 
     @Override
-    public Value toValue() {
+    public Value buildValue() {
       if(power instanceof ConstExpr) {
         ConstExpr cexp = (ConstExpr)power;
         if(cexp.value.equals(num(1))) {
@@ -309,7 +318,7 @@ public class Simplifications extends PatternRegistry {
       return recip >= direct;
     }
     
-    private Value toValue(boolean neg) {
+    private Value buildValue(boolean neg) {
       Value num = null;
       Value denom = null;
       for(Expr expr : factors) {
@@ -339,8 +348,8 @@ public class Simplifications extends PatternRegistry {
     }
     
     @Override
-    public Value toValue() {
-      return toValue(false);
+    public Value buildValue() {
+      return buildValue(false);
     }
   }
   
@@ -366,7 +375,7 @@ public class Simplifications extends PatternRegistry {
     }
     
     @Override
-    public Value toValue() {
+    public Value buildValue() {
       Value ret = null;
       List<Expr> negs = new LinkedList<Expr>();
       if(!offset.equals(num(0))) {

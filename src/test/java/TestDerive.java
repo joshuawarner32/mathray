@@ -21,10 +21,14 @@ public class TestDerive {
   Symbol y = sym("y");
   
   @Test
-  public void testConstants() {
+  public void testTrivialConstants() {
     assertDerivesTo(def(args(x), TAU), x, def(args(x), num(0)));
     assertDerivesTo(def(args(x), num(0)), x, def(args(x), num(0)));
     assertDerivesTo(def(args(x), num(1)), x, def(args(x), num(0)));
+  }
+  
+  @Test
+  public void testNontrivialConstants() {
     assertDerivesTo(def(args(x), sin(num(1))), x, def(args(x), num(0)));
     assertDerivesTo(def(args(x), add(num(1), sin(num(2)))), x, def(args(x), num(0)));
   }

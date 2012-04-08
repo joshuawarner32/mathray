@@ -5,7 +5,6 @@ import org.objectweb.asm.Opcodes;
 
 import org.objectweb.asm.Type;
 
-import mathray.Args;
 import mathray.Call;
 import mathray.Closure;
 import mathray.Multidef;
@@ -16,10 +15,9 @@ import mathray.Symbol;
 import mathray.concrete.BlockD3;
 import mathray.concrete.RayD3;
 import mathray.device.FunctionTypes;
-import mathray.device.FunctionTypes.ZeroInBlockD3;
 import mathray.util.MathEx;
 import mathray.util.Vector;
-import mathray.visitor.EvaluatingVisitor;
+import mathray.visitor.Processor;
 
 import static mathray.Functions.*;
 
@@ -371,7 +369,7 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
     return INSTANCE.transform(FUNCTION_D, def);
   }
   
-  public static <I extends Closure<?>, T> T compile(FunctionGenerator<Closure<?>, T> ctx, final Closure<?> def) {
+  public static <T, Clos extends Closure<?>> T compile(FunctionGenerator<Clos, T> ctx, final Clos def) {
     return INSTANCE.transform(ctx, def);
   }
   
@@ -387,14 +385,14 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
     }
   }
   
-  public <T> T transform(FunctionGenerator<Closure<?>, T> ctx, final Closure<?> def) {
+  public <T, Clos extends Closure<?>> T transform(FunctionGenerator<Clos, T> ctx, final Clos def) {
     final Wrapper<T> wrap = ctx.begin(def);
     
     final MethodGenerator mgen = wrap.mgen;
     final Usage usage = Usage.generate(def);
-    EvaluatingVisitor<JavaValue> v = new EvaluatingVisitor<JavaValue>() {
+    Processor<JavaValue> v = new Processor<JavaValue>() {
       @Override
-      public JavaValue call(Call call, Vector<JavaValue> args) {
+      public JavaValue process(Call call, Vector<JavaValue> args) {
         JavaValue ret = lookup(call.func).call(mgen, args);
         if(usage.get(call) > 1) {
           mgen.store(ret);
@@ -403,7 +401,7 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
       }
 
       @Override
-      public JavaValue symbol(Symbol sym) {
+      public JavaValue process(Symbol sym) {
         JavaValue ret = wrap.symbol(sym);
         if(ret == null) {
           ret = mgen.doubleConstant(lookup(sym));
@@ -415,7 +413,7 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
       }
 
       @Override
-      public JavaValue rational(Rational r) {
+      public JavaValue process(Rational r) {
         JavaValue ret = mgen.doubleConstant(r.toDouble());
         if(usage.get(r) > 1) {
           mgen.store(ret);

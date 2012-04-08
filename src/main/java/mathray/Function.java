@@ -14,6 +14,10 @@ public class Function implements Comparable<Function> {
   
   public Function(String name, int arity) {
     this.name = name;
+    
+    if(arity <= 0) {
+      throw new IllegalArgumentException();
+    }
     this.arity = arity;
   }
   
@@ -51,6 +55,11 @@ public class Function implements Comparable<Function> {
       definition = def(args, call(struct(args.toValueVector())));
     }
     return definition;
+  }
+  
+  @Override
+  public String toString() {
+    return name + "::" + arity;
   }
 
   // Purposefully not overriding hashCode and equals - we want identity comparisons.

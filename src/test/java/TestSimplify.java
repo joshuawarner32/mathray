@@ -154,8 +154,8 @@ public class TestSimplify {
   
   @Test
   public void testCommonSubexpression() {
-    Call c = (Call)Simplifications.simplify(add(sin(x), sin(x)));
-    assertSame(c.args.get(0), c.args.get(1));
+    Call c = (Call)Simplifications.simplify(add(sin(x), cos(sin(x))));
+    assertSame(c.args.get(0), ((Call)c.args.get(1)).args.get(0));
   }
   
   @Test

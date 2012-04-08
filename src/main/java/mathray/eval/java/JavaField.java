@@ -20,6 +20,7 @@ public class JavaField {
   }
 
   public JavaValue load(MethodGenerator mgen) {
+    mgen.methodVisitor.visitFieldInsn(Opcodes.GETFIELD, class_, name, desc);
     return mgen.push(new ComputedValue(Type.getType(desc)));
   }
 

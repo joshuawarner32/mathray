@@ -24,7 +24,11 @@ public class Context<T> {
     return args.toVector().transform(new Transformer<Value, T>() {
       @Override
       public T transform(Value in) {
-        return get(in);
+        T ret = get(in);
+        if(ret == null) {
+          throw new NullPointerException();
+        }
+        return ret;
       }
     });
   }

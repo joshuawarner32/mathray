@@ -33,6 +33,9 @@ public final class Vector<T> implements Iterable<T> {
     ret.items = (O[])new Object[items.length];
     for(int i = 0; i < items.length; i++) {
       ret.items[i] = t.transform(items[i]);
+      if(ret.items[i] == null) {
+        throw new NullPointerException();
+      }
     }
     return ret;
   }
@@ -106,6 +109,9 @@ public final class Vector<T> implements Iterable<T> {
     ret.items = (T[])new Object[count];
     for(int i = 0; i < count; i++) {
       ret.items[i] = generator.generate(i);
+      if(ret.items[i] == null) {
+        throw new NullPointerException();
+      }
     }
     return ret;
   }

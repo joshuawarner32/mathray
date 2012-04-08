@@ -27,7 +27,7 @@ public class MethodGenerator {
       thisRef = null;
     } else {
       state.locals.add(null);
-      thisRef = new MethodArg(Type.getType(cgen.name));
+      thisRef = new MethodArg(Type.getObjectType(cgen.name));
     }
     for(int i = 0; i < argTypes.length; i++) {
       findOrAllocLocalIndex(args[i] = new MethodArg(argTypes[i]));

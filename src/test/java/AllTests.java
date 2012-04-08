@@ -6,6 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
   Sandbox.class,
+  TestEquality.class,
   TestPrinter.class,
   TestParser.class,
   TestDerive.class,

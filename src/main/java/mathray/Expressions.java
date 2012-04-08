@@ -29,6 +29,11 @@ public class Expressions {
     return new Vector<T>(values);
   }
   
+  @SuppressWarnings("unchecked")
+  public static <T> Vector<T> vector(T value) {
+    return new Vector<T>(value);
+  }
+  
   public static Struct struct(Value... values) {
     return struct(vector(values));
   }
@@ -38,6 +43,9 @@ public class Expressions {
   }
   
   public static Struct struct(final Vector<Value> values) {
+    if(values.size() < 2) {
+      return new Multivalue(values);
+    }
     Function func = null;
     boolean all = true;
     for(Value val : values) {

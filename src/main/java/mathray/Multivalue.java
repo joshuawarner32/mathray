@@ -24,5 +24,10 @@ public class Multivalue extends Struct {
   public Vector<Value> toVector() {
     return values;
   }
+  
+  @Override
+  public String toString() {
+    return values.toString();
+  }
 
 }

@@ -110,7 +110,11 @@ public class ParseInfo {
 
       @Override
       public PrecedenceString process(Rational r) {
-        return new PrecedenceString(r.toString(), Integer.MAX_VALUE);
+        if(r.denom == 1) {
+          return new PrecedenceString(String.valueOf(r.num), Integer.MAX_VALUE);
+        } else {
+          return new PrecedenceString(r.num + "/" + r.denom, Integer.MAX_VALUE);
+        }
       }
       
     }).toString();

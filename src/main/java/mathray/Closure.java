@@ -1,5 +1,7 @@
 package mathray;
 
+import mathray.util.Vector;
+import mathray.visitor.Processor;
 import mathray.visitor.Visitor;
 
 public class Closure<T extends Closable> implements Closable {
@@ -10,6 +12,10 @@ public class Closure<T extends Closable> implements Closable {
   
   public Closure(Args args, T value) {
     this.args = args;
+    
+    if(value == null) {
+      throw new NullPointerException();
+    }
     this.value = value;
   }
 
@@ -20,6 +26,11 @@ public class Closure<T extends Closable> implements Closable {
   @Override
   public void accept(Visitor v) {
     value.accept(v);
+  }
+  
+  @Override
+  public <K> Vector<K> acceptVector(Processor<K> v) {
+    return value.acceptVector(v);
   }
   
 }

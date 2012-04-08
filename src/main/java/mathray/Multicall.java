@@ -55,5 +55,10 @@ public class Multicall extends Struct {
       }
     });
   }
+  
+  @Override
+  public String toString() {
+    return toVector().toString();
+  }
 
 }
