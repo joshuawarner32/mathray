@@ -97,17 +97,6 @@ public class Args implements Iterable<Symbol> {
     return true;
   }
 
-  public String toJavaString() {
-    StringBuilder b = new StringBuilder();
-    Vector<Symbol> vars = toVector();
-    b.append("args(");
-    if(vars.size() > 0) {
-      b.append(vars.get(0).name);
-    }
-    b.append(")");
-    return b.toString();
-  }
-
   public Args concat(Symbol... nargs) {
     Symbol[] ns = Arrays.copyOf(syms, syms.length + nargs.length);
     Args ret = new Args();
@@ -116,6 +105,21 @@ public class Args implements Iterable<Symbol> {
       ns[i + syms.length] = nargs[i];
     }
     return ret;
+  }
+  
+  @Override
+  public String toString() {
+    StringBuilder b = new StringBuilder();
+    b.append("(");
+    if(syms.length > 0) {
+      b.append(syms[0]);
+    }
+    for(int i = 1; i < syms.length; i++) {
+      b.append(", ");
+      b.append(syms[i]);
+    }
+    b.append(")");
+    return b.toString();
   }
 
 }

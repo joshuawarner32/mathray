@@ -69,16 +69,6 @@ public class Definition extends Closure<Value> implements Impl<Value> {
     return new Definition(args, args.get(0));
   }
 
-  public String toJavaString() {
-    StringBuilder b = new StringBuilder();
-    b.append("def(");
-    b.append(args.toJavaString());
-    b.append(", ");
-    b.append(value.toJavaString());
-    b.append(")");
-    return b.toString();
-  }
-
   public Multidef toMultidef() {
     return new Multidef(args, struct(value));
   }

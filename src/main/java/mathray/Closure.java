@@ -32,5 +32,10 @@ public class Closure<T extends Closable> implements Closable {
   public <K> Vector<K> acceptVector(Processor<K> v) {
     return value.acceptVector(v);
   }
+ 
+  @Override
+  public String toString() {
+    return args + " = " + value.toString();
+  }
   
 }

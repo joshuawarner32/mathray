@@ -31,6 +31,7 @@ public class Visitors {
         T ret = ctx.get(call);
         if(ret == null) {
           call.args.accept(this);
+          System.out.println();
           ctx.put(call, ret = v.process(call, ctx.getStruct(call.args)));
         }
       }

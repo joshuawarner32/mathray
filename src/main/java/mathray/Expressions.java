@@ -5,6 +5,8 @@ import static mathray.Functions.*;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import org.objectweb.asm.Opcodes;
+
 import mathray.util.Generator;
 import mathray.util.Transformer;
 import mathray.util.Vector;
@@ -80,6 +82,10 @@ public class Expressions {
   
   public static Definition def(Args args, Value value) {
     return new Definition(args, value);
+  }
+  
+  public static Multidef multidef(Args args, Vector<Value> values) {
+    return new Multidef(args, struct(values));
   }
   
   public static Multidef multidef(Args args, Value... values) {

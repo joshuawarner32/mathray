@@ -18,11 +18,11 @@ public class Project {
     final Symbol[] center = new Symbol[count];
     for(int i = 0; i < count; i++) {
       for(int j = 0; j < count; j++) {
-        nargs[count * i + j] = sym("v_" + i + "_" + j);
+        nargs[count * i + j] = sym("v_" + args.get(i).name + "_" + j);
       }
     }
     for(int i = 0; i < count; i++) {
-      center[i] = sym("p_" + i);
+      center[i] = sym("p_" + args.get(i).name);
     }
     final Value[] vals = new Value[count];
     Vector<Value> res = def.eval(args, Vector.generate(args.size(), new Generator<Value>() {
@@ -31,11 +31,11 @@ public class Project {
         for(int i = 0; i < count - 1; i++) {
           vals[i] = mul(args.get(i), nargs[count * i + index]);
         }
-        vals[count] = nargs[count * (count - 1) + index];
+        vals[count - 1] = nargs[count * (count - 1) + index];
         return add(mul(add(vals), args.get(count - 1)), center[index]);
       }
     }));
-    return closure(args(nargs), def.call(args, res));
+    return closure(args(nargs), multidef(args, res));
   }
 
 }
