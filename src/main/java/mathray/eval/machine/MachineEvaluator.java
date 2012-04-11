@@ -1,6 +1,7 @@
 package mathray.eval.machine;
 
 import mathray.Call;
+import mathray.Closure;
 import mathray.Multidef;
 import mathray.Definition;
 import mathray.FunctionSymbolRegistrar;
@@ -189,6 +190,11 @@ public class MachineEvaluator extends FunctionSymbolRegistrar<Impl<Double>, Doub
 
   public static double eval(Definition def, Vector<Double> args) {
     return eval(def.toMultidef(), args).get(0);
+  }
+  
+  public static Vector<Double> eval(Closure<?> def, Vector<Double>... args_args) {
+    def.collectArgs(args_args);
+    return null;
   }
 
 }

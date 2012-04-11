@@ -2,9 +2,10 @@ package mathray.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 
-public final class Vector<T> implements Iterable<T> {
+public final class Vector<T> implements Collection<T> {
   
   private T[] items;
   
@@ -62,9 +63,9 @@ public final class Vector<T> implements Iterable<T> {
     };
   }
 
-  public boolean contains(T v) {
+  public boolean contains(Object o) {
     for(T i : items) {
-      if(i == v) {
+      if(i == o) {
         return true;
       }
     }
@@ -182,6 +183,70 @@ public final class Vector<T> implements Iterable<T> {
       ret.add(t);
     }
     return Vector.unsafe(ret.toArray((T[])new Object[ret.size()]));
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return items.length > 0;
+  }
+
+  @Override
+  public Object[] toArray() {
+    return Arrays.copyOf(items, items.length);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public <K> K[] toArray(K[] a) {
+    if(a.length < items.length) {
+      a = Arrays.copyOf(a, items.length);
+    } else if(a.length > items.length) {
+      a[items.length] = null;
+    }
+    for(int i = 0; i < items.length; i++) {
+      a[i] = (K)items[i];
+    }
+    return a;
+  }
+
+  @Override
+  public boolean containsAll(Collection<?> c) {
+    for(Object o : c) {
+      if(!contains(o)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public boolean add(T e) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean remove(Object o) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean addAll(Collection<? extends T> c) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean removeAll(Collection<?> c) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean retainAll(Collection<?> c) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void clear() {
+    throw new UnsupportedOperationException();
   }
 
 }
