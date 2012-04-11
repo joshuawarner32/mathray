@@ -35,7 +35,7 @@ public class Project {
         return add(mul(add(vals), args.get(count - 1)), center[index]);
       }
     }));
-    return closure(args(nargs), multidef(args, res));
+    return closure(args(center).concat(nargs), multidef(args, res));
   }
 
 }

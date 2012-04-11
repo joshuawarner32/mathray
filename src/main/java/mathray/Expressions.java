@@ -5,8 +5,6 @@ import static mathray.Functions.*;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.objectweb.asm.Opcodes;
-
 import mathray.util.Generator;
 import mathray.util.Transformer;
 import mathray.util.Vector;
