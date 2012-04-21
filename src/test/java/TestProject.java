@@ -19,7 +19,7 @@ public class TestProject {
     Definition def = def(args(x), sin(x));
     Closure<Multidef> projected = Project.project(def.toMultidef(), args(x));
     System.out.println(projected);
-//    MachineEvaluator.close(projected, vector(1.0, -1.0));
+//    double res = MachineEvaluator.eval(projected, vector(vector(1.0, -1.0), vector(1.0))).get(0);
     // TODO: use MachineEvaluator to test result
   }
   
