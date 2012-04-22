@@ -13,6 +13,7 @@ public class DefaultPrinter {
     .group("(", ",", ")")
     .infix("+", 10, Associativity.LEFT, ADD)
     .infix("-", 10, Associativity.LEFT, SUB)
+    .infix("", 20, Associativity.LEFT, MUL)
     .infix("*", 20, Associativity.LEFT, MUL)
     .infix("/", 20, Associativity.LEFT, DIV)
     .infix("^", 30, Associativity.RIGHT, POW)

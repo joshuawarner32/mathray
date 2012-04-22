@@ -11,9 +11,11 @@ public class TestParser {
 
   private Symbol x = sym("x");
   private Symbol y = sym("y");
+  private Symbol y3 = sym("y3");
   
   private ParseInfo parser = DefaultPrinter.BASIC_FUNCTIONS.toBuilder()
     .values(x, y)
+    .values(y3)
     .build();
   
   @Test
@@ -64,6 +66,15 @@ public class TestParser {
     assertEquals(sin(add(x, num(1))), parser.parse("sin(x+1)"));
     assertEquals(min(add(num(1), x), y), parser.parse("min(1+x, y)"));
     assertEquals(min(x, add(num(1), y)), parser.parse("min(x, 1+y)"));
+  }
+  
+  @Test
+  public void testInvisibleProduct() {
+    assertEquals(mul(x, y), parser.parse("x y"));
+    assertEquals(mul(num(3), y), parser.parse("3y"));
+    assertEquals(y3, parser.parse("y3"));
+    assertEquals(mul(x, sin(x)), parser.parse("x sin(x)"));
+//    assertEquals(mul(sin(x), y), parser.parse("sin(x) y"));    
   }
   
   @Test

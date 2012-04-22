@@ -59,6 +59,7 @@ public class Token {
   public static List<Token> tokens(Set<String> symbols, String text) {
     List<Token> ret = new ArrayList<Token>();
     int pos = 0;
+    boolean lastSymbol = true;
     while(pos < text.length()) {
       char ch = text.charAt(pos);
       if(Character.isWhitespace(ch)) {
@@ -69,8 +70,12 @@ public class Token {
         int start = pos;
         do {
           pos++;
-        } while(pos < text.length() && Character.isLetter(text.charAt(pos)));
+        } while(pos < text.length() && Character.isLetterOrDigit(text.charAt(pos)));
+        if(!lastSymbol) {
+          ret.add(new Token(Type.Symbol, ""));
+        }
         ret.add(new Token(Type.Identifier, text.substring(start, pos)));
+        lastSymbol = false;
       } else if(Character.isDigit(ch)) {
         int start = pos;
         do {
@@ -82,13 +87,18 @@ public class Token {
             pos++;
           }
         }
+        if(!lastSymbol) {
+          ret.add(new Token(Type.Symbol, ""));
+        }
         ret.add(new Token(Type.Number, text.substring(start, pos)));
+        lastSymbol = false;
       } else if(isSymbol(ch)) {
         int start = pos;
         do {
           pos++;
         } while(pos < text.length() && isSymbol(text.charAt(pos)));
         splitSymbols(symbols, ret, text.substring(start, pos));
+        lastSymbol = true;
       } else {
         throw new RuntimeException("parse error");
       }
