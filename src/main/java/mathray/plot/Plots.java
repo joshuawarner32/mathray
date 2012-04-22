@@ -21,7 +21,7 @@ public class Plots {
     Graphics2D g = (Graphics2D)image.getGraphics();
     double[] vals = new double[width + 1];
     for(int i = 0; i <= width; i++) {
-      double x = frame.height() * i / width + frame.xmin;
+      double x = frame.width() * i / width + frame.xmin;
       vals[i] = f.call(x);
     }
     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

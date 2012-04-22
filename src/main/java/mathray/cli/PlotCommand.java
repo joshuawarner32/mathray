@@ -4,7 +4,6 @@ import static mathray.Expressions.*;
 import static mathray.Functions.*;
 import static mathray.NamedConstants.*;
 
-import java.util.Arrays;
 import java.util.Set;
 
 import mathray.Args;
