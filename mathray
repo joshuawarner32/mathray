@@ -1,0 +1,20 @@
+#!/bin/bash
+
+repo=~/.m2/repository
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+JAR=$(ls ${DIR}/target/mathray-*.jar)
+
+if [[ -z "${JAR}" ]]; then
+  (cd ${DIR} && mvn package)
+  JAR=$(ls ${DIR}/target/mathray-*.jar)
+fi
+
+java -cp \
+${JAR}:\
+${repo}/asm/asm-debug-all/3.3.1/asm-debug-all-3.3.1.jar:\
+${repo}/commons-cli/commons-cli/1.2/commons-cli-1.2.jar:\
+${repo}/org/jocl/jocl/0.1.7/jocl-0.1.7.jar \
+mathray.cli.Main \
+${@}
