@@ -42,10 +42,10 @@ public class Frame {
       eval2(f, in, out, xa, xb);
       vals[i * 2] = out[0];
       vals[i * 2 + 1] = out[1];
-      if(out[0] < ymin) {
+      if(!Double.isInfinite(out[0]) && out[0] < ymin) {
         ymin = out[0];
       }
-      if(out[1] > ymax) {
+      if(!Double.isInfinite(out[1]) && out[1] > ymax) {
         ymax = out[1];
       }
     }
