@@ -36,14 +36,33 @@ public class ParseInfo {
 
   private Map<String, Function> functions = new HashMap<String, Function>();
   
-  private Map<String, Symbol> variables = new HashMap<String, Symbol>();
+  private Map<String, Value> namedValues = new HashMap<String, Value>();
   
   private ParseInfo() {}
   
+  private ParseInfo(ParseInfo copy) {
+    operators = new HashMap<Function, Operator>(copy.operators);
+    infixes = new HashMap<String, InfixOperator>(copy.infixes);
+    prefixes = new HashMap<String, PrefixOperator>(copy.prefixes);
+    symbols = new HashSet<String>(copy.symbols);
+    groupBegin = copy.groupBegin;
+    groupEnd = copy.groupEnd;
+    groupSep = copy.groupSep;
+    functions = new HashMap<String, Function>(copy.functions);
+    namedValues = new HashMap<String, Value>(copy.namedValues);
+  }
+  
   public static class Builder {
-    private Builder() {}
     
-    private ParseInfo info = new ParseInfo();
+    private ParseInfo info;
+    
+    private Builder() {
+      info = new ParseInfo();
+    }
+    
+    private Builder(ParseInfo info) {
+      this.info = new ParseInfo(info);
+    }
     
     public Builder group(String begin, String sep, String end) {
       info.symbols.add(begin);
@@ -71,14 +90,27 @@ public class ParseInfo {
       return this;
     }
     
-    public Builder sym(Symbol var) {
-      info.variables.put(var.name, var);
+    public Builder value(Symbol var) {
+      info.namedValues.put(var.name, var);
+      return this;
+    }
+    
+    public Builder value(String name, Value v) {
+      info.namedValues.put(name, v);
+      return this;
+    }
+
+    public Builder values(Symbol... syms) {
+      for(Symbol s : syms) {
+        value(s);
+      }
       return this;
     }
     
     public ParseInfo build() {
-      // TODO: enforce immutability
-      return info;
+      ParseInfo ret = info;
+      info = null;
+      return ret;
     }
 
     public Builder function(String name, Function function) {
@@ -89,10 +121,21 @@ public class ParseInfo {
     public Builder function(Function func) {
       return function(func.name, func);
     }
+
+    public Builder functions(Function... funcs) {
+      for(Function f : funcs) {
+        function(f);
+      }
+      return this;
+    }
   }
   
-  public static Builder builder() {
+  public static Builder newBuilder() {
     return new Builder();
+  }
+  
+  public Builder toBuilder() {
+    return new Builder(this);
   }
   
   public String unparse(Value value) {
@@ -133,7 +176,7 @@ public class ParseInfo {
     for(Token tok : Token.tokens(symbols, text)) {
       switch(tok.type) {
       case Identifier:
-        Value val = variables.get(tok.text);
+        Value val = namedValues.get(tok.text);
         if(val != null) {
           stack.push(val);
           state = AFTER_VALUE;

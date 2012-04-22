@@ -13,12 +13,12 @@ import mathray.device.FunctionTypes;
 import mathray.eval.java.JavaCompiler;
 import mathray.eval.simplify.Simplifications;
 import mathray.eval.split.IntervalTransform;
+import mathray.eval.text.DefaultPrinter;
 import mathray.eval.text.ParseInfo;
-import mathray.eval.text.InfixOperator.Associativity;
 import mathray.eval.transform.Project;
 import mathray.plot.Frame;
 import mathray.plot.Plot3D;
-import mathray.plot.Plotter;
+import mathray.plot.Plots;
 import mathray.random.ValueRandom;
 import mathray.util.UI;
 import mathray.util.Vector;
@@ -37,29 +37,8 @@ public class Main {
   private static Symbol z = sym("z");
   
   private static void plot3DStuff() {
-    ParseInfo info = ParseInfo.builder()
-      .group("(", ",", ")")
-      .infix("+", 10, Associativity.LEFT, ADD)
-      .infix("-", 10, Associativity.LEFT, SUB)
-      .infix("*", 20, Associativity.LEFT, MUL)
-      .infix("/", 20, Associativity.LEFT, DIV)
-      .infix("^", 30, Associativity.RIGHT, POW)
-      .prefix("-", 25, NEG)
-      .function(SIN)
-      .function(SINH)
-      .function(ASIN)
-      .function(COS)
-      .function(COSH)
-      .function(ACOS)
-      .function(TAN)
-      .function(TANH)
-      .function(ATAN)
-      .function(ATAN2)
-      .function(SQRT)
-      .function(LOG)
-      .function(MIN)
-      .function(MAX)
-      .sym(x).sym(y).sym(z)
+    ParseInfo info = DefaultPrinter.BASIC_FUNCTIONS.toBuilder()
+      .values(x, y, z)
       .build();
     //plot3D(def(args(x, y, z), add(mul(x, x), mul(y, y), mul(z, z), num(-1))), 512, 512);
     //plot3D(def(args(x, y, z), add(pow(x, 2), pow(y, 2), pow(z, 2), num(-1))), 512, 512);
@@ -83,7 +62,7 @@ public class Main {
     g.setBackground(Color.WHITE);
     g.clearRect(0, 0, 512, 512);
     FunctionTypes.D1_1 f = JavaCompiler.compile(JavaCompiler.D1_1, def.toMultidef());
-    Plotter.simplePlot(f, Frame.frameFor(def, -10, 10), image, Color.BLACK);
+    Plots.simplePlot(f, Frame.frameFor(def, -10, 10), image, Color.BLACK);
     UI.show(def.toString(), image);
   }
 

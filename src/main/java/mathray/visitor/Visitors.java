@@ -1,8 +1,12 @@
 package mathray.visitor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import mathray.Call;
 import mathray.Rational;
 import mathray.Symbol;
+import mathray.Value;
 
 public class Visitors {
   
@@ -36,6 +40,26 @@ public class Visitors {
       }
       
     };
+  }
+  
+  public static Set<Symbol> getSymbols(Value... values) {
+    final Set<Symbol> ret = new HashSet<Symbol>();
+    Visitor visitor = new Visitor() {
+      @Override
+      public void visit(Rational rat) {}
+      
+      @Override
+      public void visit(Symbol sym) {
+        ret.add(sym);
+      }
+      
+      @Override
+      public void visit(Call call) {}
+    };
+    for(Value v : values) {
+      v.accept(visitor);
+    }
+    return ret;
   }
   
 }

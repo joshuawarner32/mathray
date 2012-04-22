@@ -9,7 +9,7 @@ public class DefaultPrinter {
   
   private DefaultPrinter() {}
 
-  private static ParseInfo parser = ParseInfo.builder()
+  public static ParseInfo BASIC_OPERATORS = ParseInfo.newBuilder()
     .group("(", ",", ")")
     .infix("+", 10, Associativity.LEFT, ADD)
     .infix("-", 10, Associativity.LEFT, SUB)
@@ -17,20 +17,10 @@ public class DefaultPrinter {
     .infix("/", 20, Associativity.LEFT, DIV)
     .infix("^", 30, Associativity.RIGHT, POW)
     .prefix("-", 25, NEG)
-    .function(SIN)
-    .function(SINH)
-    .function(ASIN)
-    .function(COS)
-    .function(COSH)
-    .function(ACOS)
-    .function(TAN)
-    .function(TANH)
-    .function(ATAN)
-    .function(ATAN2)
-    .function(SQRT)
-    .function(LOG)
-    .function(MIN)
-    .function(MAX)
+    .build();
+  
+  public static ParseInfo BASIC_FUNCTIONS = BASIC_OPERATORS.toBuilder()
+    .functions(SIN, SINH, ASIN, COS, COSH, ACOS, TAN, TANH, ATAN, ATAN2, SQRT, LOG, MIN, MAX)
     .build();
   
   public static String toString(Definition def) {
@@ -44,16 +34,16 @@ public class DefaultPrinter {
       b.append(def.args.get(i));
     }
     b.append(") = ");
-    b.append(parser.unparse(def.value));
+    b.append(BASIC_OPERATORS.unparse(def.value));
     return b.toString();
   }
   
   public static String toString(Value value) {
-    return parser.unparse(value);
+    return BASIC_OPERATORS.unparse(value);
   }
   
   public static Value parse(String text) {
-    return parser.parse(text);
+    return BASIC_OPERATORS.parse(text);
   }
 
 }

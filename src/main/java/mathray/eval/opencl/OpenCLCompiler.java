@@ -5,7 +5,7 @@ import mathray.FunctionSymbolRegistrar;
 import mathray.NamedConstants;
 import mathray.util.MathEx;
 
-public class OpenCLCompiler extends FunctionSymbolRegistrar<OpenCLImpl, Double>{
+public class OpenCLCompiler extends FunctionSymbolRegistrar<OpenCLImpl, Double> {
 
   {
     
@@ -25,4 +25,7 @@ public class OpenCLCompiler extends FunctionSymbolRegistrar<OpenCLImpl, Double>{
   private OpenCLImpl binop(String op) {
     return new OpenCLImpl();
   }
+  
+  private static OpenCLCompiler instance = new OpenCLCompiler();
+  
 }

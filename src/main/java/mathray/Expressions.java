@@ -102,6 +102,10 @@ public class Expressions {
     return ret;
   }
   
+  public static Value fold(Function func, Value... values) {
+    return fold(func, Arrays.asList(values));
+  }
+  
   public static Value fold(Function func, Value start, Vector<Value> values) {
     if(values.size() < 1) {
       return start;

@@ -1,8 +1,7 @@
 import static mathray.Expressions.*;
-import static mathray.Functions.*;
 import static org.junit.Assert.*;
 import mathray.Symbol;
-import mathray.eval.text.InfixOperator.Associativity;
+import mathray.eval.text.DefaultPrinter;
 import mathray.eval.text.ParseInfo;
 import org.junit.Test;
 
@@ -10,20 +9,11 @@ import org.junit.Test;
 public class TestParser {
   
 
-  Symbol x = sym("x");
-  Symbol y = sym("y");
-  ParseInfo parser = ParseInfo.builder()
-    .group("(", ",", ")")
-    .infix("+", 10, Associativity.LEFT, ADD)
-    .infix("-", 10, Associativity.LEFT, SUB)
-    .infix("*", 20, Associativity.LEFT, MUL)
-    .infix("/", 20, Associativity.LEFT, DIV)
-    .infix("^", 30, Associativity.RIGHT, POW)
-    .prefix("-", 25, NEG)
-    .function("sin", SIN)
-    .function("min", MIN)
-    .sym(x)
-    .sym(y)
+  private Symbol x = sym("x");
+  private Symbol y = sym("y");
+  
+  private ParseInfo parser = DefaultPrinter.BASIC_FUNCTIONS.toBuilder()
+    .values(x, y)
     .build();
   
   @Test
@@ -62,11 +52,11 @@ public class TestParser {
   
   @Test
   public void testFunctions() {
-//    assertEquals(sin(x), parser.parse("sin(x)"));
-//    assertEquals(min(x, y), parser.parse("min(x, y)"));
-//    
-//    assertEquals(add(num(1), sin(x)), parser.parse("1+sin(x)"));
-//    assertEquals(add(num(1), min(x, y)), parser.parse("1+min(x, y)"));
+    assertEquals(sin(x), parser.parse("sin(x)"));
+    assertEquals(min(x, y), parser.parse("min(x, y)"));
+    
+    assertEquals(add(num(1), sin(x)), parser.parse("1+sin(x)"));
+    assertEquals(add(num(1), min(x, y)), parser.parse("1+min(x, y)"));
     assertEquals(add(sin(x), num(1)), parser.parse("sin(x)+1"));
     assertEquals(add(min(x, y), num(1)), parser.parse("min(x, y)+1"));
     
