@@ -21,7 +21,7 @@ import mathray.visitor.Processor;
 
 import static mathray.Functions.*;
 
-public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
+public class JavaDevice extends FunctionSymbolRegistrar<JavaImpl, Double> {
   
   {
     
@@ -363,7 +363,7 @@ public class JavaCompiler extends FunctionSymbolRegistrar<JavaImpl, Double> {
     };
   }
   
-  private static final JavaCompiler INSTANCE = new JavaCompiler();
+  private static final JavaDevice INSTANCE = new JavaDevice();
   
   public static FunctionTypes.D compile(final Multidef def) {
     return INSTANCE.transform(FUNCTION_D, def);

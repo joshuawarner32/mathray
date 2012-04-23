@@ -4,7 +4,7 @@ import mathray.Multidef;
 import mathray.Symbol;
 import mathray.Value;
 import mathray.device.FunctionTypes;
-import mathray.eval.java.JavaCompiler;
+import mathray.eval.java.JavaDevice;
 import mathray.util.Vector;
 
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class TestJavaCompilerEval {
   private static final Symbol y = sym("y");
   
   private static void assertCompileEvaluatesTo(Multidef def, Vector<Double> args, Vector<Double> results) {
-    FunctionTypes.D func = JavaCompiler.compile(def);
+    FunctionTypes.D func = JavaDevice.compile(def);
     double[] in = new double[args.size()];
     double[] out = new double[results.size()];
     for(int i = 0; i < in.length; i++) {

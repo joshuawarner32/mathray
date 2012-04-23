@@ -5,7 +5,7 @@ import mathray.FunctionSymbolRegistrar;
 import mathray.NamedConstants;
 import mathray.util.MathEx;
 
-public class OpenCLCompiler extends FunctionSymbolRegistrar<OpenCLImpl, Double> {
+public class OpenCLDevice extends FunctionSymbolRegistrar<OpenCLImpl, Double> {
 
   {
     
@@ -26,6 +26,6 @@ public class OpenCLCompiler extends FunctionSymbolRegistrar<OpenCLImpl, Double> 
     return new OpenCLImpl();
   }
   
-  private static OpenCLCompiler instance = new OpenCLCompiler();
+  private static OpenCLDevice instance = new OpenCLDevice();
   
 }

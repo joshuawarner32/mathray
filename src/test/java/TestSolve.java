@@ -7,7 +7,7 @@ import mathray.Symbol;
 import mathray.concrete.RayD3;
 import mathray.concrete.VectorD3;
 import mathray.device.FunctionTypes.ZeroOnRayD3;
-import mathray.eval.java.JavaCompiler;
+import mathray.eval.java.JavaDevice;
 import mathray.eval.split.IntervalTransform;
 import mathray.plot.Plot3D;
 
@@ -23,7 +23,7 @@ public class TestSolve {
 
   private void assertSolvesTo(Multidef def, RayD3 solution, VectorD3 res) {
     Multidef ival = IntervalTransform.intervalize(def, args);
-    ZeroOnRayD3 f = JavaCompiler.compile(JavaCompiler.MAYBE_ZERO_ON_RAY3, ival);
+    ZeroOnRayD3 f = JavaDevice.compile(JavaDevice.MAYBE_ZERO_ON_RAY3, ival);
     double eps = 0.001;
     assertTrue(Plot3D.solve(f, solution, 100, eps * 2));
     
@@ -32,7 +32,7 @@ public class TestSolve {
   
   public void assertNoSolution(Multidef def, RayD3 solution) {
     Multidef ival = IntervalTransform.intervalize(def, args);
-    ZeroOnRayD3 f = JavaCompiler.compile(JavaCompiler.MAYBE_ZERO_ON_RAY3, ival);
+    ZeroOnRayD3 f = JavaDevice.compile(JavaDevice.MAYBE_ZERO_ON_RAY3, ival);
     double eps = 0.001;
     assertFalse(Plot3D.solve(f, solution, 100, eps * 2));
   }

@@ -9,34 +9,12 @@ import mathray.Multidef;
 
 public class MultiDevice implements Device {
   
-  private static class Support<T, Clos> {
-    public final Compiler<T, Clos> compiler;
-    public final int cost;
-    public final int compileCost;
-    
-    public Support(Compiler<T, Clos> compiler, int cost, int compileCost) {
-      this.compiler = compiler;
-      this.cost = cost;
-      this.compileCost = compileCost;
-    }
-  }
-  
-  private final Map<FunctionType<?, ?>, Support<?, ?>> support = new HashMap<FunctionType<?, ?>, Support<?, ?>>();
+  private final Map<FunctionType<?, ?>, Device> support = new HashMap<FunctionType<?, ?>, Device>();
   
   private final Set<Device> devices;
   
-  private <T, Clos> Support<T, Clos> register(FunctionType<T, Clos> type, int cost, int compileCost, Compiler<T, Clos> c) {
-    Support<T, Clos> s = new Support<T, Clos>(c, cost, compileCost);
-    support.put(type, s);
-    return s;
-  }
-  
-  private <T, Clos> Support<T, Clos> passThrough(final FunctionType<T, Clos> type, final Device device) {
-    return register(type, device.cost(type), device.compileCost(type), new Compiler<T, Clos>() {
-      public T compile(Clos def) {
-        return device.compile(type, def);
-      }
-    });
+  private <T, Clos> void register(FunctionType<T, Clos> type, Device device) {
+    support.put(type, device);
   }
   
   private <T, Clos> Device findDevice(FunctionType<T, Clos> type) {
@@ -54,85 +32,95 @@ public class MultiDevice implements Device {
     return minD;
   }
   
-  @SuppressWarnings("unchecked")
-  private <T, Clos> Support<T, Clos> findSupport(FunctionType<T, Clos> type) {
-    Support<?, ?> s = support.get(type);
+  private <T, Clos> Device findSupport(FunctionType<T, Clos> type) {
+    Device d = support.get(type);
     
-    if(s == null) {
-      Device d = findDevice(type);
+    if(d == null) {
+      d = findDevice(type);
       if(d == null) {
         return null;
       }
-      s = passThrough(type, d);
+      register(type, d);
     }
     
-    return (Support<T, Clos>) s;
+    return d;
   }
   
   private static final int BASE_CASTING_COST = 5;
   private static final int BASE_CASTING_COMPILE_COST = 1;
   
-  private <T, Clos> void registerCast(Device device, FunctionType<?, ?> from, FunctionType<T, Clos> to) {
+  private interface Compiler<T, Clos> {
+    public T compile(Device fromDevice, Clos def);
+  }
+  
+  private <T, Clos> void maybeRegisterCast(FunctionType<?, ?> from, FunctionType<T, Clos> to, final Compiler<T, Clos> compiler) {
+    Device toDevice = findDevice(to);
+    if(toDevice == null) {
+      final Device device = findDevice(from);
+      if(device != null) {
+        register(to, new Device() {
+          @SuppressWarnings("unchecked")
+          @Override
+          public <T2, Clos2> T2 compile(FunctionType<T2, Clos2> type, Clos2 def) {
+            return (T2)compiler.compile(device, (Clos)def);
+          }
+    
+          @Override
+          public int cost(FunctionType<?, ?> type) {
+            return BASE_CASTING_COST + device.cost(type);
+          }
+    
+          @Override
+          public int compileCost(FunctionType<?, ?> type) {
+            return BASE_CASTING_COMPILE_COST + device.compileCost(type);
+          }
+        });
+      }
+    }
   }
 
   public MultiDevice(Set<Device> devices) {
     this.devices = new HashSet<Device>(devices);
     
-    final Device deviceF = findDevice(FunctionTypes.FUNCTION_F);
-    final Device deviceD = findDevice(FunctionTypes.FUNCTION_D);
-    
-    if(deviceF != null && deviceD == null) {
-      register(FunctionTypes.FUNCTION_D, BASE_CASTING_COST + deviceF.cost(FunctionTypes.FUNCTION_D), BASE_CASTING_COMPILE_COST + deviceF.compileCost(FunctionTypes.FUNCTION_D), new Compiler<FunctionTypes.D, Multidef>() {
-        @Override
-        public FunctionTypes.D compile(Multidef def) {
-          return FunctionTypes.toD(deviceF.compile(FunctionTypes.FUNCTION_F, def));
-        }
-      });
-    }
-    
-    if(deviceF == null && deviceD != null) {
-      register(FunctionTypes.FUNCTION_F, BASE_CASTING_COST + deviceF.cost(FunctionTypes.FUNCTION_D), BASE_CASTING_COMPILE_COST + deviceF.compileCost(FunctionTypes.FUNCTION_D), new Compiler<FunctionTypes.F, Multidef>() {
-        @Override
-        public FunctionTypes.F compile(Multidef def) {
-          return FunctionTypes.toF(deviceD.compile(FunctionTypes.FUNCTION_D, def));
-        }
-      });
-    }
-  }
-  
-  @SuppressWarnings("unchecked")
-  private <T, Clos> Compiler<T, Clos> lookup(FunctionType<T, Clos> type) {
-    Compiler<T, Clos> ret = (Compiler<T, Clos>)support.get(type).compiler;
-    if(ret == null) {
-      throw new IllegalArgumentException("unsupported function type");
-    }
-    return ret;
+    maybeRegisterCast(FunctionTypes.FUNCTION_F, FunctionTypes.FUNCTION_D, new Compiler<FunctionTypes.D, Multidef>() {
+      @Override
+      public FunctionTypes.D compile(Device device, Multidef def) {
+        return FunctionTypes.toD(device.compile(FunctionTypes.FUNCTION_F, def));
+      }
+    });
+
+    maybeRegisterCast(FunctionTypes.FUNCTION_D, FunctionTypes.FUNCTION_F, new Compiler<FunctionTypes.F, Multidef>() {
+      @Override
+      public FunctionTypes.F compile(Device device, Multidef def) {
+        return FunctionTypes.toF(device.compile(FunctionTypes.FUNCTION_D, def));
+      }
+    });
   }
 
   @Override
   public <T, Clos> T compile(FunctionType<T, Clos> type, Clos def) {
-    return lookup(type).compile(def);
+    return findSupport(type).compile(type, def);
   }
 
   @Override
   public int cost(FunctionType<?, ?> type) {
-    Support<?, ?> s = findSupport(type);
+    Device d = findSupport(type);
     
-    if(s == null) {
+    if(d == null) {
       return Device.NO_SUPPORT;
     }
     
-    return s.cost;
+    return d.cost(type);
   }
 
   @Override
   public int compileCost(FunctionType<?, ?> type) {
-    Support<?, ?> s = findSupport(type);
+    Device d = findSupport(type);
     
-    if(s == null) {
+    if(d == null) {
       return Device.NO_SUPPORT;
     }
     
-    return s.compileCost;
+    return d.compileCost(type);
   }
 }

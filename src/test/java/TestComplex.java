@@ -7,7 +7,7 @@ import mathray.Args;
 import mathray.Multidef;
 import mathray.Definition;
 import mathray.Symbol;
-import mathray.eval.machine.MachineEvaluator;
+import mathray.eval.machine.VisitorDevice;
 import mathray.eval.split.ComplexTransform;
 import mathray.util.Vector;
 
@@ -15,7 +15,7 @@ public class TestComplex {
   
   private static void assertComplexEvalsTo(Definition def, Vector<Double> input, Vector<Double> output) {
     Multidef comp = ComplexTransform.complexify(def.toMultidef(), def.args);
-    Vector<Double> res = MachineEvaluator.eval(comp, input);
+    Vector<Double> res = VisitorDevice.eval(comp, input);
     assertEquals(output, res);
   }
   

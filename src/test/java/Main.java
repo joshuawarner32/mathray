@@ -10,7 +10,7 @@ import mathray.Symbol;
 import mathray.concrete.CameraD3;
 import mathray.concrete.VectorD3;
 import mathray.device.FunctionTypes;
-import mathray.eval.java.JavaCompiler;
+import mathray.eval.java.JavaDevice;
 import mathray.eval.simplify.Simplifications;
 import mathray.eval.split.IntervalTransform;
 import mathray.eval.text.DefaultPrinter;
@@ -50,7 +50,7 @@ public class Main {
     Closure<Multidef> proj = Project.project(def.toMultidef(), def.args); 
     Closure<Multidef> inter = proj.close(Simplifications.simplify(IntervalTransform.intervalize(proj.value, proj.value.args)));
     CameraD3 cam = CameraD3.lookAt(new VectorD3(3, 3, 3), new VectorD3(0, 0, 0), 1, width / (double)height, new VectorD3(0, 0, 1));
-    FunctionTypes.ClosureD<FunctionTypes.ZeroInBlockD3> func = JavaCompiler.compile(JavaCompiler.closureD(JavaCompiler.MAYBE_ZERO_IN_BLOCKD3), inter);
+    FunctionTypes.ClosureD<FunctionTypes.ZeroInBlockD3> func = JavaDevice.compile(JavaDevice.closureD(JavaDevice.MAYBE_ZERO_IN_BLOCKD3), inter);
     BufferedImage image = Plot3D.plotBlockDepth(func.close(cam.args()), width, height, 0.001, 100);
     UI.show(def.toString(), image);
   }
@@ -61,7 +61,7 @@ public class Main {
     Graphics2D g = image.createGraphics();
     g.setBackground(Color.WHITE);
     g.clearRect(0, 0, 512, 512);
-    FunctionTypes.D1_1 f = JavaCompiler.compile(JavaCompiler.D1_1, def.toMultidef());
+    FunctionTypes.D1_1 f = JavaDevice.compile(JavaDevice.D1_1, def.toMultidef());
     Plots.simplePlot(f, Frame.frameFor(def, -10, 10), image, Color.BLACK);
     UI.show(def.toString(), image);
   }

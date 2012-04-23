@@ -1,7 +1,7 @@
 import mathray.Multidef;
 import mathray.Definition;
 import mathray.Symbol;
-import mathray.eval.machine.MachineEvaluator;
+import mathray.eval.machine.VisitorDevice;
 import mathray.eval.split.IntervalTransform;
 import mathray.util.MathEx;
 import mathray.util.Vector;
@@ -18,7 +18,7 @@ public class TestIntervals {
   
   private static void assertRange(Definition def, double a, double b, double oa, double ob) {
     Multidef inter = IntervalTransform.intervalize(def.toMultidef(), args(x));
-    Vector<Double> res = MachineEvaluator.eval(inter, vector(a, b));
+    Vector<Double> res = VisitorDevice.eval(inter, vector(a, b));
     assertEquals(vector(oa, ob), res);
   }
   

@@ -15,9 +15,9 @@ import mathray.visitor.Processor;
 
 import static mathray.Functions.*;
 
-public class MachineEvaluator extends FunctionSymbolRegistrar<Impl<Double>, Double> {
+public class VisitorDevice extends FunctionSymbolRegistrar<Impl<Double>, Double> {
   
-  private static final MachineEvaluator INSTANCE = new MachineEvaluator();
+  private static final VisitorDevice INSTANCE = new VisitorDevice();
   
   {
     register(ADD, new Impl<Double>() {

@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 import mathray.Definition;
 import mathray.device.FunctionTypes;
-import mathray.eval.java.JavaCompiler;
+import mathray.eval.java.JavaDevice;
 
 public class BasicFunctionPlotter implements Plotter {
 
@@ -16,7 +16,7 @@ public class BasicFunctionPlotter implements Plotter {
     Graphics2D g = image.createGraphics();
     g.setBackground(Color.WHITE);
     g.clearRect(0, 0, 512, 512);
-    FunctionTypes.D1_1 f = JavaCompiler.compile(JavaCompiler.D1_1, def.toMultidef());
+    FunctionTypes.D1_1 f = JavaDevice.compile(JavaDevice.D1_1, def.toMultidef());
     Plots.simplePlot(f, Frame.frameFor(def, -10, 10), image, Color.BLACK);
     return new ImageOutput(def.toString(), image);
   }

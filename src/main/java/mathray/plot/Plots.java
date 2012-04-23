@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 
 import mathray.Definition;
 import mathray.device.FunctionTypes;
-import mathray.eval.java.JavaCompiler;
+import mathray.eval.java.JavaDevice;
 
 public class Plots {
   
@@ -45,7 +45,7 @@ public class Plots {
   public static BufferedImage intervalPlot(Definition def, double min, double max, int intervals, int width, int height) {
     BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = (Graphics2D)ret.getGraphics();
-    FunctionTypes.D f = JavaCompiler.compile(def.toMultidef());
+    FunctionTypes.D f = JavaDevice.compile(def.toMultidef());
     double[] in = new double[2];
     double[] out = new double[2];
     double[] vals = new double[intervals * 2];

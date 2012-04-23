@@ -3,7 +3,7 @@ package mathray.plot;
 import mathray.Definition;
 import mathray.Multidef;
 import mathray.device.FunctionTypes;
-import mathray.eval.java.JavaCompiler;
+import mathray.eval.java.JavaDevice;
 import mathray.eval.split.IntervalTransform;
 
 public class Frame {
@@ -30,7 +30,7 @@ public class Frame {
     double ymin = Double.MAX_VALUE;
     double ymax = Double.MIN_NORMAL;
     Multidef inter = IntervalTransform.intervalize(def.toMultidef(), def.args);
-    FunctionTypes.D f = JavaCompiler.compile(inter);
+    FunctionTypes.D f = JavaDevice.compile(inter);
     double[] in = new double[2];
     double[] out = new double[2];
     final int intervals = 10;

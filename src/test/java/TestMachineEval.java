@@ -9,7 +9,7 @@ import static mathray.Expressions.vector;
 import static org.junit.Assert.assertEquals;
 import mathray.Definition;
 import mathray.Symbol;
-import mathray.eval.machine.MachineEvaluator;
+import mathray.eval.machine.VisitorDevice;
 import mathray.util.Vector;
 
 import org.junit.Test;
@@ -17,7 +17,7 @@ import org.junit.Test;
 public class TestMachineEval {
 
   private static void assertEvaluatesTo(Definition def, Vector<Double> args, double result) {
-    assertEquals((Double)result, (Double)MachineEvaluator.eval(def, args));
+    assertEquals((Double)result, (Double)VisitorDevice.eval(def, args));
   }
 
   @Test
