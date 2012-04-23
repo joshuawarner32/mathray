@@ -49,6 +49,8 @@ public class PlotOptions {
   private boolean valid = true;
   private boolean printHelp = false;
   private String plot;
+  private int width = -1;
+  private int height = -1;
   private Double xa;
   private Double xb;
   private Double ya;
@@ -85,6 +87,13 @@ public class PlotOptions {
       }
       if(line.hasOption("yb")) {
         yb = Double.parseDouble(line.getOptionValue("yb"));
+      }
+      
+      if(line.hasOption("width")) {
+        width = Integer.parseInt(line.getOptionValue("width"));
+      }
+      if(line.hasOption("height")) {
+        height = Integer.parseInt(line.getOptionValue("height"));
       }
       
       if(line.hasOption("output")) {
