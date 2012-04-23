@@ -30,8 +30,19 @@ The visitor pattern is everywhere.  <code>Visitors</code> never return values, b
 
 Right now, it would be easy to implement a generic numerical integrator that takes a <code>FunctionD</code> (a function on Java <code>doubles</code>) and an interval, and returns (an approximation of) the definite integral.  The problem with this is that this only has meaning on the host platform.  You couldn't swap out the <code>JavaCompiler</code> for an <code>OpenCLCompiler</code>, and expect to be able to compute integrals on the GPU, as you could if integrals were a feature of the Value structure itself.
 
-Integrals could be represented by an abstract infinite loop ("<code>Convergence</code>" or "<code>Kernel</code>") that "terminates" at the converged variable values.  All that is need is to plug in your favorite numerical integration algorithm.  The tricky part is getting this to integrate (no pun intended) well with transformation passes, so (for instance) IntervalTransform could return a lower- and upper- bound on the integral.
+#### Convergences
+
+Integrals could be represented by an abstract infinite loop ("<code>Convergence</code>") that "terminates" at the converged variable values.  All that is need is to plug in your favorite numerical integration algorithm.  The tricky part is getting this to integrate (no pun intended) well with transformation passes, so (for instance) IntervalTransform could return a lower- and upper- bound on the integral.
+
+#### Kernels
+
+Another possibility is to abstract over the "outer" computational system.  Integration, ray-tracing, and other plotting activities would all be <code>Kernels</code>.  <code>Kernels</code> would consist of functions to evaluate and logic to flow results of one computation into the next.  Ideally, <code>Kernel</code> transformations would be completely composable (hopefully also producing efficient algorithms) - so that, for instance, you could apply the "integrate" <code>Kernel</code> transform, followed by the "ray-trace" transform, and get the expected results.
 
 ### Tagging Constant Values
 
 The JavaCompiler, for instance, doesn't know that in the function definition "f(x) = x * sin(2)", "sin(2)" doesn't depend on any of the arguments and can thus be constant-folded into the generated Java class.
+
+### Floating-Point Constants in Parser
+
+The Parser doesn't currently handle floating-point constants.  It should, by converting them to fractions.
+
