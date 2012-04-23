@@ -19,7 +19,7 @@ public class DefaultDevices {
   
   static {
     Set<Device> devices = new HashSet<Device>();
-//    devices.add(visitorDevice);
+    devices.add(visitorDevice);
     
     allDevices = new MultiDevice(devices);
   }

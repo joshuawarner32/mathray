@@ -49,11 +49,11 @@ public class MultiDevice implements Device {
   private static final int BASE_CASTING_COST = 5;
   private static final int BASE_CASTING_COMPILE_COST = 1;
   
-  private interface Compiler<T, Clos> {
+  private interface Caster<T, Clos> {
     public T compile(Device fromDevice, Clos def);
   }
   
-  private <T, Clos> void maybeRegisterCast(FunctionType<?, ?> from, FunctionType<T, Clos> to, final Compiler<T, Clos> compiler) {
+  private <T, Clos> void maybeRegisterCast(FunctionType<?, ?> from, FunctionType<T, Clos> to, final Caster<T, Clos> compiler) {
     Device toDevice = findDevice(to);
     if(toDevice == null) {
       final Device device = findDevice(from);
@@ -82,14 +82,14 @@ public class MultiDevice implements Device {
   public MultiDevice(Set<Device> devices) {
     this.devices = new HashSet<Device>(devices);
     
-    maybeRegisterCast(FunctionTypes.FUNCTION_F, FunctionTypes.FUNCTION_D, new Compiler<FunctionTypes.D, Multidef>() {
+    maybeRegisterCast(FunctionTypes.FUNCTION_F, FunctionTypes.FUNCTION_D, new Caster<FunctionTypes.D, Multidef>() {
       @Override
       public FunctionTypes.D compile(Device device, Multidef def) {
         return FunctionTypes.toD(device.compile(FunctionTypes.FUNCTION_F, def));
       }
     });
 
-    maybeRegisterCast(FunctionTypes.FUNCTION_D, FunctionTypes.FUNCTION_F, new Compiler<FunctionTypes.F, Multidef>() {
+    maybeRegisterCast(FunctionTypes.FUNCTION_D, FunctionTypes.FUNCTION_F, new Caster<FunctionTypes.F, Multidef>() {
       @Override
       public FunctionTypes.F compile(Device device, Multidef def) {
         return FunctionTypes.toF(device.compile(FunctionTypes.FUNCTION_D, def));

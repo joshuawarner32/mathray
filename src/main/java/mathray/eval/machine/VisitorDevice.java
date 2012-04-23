@@ -8,6 +8,9 @@ import mathray.FunctionSymbolRegistrar;
 import mathray.NamedConstants;
 import mathray.Rational;
 import mathray.Symbol;
+import mathray.device.Device;
+import mathray.device.FunctionType;
+import mathray.device.FunctionTypes;
 import mathray.eval.Impl;
 import mathray.util.MathEx;
 import mathray.util.Vector;
@@ -15,7 +18,7 @@ import mathray.visitor.Processor;
 
 import static mathray.Functions.*;
 
-public class VisitorDevice extends FunctionSymbolRegistrar<Impl<Double>, Double> {
+public class VisitorDevice extends FunctionSymbolRegistrar<Impl<Double>, Double> implements Device {
   
   private static final VisitorDevice INSTANCE = new VisitorDevice();
   
@@ -195,6 +198,51 @@ public class VisitorDevice extends FunctionSymbolRegistrar<Impl<Double>, Double>
   public static Vector<Double> eval(Closure<?> def, Vector<Double>... args_args) {
     def.collectArgs(args_args);
     return null;
+  }
+
+  @Override
+  public <T, Clos> T compile(FunctionType<T, Clos> type, Clos def) {
+    if(type != FunctionTypes.FUNCTION_D) {
+      throw new IllegalArgumentException();
+    }
+    return (T)new FunctionTypes.D() {
+
+      @Override
+      public int getInputArity() {
+        return 0;
+      }
+
+      @Override
+      public int getOutputArity() {
+        // TODO Auto-generated method stub
+        return 0;
+      }
+
+      @Override
+      public void call(double[] args, double[] res) {
+        // TODO Auto-generated method stub
+        
+      }
+      
+    };
+  }
+
+  @Override
+  public int cost(FunctionType<?, ?> type) {
+    if(type == FunctionTypes.FUNCTION_D) {
+      return 10;
+    } else {
+      return Device.NO_SUPPORT;
+    }
+  }
+
+  @Override
+  public int compileCost(FunctionType<?, ?> type) {
+    if(type == FunctionTypes.FUNCTION_D) {
+      return 0;
+    } else {
+      return Device.NO_SUPPORT;
+    }
   }
 
 }
