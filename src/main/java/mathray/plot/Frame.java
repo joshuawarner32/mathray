@@ -49,6 +49,10 @@ public class Frame {
         ymax = out[1];
       }
     }
+    double ycenter = (ymax + ymin) / 2;
+    double yrad = (ymax - ymin) / 2;
+    ymax = ycenter + yrad * 1.1;
+    ymin = ycenter - yrad * 1.1;
     return new Frame(xmin, xmax, ymin, ymax);
   }
 
