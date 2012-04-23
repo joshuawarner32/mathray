@@ -12,12 +12,10 @@ public class UI {
   
   private UI() {}
   
-
-  
   public static void show(String name, BufferedImage image) {
     final Object lock = new Object();
     JFrame frame = new JFrame(name);
-    frame.setBounds(0, 0, 600, 600);
+    frame.setBounds(0, 0, image.getWidth() + 100, image.getHeight() + 100);
     frame.add(new JLabel(new ImageIcon(image)));
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     frame.setVisible(true);

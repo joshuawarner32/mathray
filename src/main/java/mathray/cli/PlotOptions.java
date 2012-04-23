@@ -2,6 +2,8 @@ package mathray.cli;
 
 import java.io.File;
 import java.io.IOException;
+
+import mathray.plot.Format;
 import mathray.plot.Output;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
@@ -49,8 +51,7 @@ public class PlotOptions {
   private boolean valid = true;
   private boolean printHelp = false;
   private String plot;
-  private int width = -1;
-  private int height = -1;
+  private Format format = new Format();
   private Double xa;
   private Double xb;
   private Double ya;
@@ -90,10 +91,10 @@ public class PlotOptions {
       }
       
       if(line.hasOption("width")) {
-        width = Integer.parseInt(line.getOptionValue("width"));
+        format.width = Integer.parseInt(line.getOptionValue("width"));
       }
       if(line.hasOption("height")) {
-        height = Integer.parseInt(line.getOptionValue("height"));
+        format.height = Integer.parseInt(line.getOptionValue("height"));
       }
       
       if(line.hasOption("output")) {
@@ -117,7 +118,7 @@ public class PlotOptions {
     
     try {
       PlotCommand cmd = new PlotCommand(plot);
-      Output out = cmd.plot();
+      Output out = cmd.plot(format);
       if(output != null) {
         out.save(output);
       } else {

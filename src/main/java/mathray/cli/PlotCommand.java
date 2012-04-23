@@ -13,6 +13,7 @@ import mathray.Value;
 import mathray.eval.text.DefaultPrinter;
 import mathray.eval.text.ParseInfo;
 import mathray.plot.BasicFunctionPlotter;
+import mathray.plot.Format;
 import mathray.plot.Output;
 import mathray.plot.Plotter;
 import mathray.visitor.Visitors;
@@ -95,8 +96,8 @@ public class PlotCommand {
     def = def(args, fold(SUB, values));
   }
 
-  public Output plot() {
-    return plotter.plot(def);
+  public Output plot(Format format) {
+    return plotter.plot(def, format);
   }
   
 }

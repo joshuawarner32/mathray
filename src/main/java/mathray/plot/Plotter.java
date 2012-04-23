@@ -4,6 +4,6 @@ import mathray.Definition;
 
 public interface Plotter {
   
-  public Output plot(Definition def);
+  public Output plot(Definition def, Format format);
 
 }
