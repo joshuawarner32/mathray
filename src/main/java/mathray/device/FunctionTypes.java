@@ -1,5 +1,6 @@
 package mathray.device;
 
+import mathray.Multidef;
 import mathray.concrete.BlockD3;
 import mathray.concrete.RayD3;
 
@@ -7,11 +8,16 @@ public class FunctionTypes {
   
   private FunctionTypes() {}
   
-  public interface D {
+  public interface Func {
+    public int getInputArity();
+    public int getOutputArity();
+  }
+  
+  public interface D extends Func {
     public void call(double[] args, double[] res);
   }
   
-  public static final FunctionType<D> FUNCTION_D = new FunctionType<D>(D.class);
+  public static final FunctionType<D, Multidef> FUNCTION_D = new FunctionType<D, Multidef>(D.class, Multidef.class);
   
   public static D toD(final F func) {
     return new D() {
@@ -27,14 +33,24 @@ public class FunctionTypes {
           res[i] = r2[i];
         }
       }
+      
+      @Override
+      public int getInputArity() {
+        return func.getInputArity();
+      }
+      
+      @Override
+      public int getOutputArity() {
+        return func.getOutputArity();
+      }
     };
   }
   
-  public interface F {
+  public interface F extends Func {
     public void call(float[] args, float[] res);
   }
 
-  public static final FunctionType<F> FUNCTION_F = new FunctionType<F>(F.class);
+  public static final FunctionType<F, Multidef> FUNCTION_F = new FunctionType<F, Multidef>(F.class, Multidef.class);
   
   public static F toF(final D func) {
     return new F() {
@@ -49,6 +65,16 @@ public class FunctionTypes {
         for(int i = 0; i < res.length; i++) {
           res[i] = (float)r2[i];
         }
+      }
+      
+      @Override
+      public int getInputArity() {
+        return func.getInputArity();
+      }
+      
+      @Override
+      public int getOutputArity() {
+        return func.getOutputArity();
       }
     };
   }
@@ -89,17 +115,25 @@ public class FunctionTypes {
     public void fill(double[] limits, int[] counts, double[] result);
   }
   
+  public static final FunctionType<FillerD, Multidef> FUNCTION_FILLER_D = new FunctionType<FillerD, Multidef>(FillerD.class, Multidef.class);
+  
   public interface FillerF {
     public void fill(float[] limits, int[] counts, float[] result);
   }
+  
+  public static final FunctionType<FillerF, Multidef> FUNCTION_FILLER_F = new FunctionType<FillerF, Multidef>(FillerF.class, Multidef.class);
   
   public interface RepeatD {
     public void repeat(double[] args, double[] res);
   }
   
+  public static final FunctionType<RepeatD, Multidef> FUNCTION_REPEAT_D = new FunctionType<RepeatD, Multidef>(RepeatD.class, Multidef.class);
+  
   public interface RepeatF {
     public void repeat(float[] args, float[] res);
   }
+  
+  public static final FunctionType<RepeatF, Multidef> FUNCTION_REPEAT_F = new FunctionType<RepeatF, Multidef>(RepeatF.class, Multidef.class);
   
   public interface All extends D, F, D1_1, F1_1, D2_1, F2_1, D3_1, F3_1, ZeroOnRayD3, ZeroInBlockD3, FillerD, FillerF, RepeatD, RepeatF {
     

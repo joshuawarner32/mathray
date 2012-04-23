@@ -1,11 +1,13 @@
 package mathray.device;
 
-import mathray.Multidef;
-
 public interface Device {
   
-  public <T> T compile(FunctionType<T> type, Multidef def);
+  public static final int NO_SUPPORT = Integer.MAX_VALUE;
   
-  public boolean supports(FunctionType<?> type);
+  public <T, Clos> T compile(FunctionType<T, Clos> type, Clos def);
+  
+  public int cost(FunctionType<?, ?> type);
+  
+  public int compileCost(FunctionType<?, ?> type);
 
 }

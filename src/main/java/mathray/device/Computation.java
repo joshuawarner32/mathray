@@ -11,6 +11,16 @@ public class Computation implements FunctionTypes.All {
   public Computation(Multidef def) {
     this.def = def;
   }
+  
+  @Override
+  public int getInputArity() {
+    return def.args.size();
+  }
+  
+  @Override
+  public int getOutputArity() {
+    return def.value.size();
+  }
 
   @Override
   public void call(double[] args, double[] res) {
