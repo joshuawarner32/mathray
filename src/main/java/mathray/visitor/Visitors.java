@@ -54,7 +54,9 @@ public class Visitors {
       }
       
       @Override
-      public void visit(Call call) {}
+      public void visit(Call call) {
+        call.args.accept(this);
+      }
     };
     for(Value v : values) {
       v.accept(visitor);

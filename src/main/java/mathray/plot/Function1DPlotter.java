@@ -8,7 +8,7 @@ import mathray.Definition;
 import mathray.device.FunctionTypes;
 import mathray.eval.java.JavaDevice;
 
-public class BasicFunctionPlotter implements Plotter {
+public class Function1DPlotter implements Plotter {
   
   private void pickFormat(Format format) {
     if(format.width == null) {

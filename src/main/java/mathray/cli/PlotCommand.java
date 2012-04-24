@@ -12,7 +12,8 @@ import mathray.Symbol;
 import mathray.Value;
 import mathray.eval.text.DefaultPrinter;
 import mathray.eval.text.ParseInfo;
-import mathray.plot.BasicFunctionPlotter;
+import mathray.plot.Equation2DPlotter;
+import mathray.plot.Function1DPlotter;
 import mathray.plot.Format;
 import mathray.plot.Output;
 import mathray.plot.Plotter;
@@ -71,9 +72,15 @@ public class PlotCommand {
       if(symbols.contains(z)) {
         return args(x, y, z);
       } else if(symbols.contains(y)) {
+        if(values.length == 2) {
+          plotter = new Equation2DPlotter();
+        }
         return args(x, y);
       } else {
-        plotter = new BasicFunctionPlotter();
+        plotter = new Function1DPlotter();
+        if(values.length != 1) {
+          throw new InputException("not expecting equation in one variable");
+        }
         return args(x);
       }
     }
