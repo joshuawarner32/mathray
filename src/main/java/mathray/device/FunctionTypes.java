@@ -117,6 +117,44 @@ public class FunctionTypes {
   
   public static final FunctionType<FillerD, Multidef> FUNCTION_FILLER_D = new FunctionType<FillerD, Multidef>(FillerD.class, Multidef.class);
   
+  public static FillerD toFillerD(final D func) {
+    return new FillerD() {
+      private void next(int[] state, int[] counts) {
+        for(int i = 0; i < counts.length; i++) {
+          state[i]++;
+          if(state[i] < counts[i]) {
+            break;
+          }
+        }
+      }
+      
+      @Override
+      public void fill(double[] limits, int[] counts, double[] result) {
+        double[] in = new double[func.getInputArity()];
+        double[] out = new double[func.getOutputArity()];
+        
+        int samples = 1;
+        for(int i = 0; i < counts.length; i++) {
+          samples += counts[i];
+        }
+        
+        int[] state = new int[counts.length];
+        int outputIndex = 0;
+        
+        for(int i = 0; i < samples; i++) {
+          for(int d = 0; d < counts.length; d++) {
+            in[i] = state[i] * (limits[i] - limits[i + counts.length]) / counts[i];
+          }
+          func.call(in, out);
+          for(int d = 0; d < func.getOutputArity(); d++) {
+            result[outputIndex++] = out[i];
+          }
+          next(state, counts);
+        }
+      }
+    };
+  }
+  
   public interface FillerF {
     public void fill(float[] limits, int[] counts, float[] result);
   }
@@ -128,6 +166,34 @@ public class FunctionTypes {
   }
   
   public static final FunctionType<RepeatD, Multidef> FUNCTION_REPEAT_D = new FunctionType<RepeatD, Multidef>(RepeatD.class, Multidef.class);
+  
+  public static RepeatD toRepeatD(final D func) {
+    return new RepeatD() {
+      @Override
+      public void repeat(double[] args, double[] res) {
+        double[] in = new double[func.getInputArity()];
+        double[] out = new double[func.getOutputArity()];
+        if(args.length % func.getInputArity() != 0) {
+          throw new IllegalArgumentException();
+        }
+        int count = args.length / func.getInputArity();
+        if(res.length != count * func.getOutputArity()) {
+          throw new IllegalArgumentException();
+        }
+        int inputIndex = 0;
+        int outputIndex = 0;
+        for(int i = 0; i < count; i++) {
+          for(int d = 0; d < in.length; d++) {
+            in[d] = args[inputIndex++];
+          }
+          func.call(in, out);
+          for(int d = 0; d < out.length; d++) {
+            res[outputIndex++] = out[d];
+          }
+        }
+      }
+    };
+  }
   
   public interface RepeatF {
     public void repeat(float[] args, float[] res);

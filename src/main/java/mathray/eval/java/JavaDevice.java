@@ -82,9 +82,20 @@ public class JavaDevice extends FunctionSymbolRegistrar<JavaImpl, Double> {
     return Type.getType(cls).getInternalName();
   }
   
+  private static void addArityMethods(ClassGenerator cgen, int inputArity, int outputArity) {
+    MethodGenerator inp = cgen.method(false, "getInputArity", "()I");
+    inp.ret(inp.intConstant(inputArity));
+    inp.end();
+    
+    MethodGenerator out = cgen.method(false, "getOutputArity", "()I");
+    out.ret(out.intConstant(outputArity));
+    out.end();
+  }
+  
   public static final FunctionGenerator<Multidef, FunctionTypes.D> FUNCTION_D = new FunctionGenerator<Multidef, FunctionTypes.D>() {
     public Wrapper<FunctionTypes.D> begin(final Multidef def) {
       ClassGenerator cgen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.D.class.getName().replace('.', '/')});
+      addArityMethods(cgen, def.args.size(), def.value.size());
       MethodGenerator mgen = cgen.method(false, "call", "([D[D)V");
       return new Wrapper<FunctionTypes.D>(cgen, mgen) {
         
