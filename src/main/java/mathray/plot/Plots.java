@@ -4,7 +4,6 @@ package mathray.plot;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
@@ -14,27 +13,6 @@ import mathray.device.FunctionTypes;
 import mathray.eval.java.JavaDevice;
 
 public class Plots {
-  
-  public static void simplePlot(FunctionTypes.D1_1 f, Frame frame, BufferedImage image, Color color) {
-    int width = image.getWidth();
-    int height = image.getHeight();
-    Graphics2D g = (Graphics2D)image.getGraphics();
-    double[] vals = new double[width + 1];
-    for(int i = 0; i <= width; i++) {
-      double x = frame.width() * i / width + frame.xmin;
-      vals[i] = f.call(x);
-    }
-    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-    g.setBackground(Color.WHITE);
-    g.clearRect(0, 0, width, height);
-    g.setColor(Color.BLACK);
-    for(int i = 0; i < width; i++) {
-      double y1 = (vals[i] - frame.ymin) / (frame.ymax - frame.ymin) * height;
-      double y2 = (vals[i + 1] - frame.ymin) / (frame.ymax - frame.ymin) * height;
-      g.draw(new Line2D.Double(i, height - y1, i + 1, height - y2));
-    }
-  }
 
   private static void eval2(FunctionTypes.D f, double[] in, double[] out, double xa, double xb) {
     in[0] = xa;
@@ -78,6 +56,18 @@ public class Plots {
       g.fill(new Rectangle2D.Double(xa, height - yb, xb - xa, yb - ya));
     }
     return ret;
+  }
+
+  public static Graph2D graphPlot(FunctionTypes.D1_1 f, Rectangle rect, int samples) {
+    Graph2D.Builder builder = Graph2D.builder();
+    
+    for(int i = 0; i < samples - 1; i++) {
+      double x = rect.width() * i / (samples - 1) + rect.xa;
+      double y = f.call(x);
+      builder.point(x, y);
+    }
+    builder.point(rect.xb, f.call(rect.xb));
+    return builder.build(rect);
   }
 
 }

@@ -7,20 +7,10 @@ import mathray.eval.java.JavaDevice;
 import mathray.eval.split.IntervalTransform;
 
 public class Frame {
+
+  private Frame() {}
   
-  public final double xmin;
-  public final double xmax;
-  public final double ymin;
-  public final double ymax;
-  
-  public Frame(double xmin, double xmax, double ymin, double ymax) {
-    this.xmin = xmin;
-    this.xmax = xmax;
-    this.ymin = ymin;
-    this.ymax = ymax;
-  }
-  
-  public static Frame frameFor(Definition def, double xmin, double xmax) {
+  public static Rectangle frameFor(Definition def, double xmin, double xmax) {
     double ymin = Double.MAX_VALUE;
     double ymax = Double.MIN_NORMAL;
     Multidef inter = IntervalTransform.intervalize(def.toMultidef(), def.args);
@@ -51,15 +41,7 @@ public class Frame {
     double yrad = (ymax - ymin) / 2;
     ymax = ycenter + yrad * 1.1;
     ymin = ycenter - yrad * 1.1;
-    return new Frame(xmin, xmax, ymin, ymax);
-  }
-
-  public double width() {
-    return xmax - xmin;
-  }
-  
-  public double height() {
-    return ymax - ymin; 
+    return new Rectangle(xmin, xmax, ymin, ymax);
   }
 
 }

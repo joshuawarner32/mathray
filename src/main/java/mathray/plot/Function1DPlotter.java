@@ -23,13 +23,9 @@ public class Function1DPlotter implements Plotter {
   public Output plot(Definition def, Format format) {
     pickFormat(format);
     
-    BufferedImage image = new BufferedImage(format.width, format.height, BufferedImage.TYPE_INT_ARGB);
-    Graphics2D g = image.createGraphics();
-    g.setBackground(Color.WHITE);
-    g.clearRect(0, 0, 512, 512);
     FunctionTypes.D1_1 f = JavaDevice.compile(JavaDevice.D1_1, def.toMultidef());
-    Plots.simplePlot(f, Frame.frameFor(def, -10, 10), image, Color.BLACK);
-    return new ImageOutput(def.toString(), image);
+    Graph2D graph = Plots.graphPlot(f, Frame.frameFor(def, -10, 10), format.width / 2);
+    return new GraphOutput(def.toString(), graph, format);
   }
 
 }

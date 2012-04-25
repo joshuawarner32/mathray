@@ -8,11 +8,11 @@ import java.util.List;
 public final class Graph2D {
   
   private final float[] verts; // two elements per vertex
-  //private final int[] segments;
-  private final int[][] curves; 
-  //private final int[] linearCurves; // three elements per segment: start, step, length - 1
+  private final int[][] curves;
+  private final Rectangle rect;
   
-  private Graph2D(float[] verts, int[][] curves) {
+  private Graph2D(Rectangle validRect, float[] verts, int[][] curves) {
+    this.rect = validRect;
     this.verts = verts;
     this.curves = curves;
   }
@@ -24,10 +24,10 @@ public final class Graph2D {
     
     private Builder() {}
     
-    public void point(float x, float y) {
+    public void point(double x, double y) {
       int index = verts.size();
-      verts.add(x);
-      verts.add(y);
+      verts.add((float)x);
+      verts.add((float)y);
       currentCurve.add(index / 2);
     }
     
@@ -42,7 +42,7 @@ public final class Graph2D {
       }
     }
     
-    public Graph2D build() {
+    public Graph2D build(Rectangle validRect) {
       float[] realVerts = new float[verts.size()];
       for(int i = 0; i < realVerts.length; i++) {
         realVerts[i] = verts.get(i);
@@ -52,7 +52,7 @@ public final class Graph2D {
       for(int i = 0; i < realCurves.length; i++) {
         realCurves[i] = curves.get(i);
       }
-      return new Graph2D(realVerts, realCurves);
+      return new Graph2D(validRect, realVerts, realCurves);
     }
   }
   
@@ -61,25 +61,13 @@ public final class Graph2D {
   }
   
   public void draw(Graphics2D g, float imagX, float imagY, float width, float height) {
-    float minx = Float.MAX_VALUE, maxx = -Float.MAX_VALUE;
-    float miny = Float.MAX_VALUE, maxy = -Float.MAX_VALUE;
     for(int[] curve : curves) {
+      double xl = (verts[2 * curve[0]] - rect.xa) / rect.width() * width + imagX;
+      double yl = (verts[2 * curve[0] + 1] - rect.ya) / rect.height() * height + imagY;
       for(int i = 1; i < curve.length; i++) {
-        float x = verts[2 * i];
-        float y = verts[2 * i + 1];
-        minx = Math.min(minx, x);
-        maxx = Math.max(maxx, x);
-        miny = Math.min(miny, y);
-        maxy = Math.max(maxy, y);
-      }
-    }
-    for(int[] curve : curves) {
-      float xl = verts[2 * curve[0]] / (maxx - minx) * width + imagX;
-      float yl = verts[2 * curve[0] + 1] / (maxy - miny) * height + imagY;
-      for(int i = 1; i < curve.length; i++) {
-        float x = verts[2 * i] / (maxx - minx) * width + imagX;
-        float y = verts[2 * i + 1] / (maxy - miny) * height + imagY;
-        g.draw(new Line2D.Float(xl, yl, x, y));
+        double x = (verts[2 * curve[i]] - rect.xa) / rect.width() * width + imagX;
+        double y = (verts[2 * curve[i] + 1] - rect.ya) / rect.height() * height + imagY;
+        g.draw(new Line2D.Double(xl, yl, x, y));
         xl = x;
         yl = y;
       }

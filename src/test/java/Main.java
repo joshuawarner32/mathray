@@ -62,7 +62,8 @@ public class Main {
     g.setBackground(Color.WHITE);
     g.clearRect(0, 0, 512, 512);
     FunctionTypes.D1_1 f = JavaDevice.compile(JavaDevice.D1_1, def.toMultidef());
-    Plots.simplePlot(f, Frame.frameFor(def, -10, 10), image, Color.BLACK);
+    g.setPaint(Color.BLACK);
+    Plots.graphPlot(f, Frame.frameFor(def, -10, 10), 512).draw(g, 0, 0, 512, 512);
     UI.show(def.toString(), image);
   }
 
