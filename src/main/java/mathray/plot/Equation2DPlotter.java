@@ -63,7 +63,7 @@ public class Equation2DPlotter implements Plotter {
       }
     }
     
-    return new ImageOutput(def.toString(), ret);
+    return new ImageOutput(def.toString() + " = 0", ret);
   }
 
 }

@@ -13,6 +13,7 @@ import mathray.Value;
 import mathray.eval.text.DefaultPrinter;
 import mathray.eval.text.ParseInfo;
 import mathray.plot.Equation2DPlotter;
+import mathray.plot.Equation3DPlotter;
 import mathray.plot.Function1DPlotter;
 import mathray.plot.Format;
 import mathray.plot.Output;
@@ -70,6 +71,9 @@ public class PlotCommand {
       }
     } else {
       if(symbols.contains(z)) {
+        if(values.length == 2) {
+          plotter = new Equation3DPlotter();
+        }
         return args(x, y, z);
       } else if(symbols.contains(y)) {
         if(values.length == 2) {

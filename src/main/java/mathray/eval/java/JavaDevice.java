@@ -1,6 +1,9 @@
 package mathray.eval.java;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.objectweb.asm.Opcodes;
 
 import org.objectweb.asm.Type;
@@ -15,6 +18,7 @@ import mathray.Symbol;
 import mathray.concrete.BlockD3;
 import mathray.concrete.RayD3;
 import mathray.device.FunctionTypes;
+import mathray.device.FunctionTypes.ClosureD;
 import mathray.util.MathEx;
 import mathray.util.Vector;
 import mathray.visitor.Processor;
@@ -93,8 +97,9 @@ public class JavaDevice extends FunctionSymbolRegistrar<JavaImpl, Double> {
   }
   
   public static final FunctionGenerator<Multidef, FunctionTypes.D> FUNCTION_D = new FunctionGenerator<Multidef, FunctionTypes.D>() {
-    public Wrapper<FunctionTypes.D> begin(final Multidef def) {
-      ClassGenerator cgen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {FunctionTypes.D.class.getName().replace('.', '/')});
+    public Wrapper<FunctionTypes.D> begin(final Multidef def, List<String> extraInterfaces) {
+      extraInterfaces.add(FunctionTypes.D.class.getName().replace('.', '/'));
+      ClassGenerator cgen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, extraInterfaces.toArray(new String[extraInterfaces.size()]));
       addArityMethods(cgen, def.args.size(), def.value.size());
       MethodGenerator mgen = cgen.method(false, "call", "([D[D)V");
       return new Wrapper<FunctionTypes.D>(cgen, mgen) {
@@ -126,10 +131,11 @@ public class JavaDevice extends FunctionSymbolRegistrar<JavaImpl, Double> {
   };
   
   public static final FunctionGenerator<Multidef, FunctionTypes.ZeroOnRayD3> MAYBE_ZERO_ON_RAY3 = new FunctionGenerator<Multidef, FunctionTypes.ZeroOnRayD3>() {
-    public Wrapper<FunctionTypes.ZeroOnRayD3> begin(final Multidef def) {
-      final ClassGenerator gen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {name(FunctionTypes.ZeroOnRayD3.class)});
-      final MethodGenerator mgen = gen.method(false, "maybeHasZeroOn", "(L" + name(RayD3.class) + ";)Z");
-      return new Wrapper<FunctionTypes.ZeroOnRayD3>(gen, mgen) {
+    public Wrapper<FunctionTypes.ZeroOnRayD3> begin(final Multidef def, List<String> extraInterfaces) {
+      extraInterfaces.add(name(FunctionTypes.ZeroOnRayD3.class));
+      ClassGenerator cgen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, extraInterfaces.toArray(new String[extraInterfaces.size()]));
+      final MethodGenerator mgen = cgen.method(false, "maybeHasZeroOn", "(L" + name(RayD3.class) + ";)Z");
+      return new Wrapper<FunctionTypes.ZeroOnRayD3>(cgen, mgen) {
         
         private JavaValue aVar;
         private JavaValue bVar;
@@ -185,16 +191,17 @@ public class JavaDevice extends FunctionSymbolRegistrar<JavaImpl, Double> {
         public FunctionTypes.ZeroOnRayD3 end() {
           mgen.ret(mgen.callStatic(MathEx.class.getName().replace('.', '/'), "containsZero", "(DD)Z", aVar, bVar));
           mgen.end();
-          gen.end();
-          return load(gen);
+          cgen.end();
+          return load(cgen);
         }
       };
     }
   };
   
   public static final FunctionGenerator<Multidef, FunctionTypes.ZeroInBlockD3> MAYBE_ZERO_IN_BLOCKD3 = new FunctionGenerator<Multidef, FunctionTypes.ZeroInBlockD3>() {
-    public Wrapper<FunctionTypes.ZeroInBlockD3> begin(final Multidef def) {
-      ClassGenerator cgen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {name(FunctionTypes.ZeroInBlockD3.class)});
+    public Wrapper<FunctionTypes.ZeroInBlockD3> begin(final Multidef def, List<String> extraInterfaces) {
+      extraInterfaces.add(name(FunctionTypes.ZeroInBlockD3.class));
+      ClassGenerator cgen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, extraInterfaces.toArray(new String[extraInterfaces.size()]));
       MethodGenerator mgen = cgen.method(false, "maybeHasZeroIn", "(L" + name(BlockD3.class) + ";)Z");
       return new Wrapper<FunctionTypes.ZeroInBlockD3>(cgen, mgen) {
         
@@ -255,8 +262,9 @@ public class JavaDevice extends FunctionSymbolRegistrar<JavaImpl, Double> {
   
   private static <T> FunctionGenerator<Multidef, T> Dn_1(final int n) {
     return new FunctionGenerator<Multidef, T>() {
-      public Wrapper<T> begin(final Multidef def) {
-        ClassGenerator cgen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, new String[] {name(FunctionTypes.class) + "$D" + n + "_1"});
+      public Wrapper<T> begin(final Multidef def, List<String> extraInterfaces) {
+        extraInterfaces.add(name(FunctionTypes.class) + "$D" + n + "_1");
+        ClassGenerator cgen = new ClassGenerator(JavaArityGenerator.CLASS_NAME, extraInterfaces.toArray(new String[extraInterfaces.size()]));
         MethodGenerator mgen = cgen.method(false, "call", JavaArityGenerator.getArityDesc(n));
         return new Wrapper<T>(cgen, mgen) {
           @Override
@@ -300,16 +308,22 @@ public class JavaDevice extends FunctionSymbolRegistrar<JavaImpl, Double> {
   public static <T> FunctionGenerator<Closure<Multidef>, FunctionTypes.ClosureD<T>> closureD(final FunctionGenerator<Multidef, T> gen) {
     return new FunctionGenerator<Closure<Multidef>, FunctionTypes.ClosureD<T>>() {
       @Override
-      public Wrapper<FunctionTypes.ClosureD<T>> begin(final Closure<Multidef> def) {
-        final Wrapper<T> wrap = gen.begin(def.value);
-        MethodGenerator closeMethod = wrap.cgen.method(false, "close", "(D])" + name(FunctionTypes.ClosureD.class));
+      public Wrapper<FunctionTypes.ClosureD<T>> begin(final Closure<Multidef> def, List<String> extraInterfaces) {
+        extraInterfaces.add(name(ClosureD.class));
+        final Wrapper<T> wrap = gen.begin(def.value, extraInterfaces);
+        MethodGenerator closeMethod = wrap.cgen.method(false, "close", "([D)L" + name(Object.class) + ";");
         JavaValue arr = closeMethod.arg(0);
+        JavaValue nw = closeMethod.newInstance(wrap.cgen.name);
+        closeMethod.store(nw);
         final JavaField[] args = new JavaField[def.args.size()];
         for(int i = 0; i < args.length; i++) {
           String name = "closed_" + def.args.get(i).name;
           JavaField field = wrap.cgen.field(false, name, "D");
-          closeMethod.storeField(closeMethod.getThis(), field, closeMethod.aload(arr, i));
+          args[i] = field;
+          closeMethod.storeField(nw, field, closeMethod.aload(arr, i));
         }
+        closeMethod.ret(nw);
+        closeMethod.end();
         return new Wrapper<FunctionTypes.ClosureD<T>>(wrap.cgen, wrap.mgen) {
           @Override
           public JavaValue symbol(Symbol sym) {
@@ -397,7 +411,7 @@ public class JavaDevice extends FunctionSymbolRegistrar<JavaImpl, Double> {
   }
   
   public <T, Clos extends Closure<?>> T transform(FunctionGenerator<Clos, T> ctx, final Clos def) {
-    final Wrapper<T> wrap = ctx.begin(def);
+    final Wrapper<T> wrap = ctx.begin(def, new ArrayList<String>());
     
     final MethodGenerator mgen = wrap.mgen;
     final Usage usage = Usage.generate(def);

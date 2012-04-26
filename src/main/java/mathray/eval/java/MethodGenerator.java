@@ -26,8 +26,8 @@ public class MethodGenerator {
     if(static_) {
       thisRef = null;
     } else {
-      state.locals.add(null);
       thisRef = new MethodArg(Type.getObjectType(cgen.name));
+      state.locals.add(thisRef);
     }
     for(int i = 0; i < argTypes.length; i++) {
       findOrAllocLocalIndex(args[i] = new MethodArg(argTypes[i]));
@@ -196,6 +196,13 @@ public class MethodGenerator {
   public JavaValue loadField(JavaValue obj, JavaField field) {
     load(obj);
     return field.load(this);
+  }
+
+  public JavaValue newInstance(String className) {
+    methodVisitor.visitTypeInsn(Opcodes.NEW, className);
+    methodVisitor.visitInsn(Opcodes.DUP);
+    methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, className, "<init>", "()V");
+    return push(new ComputedValue(Type.getObjectType(className)));
   }
   
 }
