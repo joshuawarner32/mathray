@@ -46,3 +46,13 @@ The JavaCompiler, for instance, doesn't know that in the function definition "f(
 
 The Parser doesn't currently handle floating-point constants.  It should, by converting them to fractions.
 
+### Affine Arithmetic (or other similar systems)
+
+Affine arithmetic is promising not only because it offers a better convergence rate (error ~ O(h^2) vs O(h) for interval arithmetic), but also because it provides an approximation of the function in the input space.
+
+An interesting subset of affine arithmetic that would be good to explore is that which yields linear approximations (with guaranteed bounds).  Call this "linear interval arithmetic." Note that the output arity of resultant function will be n + 2, where the input arity is n.  Compare this with 2 for interval arithmetic.  The output arity for affine arithmetic is dependent on the complexity of the output, not the input arity.  Linear approximations should be more useful, and nearly as efficient as the zonotopes produced by affine arithmetic.
+
+### Plotting
+
+
+
