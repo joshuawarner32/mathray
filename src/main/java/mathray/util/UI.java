@@ -1,5 +1,7 @@
 package mathray.util;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
@@ -19,6 +21,25 @@ public class UI {
     frame.pack();
     frame.setVisible(true);
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    frame.addKeyListener(new KeyListener() {
+      
+      @Override
+      public void keyTyped(KeyEvent e) {}
+      
+      @Override
+      public void keyReleased(KeyEvent e) {}
+      
+      @Override
+      public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_W && e.getModifiers() == KeyEvent.CTRL_MASK) {
+          frame.setVisible(false);
+          frame.dispose();
+          synchronized(lock) {
+            lock.notify();
+          }
+        }
+      }
+    });
     frame.addWindowListener(new WindowListener() {
       
       @Override
