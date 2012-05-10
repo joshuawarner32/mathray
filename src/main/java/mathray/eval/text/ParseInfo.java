@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import com.google.common.base.Joiner;
+
 import mathray.Call;
 import mathray.Function;
 import mathray.Rational;
@@ -245,12 +247,17 @@ public class ParseInfo {
     return stack.pop();
   }
 
-  public Impl<PrecedenceString> implement(Function func) {
+  public Impl<PrecedenceString> implement(final Function func) {
     Impl<PrecedenceString> ret = operators.get(func);
     if(ret != null) {
       return ret;
     }
-    return new FunctionPrecedenceImplementation(func);
+    return new Impl<PrecedenceString>() {
+      @Override
+      public PrecedenceString call(Vector<PrecedenceString> args) {
+        return new PrecedenceString(func.name + '(' + Joiner.on(", ").join(args) + ')', Integer.MAX_VALUE);
+      }
+    };
   }
 
 }
