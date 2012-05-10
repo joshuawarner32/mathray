@@ -52,10 +52,6 @@ public class PlotOptions {
   private boolean printHelp = false;
   private String plot;
   private Format format = new Format();
-  private Double xa;
-  private Double xb;
-  private Double ya;
-  private Double yb;
 
   private File output;
   
@@ -78,16 +74,16 @@ public class PlotOptions {
       }
       
       if(line.hasOption("xa")) {
-        xa = Double.parseDouble(line.getOptionValue("xa"));
+        format.xa = Double.parseDouble(line.getOptionValue("xa"));
       }
       if(line.hasOption("xb")) {
-        xb = Double.parseDouble(line.getOptionValue("xb"));
+        format.xb = Double.parseDouble(line.getOptionValue("xb"));
       }
       if(line.hasOption("ya")) {
-        ya = Double.parseDouble(line.getOptionValue("ya"));
+        format.ya = Double.parseDouble(line.getOptionValue("ya"));
       }
       if(line.hasOption("yb")) {
-        yb = Double.parseDouble(line.getOptionValue("yb"));
+        format.yb = Double.parseDouble(line.getOptionValue("yb"));
       }
       
       if(line.hasOption("width")) {

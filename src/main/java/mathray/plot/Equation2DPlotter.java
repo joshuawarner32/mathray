@@ -18,6 +18,30 @@ public class Equation2DPlotter implements Plotter {
     if(format.height == null) {
       format.height = 512;
     }
+    if(format.xa == null) {
+      if(format.xb == null) {
+        format.xa = -10d;
+        format.xb = 10d;
+      } else {
+        format.xa = format.xb - 10;
+      }
+    } else {
+      if(format.xb == null) {
+        format.xb = format.xa + 10;
+      }
+    }
+    if(format.ya == null) {
+      if(format.yb == null) {
+        format.ya = -10d;
+        format.yb = 10d;
+      } else {
+        format.ya = format.yb - 10;
+      }
+    } else {
+      if(format.yb == null) {
+        format.yb = format.ya + 10;
+      }
+    }
   }
 
   @Override
