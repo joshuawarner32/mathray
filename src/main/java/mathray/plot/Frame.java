@@ -12,7 +12,7 @@ public class Frame {
   
   public static Rectangle frameFor(Definition def, double xmin, double xmax) {
     double ymin = Double.MAX_VALUE;
-    double ymax = Double.MIN_NORMAL;
+    double ymax = -Double.MAX_VALUE;
     Multidef inter = IntervalTransform.intervalize(def.toMultidef(), def.args);
     FunctionTypes.RepeatD funcRepeat = FunctionTypes.toRepeatD(JavaDevice.compile(inter));
     
