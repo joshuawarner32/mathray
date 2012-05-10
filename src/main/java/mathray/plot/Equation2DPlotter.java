@@ -48,7 +48,7 @@ public class Equation2DPlotter implements Plotter {
   public Output plot(Definition def, Format format) {
     pickFormat(format);
     
-    Rectangle rect = new Rectangle(-10, 10, -10, 10);
+    Rectangle rect = new Rectangle(format.xa, format.xb, format.ya, format.yb);
     FunctionTypes.D f = JavaDevice.compile(IntervalTransform.intervalize(def.toMultidef(), def.args));
     FunctionTypes.RepeatD rf = FunctionTypes.toRepeatD(f);
     int w = format.width;
@@ -82,7 +82,7 @@ public class Equation2DPlotter implements Plotter {
         double a = out[i + 0];
         double b = out[i + 1];
         if(a * b <= 0) {
-          g.fillRect(x, y, 1, 1);
+          g.fillRect(x, h - y, 1, 1);
         }
       }
     }
