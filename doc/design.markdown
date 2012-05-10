@@ -54,5 +54,7 @@ An interesting subset of affine arithmetic that would be good to explore is that
 
 ### Plotting
 
+Plotting should be simple and intuitive, and deal gracefully with even the most complicated cases without artifacts.
 
+It'd be cool to (at least, under some flag) plot true multivalued functions, like sqrt(x) and asin(x), respecting the multivalued-ness.  For simple cases like "y=asin(x)", this can be solved by unwrapping the inverse functions - essentially transforming that into "sin(y)=x", but this approach is not completely general.  Difficulties occur when combining multivalued outputs, as in "sqrt(x)+sqrt(x)". Can sqrt(x) take on two separate values in this case (and yield a result of 0)?  What about the case of "sqrt(x)+sqrt(2x)"?  I'm not aware of any mathematical theory that covers this.
 
