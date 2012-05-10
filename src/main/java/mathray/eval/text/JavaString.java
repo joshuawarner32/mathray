@@ -1,5 +1,7 @@
 package mathray.eval.text;
 
+import com.google.common.base.Joiner;
+
 import mathray.Call;
 import mathray.Rational;
 import mathray.Symbol;
@@ -15,18 +17,7 @@ public class JavaString {
     return v.accept(new Processor<String>() {
       @Override
       public String process(Call call, Vector<String> args) {
-        StringBuilder b = new StringBuilder();
-        b.append(call.func.name);
-        b.append("(");
-        if(args.size() > 0) {
-          b.append(call.args.get(0).toJavaString());
-        }
-        for(int i = 1; i < args.size(); i++) {
-          b.append(", ");
-          b.append(call.args.get(i).toJavaString());
-        }
-        b.append(")");
-        return b.toString();
+        return call.func.name + '(' + Joiner.on(", ").join(args) + ')';
       }
       
       @Override
