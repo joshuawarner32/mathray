@@ -14,11 +14,11 @@ public class UI {
   
   public static void show(String name, BufferedImage image) {
     final Object lock = new Object();
-    JFrame frame = new JFrame(name);
-    frame.setBounds(0, 0, image.getWidth() + 100, image.getHeight() + 100);
+    final JFrame frame = new JFrame(name);
     frame.add(new JLabel(new ImageIcon(image)));
-    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    frame.pack();
     frame.setVisible(true);
+    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     frame.addWindowListener(new WindowListener() {
       
       @Override

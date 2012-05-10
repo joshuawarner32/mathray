@@ -15,6 +15,7 @@ java -cp \
 ${JAR}:\
 ${repo}/asm/asm-debug-all/3.3.1/asm-debug-all-3.3.1.jar:\
 ${repo}/commons-cli/commons-cli/1.2/commons-cli-1.2.jar:\
+${repo}/com/google/guava/guava/12.0/guava-12.0.jar:\
 ${repo}/org/jocl/jocl/0.1.7/jocl-0.1.7.jar \
 mathray.cli.Main \
 "${@}"

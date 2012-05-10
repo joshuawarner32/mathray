@@ -5,7 +5,7 @@ public class Stopwatch {
   public final long start;
   
   public Stopwatch() {
-    start = System.currentTimeMillis(); 
+    start = System.currentTimeMillis();
   }
   
   public long time() {
