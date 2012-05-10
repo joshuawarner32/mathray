@@ -13,6 +13,7 @@ import static mathray.Expressions.*;
 
 public class Splitter {
   
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   public static Multidef split(Multidef def, final FunctionRegistrar<Multidef> env, final Multidef splitter, final Args args, SymbolSplitter replacements) {
     if(!args.isSubsetOf(def.args)) {
       throw new IllegalArgumentException();

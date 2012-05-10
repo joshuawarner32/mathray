@@ -2,7 +2,6 @@ import mathray.Closure;
 import mathray.Definition;
 import mathray.Multidef;
 import mathray.Symbol;
-import mathray.eval.machine.VisitorDevice;
 import mathray.eval.transform.Project;
 import static mathray.Expressions.*;
 
