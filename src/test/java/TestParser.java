@@ -2,6 +2,7 @@ import static mathray.Expressions.*;
 import static org.junit.Assert.*;
 import mathray.Symbol;
 import mathray.eval.text.DefaultPrinter;
+import mathray.eval.text.ParseException;
 import mathray.eval.text.ParseInfo;
 import org.junit.Test;
 
@@ -19,13 +20,13 @@ public class TestParser {
     .build();
   
   @Test
-  public void testSimple() {
+  public void testSimple() throws ParseException {
     assertEquals(num(0), parser.parse("0"));
     assertEquals(x, parser.parse("x"));
   }
 
   @Test
-  public void testOperators() {
+  public void testOperators() throws ParseException {
     assertEquals(add(num(1), num(2)), parser.parse("1+2"));
     assertEquals(mul(num(1), num(2)), parser.parse("1*2"));
     assertEquals(sub(num(1), num(2)), parser.parse("1-2"));
@@ -34,26 +35,26 @@ public class TestParser {
   }
   
   @Test
-  public void testOrderOfOps() {
+  public void testOrderOfOps() throws ParseException {
     assertEquals(add(num(1), mul(num(2), num(3))), parser.parse("1+2*3"));
     assertEquals(add(mul(num(1), num(2)), num(3)), parser.parse("1*2+3"));
   }
   
   @Test
-  public void testParentheses() {
+  public void testParentheses() throws ParseException {
     assertEquals(mul(add(num(1), num(2)), num(3)), parser.parse("(1+2)*3"));
     assertEquals(mul(num(1), add(num(2), num(3))), parser.parse("1*(2+3)"));
   }
   
   @Test
-  public void testAssociativity() {
+  public void testAssociativity() throws ParseException {
     assertEquals(add(add(num(1), num(2)), num(3)), parser.parse("1+2+3"));
     assertEquals(mul(mul(num(1), num(2)), num(3)), parser.parse("1*2*3"));
     assertEquals(pow(num(1), pow(num(2), num(3))), parser.parse("1^2^3"));
   }
   
   @Test
-  public void testFunctions() {
+  public void testFunctions() throws ParseException {
     assertEquals(sin(x), parser.parse("sin(x)"));
     assertEquals(min(x, y), parser.parse("min(x, y)"));
     
@@ -69,22 +70,38 @@ public class TestParser {
   }
   
   @Test
-  public void testInvisibleProduct() {
+  public void testInvisibleProduct() throws ParseException {
     assertEquals(mul(x, y), parser.parse("x y"));
     assertEquals(mul(num(3), y), parser.parse("3y"));
     assertEquals(y3, parser.parse("y3"));
     assertEquals(mul(x, sin(x)), parser.parse("x sin(x)"));
+    assertEquals(mul(num(1), num(2)), parser.parse("1 2"));
 //    assertEquals(mul(sin(x), y), parser.parse("sin(x) y"));    
   }
   
+  @Test(expected = ParseException.class)
+  public void testInvalidOperator() throws ParseException {
+    parser.parse("x $ b");
+  }
+  
+  @Test(expected = ParseException.class)
+  public void testUndefinedFunction() throws ParseException {
+    parser.parse("bla(x)");
+  }
+  
+  @Test(expected = ParseException.class)
+  public void testUndefinedSymbol() throws ParseException {
+    parser.parse("x * bla");
+  }
+  
   @Test
-  public void testSimplePrefixOperators() {
+  public void testSimplePrefixOperators() throws ParseException {
     assertEquals(neg(num(1)), parser.parse("-1"));
     assertEquals(neg(x), parser.parse("-x"));
   }
   
   @Test
-  public void testPrefixOrderOfOps() {
+  public void testPrefixOrderOfOps() throws ParseException {
     assertEquals(neg(pow(num(1), pow(num(2), num(3)))), parser.parse("-1^2^3"));
     assertEquals(pow(num(1), neg(pow(num(2), num(3)))), parser.parse("1^-2^3"));
     assertEquals(pow(num(1), pow(num(2), neg(num(3)))), parser.parse("1^2^-3"));

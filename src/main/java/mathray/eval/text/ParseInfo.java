@@ -165,7 +165,7 @@ public class ParseInfo {
     }).toString();
   }
   
-  public Value parse(String text) {
+  public Value parse(String text) throws ParseException {
     Stack<Value> stack = new Stack<Value>();
     Stack<Operator> ops = new Stack<Operator>();
     ops.push(new SentinelOperator());
@@ -187,8 +187,7 @@ public class ParseInfo {
           if(func != null) {
             ops.push(new FunctionOperator(func));
           } else {
-            // TODO: real parse exceptions
-            throw new RuntimeException("parse error");
+            throw new ParseException("unknown function '" + tok.text + "'");
           }
         }
         break;
@@ -224,14 +223,14 @@ public class ParseInfo {
             ops.push(op);
             state = AFTER_OPERATOR;
           } else {
-            throw new RuntimeException("unexpected operator '" + tok.text + "'");
+            throw new ParseException("unexpected operator '" + tok.text + "'");
           }
         } else if(state == AFTER_OPERATOR) {
           PrefixOperator op = prefixes.get(tok.text);
           if(op != null) {
             ops.push(op);
           } else {
-            throw new RuntimeException("unexpected operator '" + tok.text + "'");
+            throw new ParseException("unexpected operator '" + tok.text + "'");
           }
         }
         break;
@@ -241,8 +240,7 @@ public class ParseInfo {
       ops.pop().reduce(stack);
     }
     if(stack.size() != 1) {
-      // TODO: real parse exceptions
-      throw new RuntimeException("stack size wrong: 1 != " + stack.size());
+      throw new ParseException("missing operator");
     }
     return stack.pop();
   }

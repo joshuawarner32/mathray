@@ -14,6 +14,7 @@ import mathray.eval.java.JavaDevice;
 import mathray.eval.simplify.Simplifications;
 import mathray.eval.split.IntervalTransform;
 import mathray.eval.text.DefaultPrinter;
+import mathray.eval.text.ParseException;
 import mathray.eval.text.ParseInfo;
 import mathray.eval.transform.Project;
 import mathray.plot.Frame;
@@ -42,7 +43,11 @@ public class Main {
       .build();
     //plot3D(def(args(x, y, z), add(mul(x, x), mul(y, y), mul(z, z), num(-1))), 512, 512);
     //plot3D(def(args(x, y, z), add(pow(x, 2), pow(y, 2), pow(z, 2), num(-1))), 512, 512);
-    plot3D(def(args(x, y, z), info.parse("x^2+z^2-(1-y)*y^4")), 512, 512);
+    try {
+      plot3D(def(args(x, y, z), info.parse("x^2+z^2-(1-y)*y^4")), 512, 512);
+    } catch(ParseException e) {
+      throw new RuntimeException(e);
+    }
     //plot3D(def(args(x, y, z), info.parse("81*(x^3 + y^3 + z^3) - 189*(x^2*y + x^2*z + y^2*x + y^2*z + z^2*x + z^2*y) + 54*x*y*z + 126*(x*y + x*z + y*z) - 9*(x^2 + y^2 + z^2) - 9*(x + y + z) + 1")), 512, 512);
   }
   

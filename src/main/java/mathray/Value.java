@@ -1,7 +1,7 @@
 package mathray;
 
 import mathray.eval.text.DefaultPrinter;
-import mathray.eval.text.JavaString;
+import mathray.eval.text.JavaStringizer;
 import mathray.util.Vector;
 import mathray.visitor.Context;
 import mathray.visitor.Processor;
@@ -20,7 +20,7 @@ public abstract class Value implements Comparable<Value>, Closable {
   }
   
   public final String toJavaString() {
-    return JavaString.toJavaString(this);
+    return JavaStringizer.toJavaString(this);
   }
 
   public <T> T accept(Processor<T> v) {

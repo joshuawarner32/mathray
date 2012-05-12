@@ -43,7 +43,7 @@ public class DefaultPrinter {
     return BASIC_OPERATORS.unparse(value);
   }
   
-  public static Value parse(String text) {
+  public static Value parse(String text) throws ParseException {
     return BASIC_OPERATORS.parse(text);
   }
 

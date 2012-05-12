@@ -5,15 +5,14 @@ import static mathray.Expressions.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import mathray.Args;
 import mathray.Symbol;
 import mathray.Value;
 
 public class LinearTerm {
-  private final Value lowOffset;
-  private final Value highOffset;
+  public final Value lowOffset;
+  public final Value highOffset;
   
-  private final Map<Symbol, Value> linearCoefficients;
+  final Map<Symbol, Value> linearCoefficients;
   
   LinearTerm(Value lowOffset, Value highOffset, Map<Symbol, Value> linearCoefficients) {
     this.lowOffset = lowOffset;

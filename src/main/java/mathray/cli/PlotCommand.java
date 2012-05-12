@@ -11,6 +11,7 @@ import mathray.Definition;
 import mathray.Symbol;
 import mathray.Value;
 import mathray.eval.text.DefaultPrinter;
+import mathray.eval.text.ParseException;
 import mathray.eval.text.ParseInfo;
 import mathray.plot.Equation2DPlotter;
 import mathray.plot.Equation3DPlotter;
@@ -97,7 +98,11 @@ public class PlotCommand {
     }
     Value[] values = new Value[parts.length];
     for(int i = 0; i < parts.length; i++) {
-      values[i] = COORDINATE_PARSER.parse(parts[i]);
+      try {
+        values[i] = COORDINATE_PARSER.parse(parts[i]);
+      } catch(ParseException e) {
+        throw new InputException(e);
+      }
     }
     Args args = detectArgs(values);
     if(plotter == null) {

@@ -56,7 +56,7 @@ public class Token {
     return text;
   }
   
-  public static List<Token> tokens(Set<String> symbols, String text) {
+  public static List<Token> tokens(Set<String> symbols, String text) throws ParseException {
     List<Token> ret = new ArrayList<Token>();
     int pos = 0;
     boolean lastSymbol = true;
@@ -100,13 +100,13 @@ public class Token {
         splitSymbols(symbols, ret, text.substring(start, pos));
         lastSymbol = true;
       } else {
-        throw new RuntimeException("parse error");
+        throw new ParseException("unexpected character '" + ch + "'");
       }
     }
     return ret;
   }
 
-  private static void splitSymbols(Set<String> symbols, List<Token> ret, String text) {
+  private static void splitSymbols(Set<String> symbols, List<Token> ret, String text) throws ParseException {
     int i;
     for(i = text.length() - 1; i > 0; i--) {
       String s = text.substring(0, i);
@@ -121,7 +121,7 @@ public class Token {
         ret.add(new Token(Type.Symbol, s));
         return;
       } else {
-        throw new RuntimeException("unknown symbol '" + s + "'");
+        throw new ParseException("unknown symbol '" + s + "'");
       }
     } else {
       splitSymbols(symbols, ret, s);

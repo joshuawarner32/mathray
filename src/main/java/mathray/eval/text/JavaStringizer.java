@@ -9,9 +9,9 @@ import mathray.Value;
 import mathray.util.Vector;
 import mathray.visitor.Processor;
 
-public class JavaString {
+public class JavaStringizer {
   
-  private JavaString() {}
+  private JavaStringizer() {}
   
   public static String toJavaString(Value v) {
     return v.accept(new Processor<String>() {
