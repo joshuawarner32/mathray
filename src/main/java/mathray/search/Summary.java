@@ -8,7 +8,7 @@ public class Summary {
   private SummaryNode root;
 
   public static Summary of(Definition def) {
-    return null;
+    return new Summary();
   }
 
   public void find(double value) {
