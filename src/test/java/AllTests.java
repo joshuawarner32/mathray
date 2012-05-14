@@ -16,7 +16,8 @@ import org.junit.runners.Suite.SuiteClasses;
   TestComplex.class,
   TestIntervals.class,
   TestSolve.class,
-  TestProject.class
+  TestProject.class,
+  TestLinearArithmetic.class
 })
 public class AllTests {
 
