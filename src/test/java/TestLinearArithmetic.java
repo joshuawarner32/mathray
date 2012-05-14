@@ -28,6 +28,8 @@ public class TestLinearArithmetic {
   @Test
   public void testLinear() {
     assertLinearizesTo(multidef(args(x), x), multidef(args(x), x));
+    assertLinearizesTo(multidef(args(x, y), x, y), multidef(args(x, y), x, y));
+    assertLinearizesTo(multidef(args(x, y), add(x, y)), multidef(args(x, y), add(x, y)));
   }
 
 }
