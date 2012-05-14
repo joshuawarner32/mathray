@@ -40,6 +40,28 @@ public class Closure<T extends Closable> implements Closable {
   public String toString() {
     return args + " = " + value.toString();
   }
+  
+  @Override
+  public int hashCode() {
+    return args.hashCode() + value.hashCode();
+  }
+  
+  @SuppressWarnings("rawtypes")
+  @Override
+  public boolean equals(Object other) {
+    if(!(other instanceof Closure)) {
+      return false;
+    }
+    Closure<?> def = (Closure)other;
+    if(args.size() != def.args.size()) {
+      return false;
+    }
+    if(args.equals(def.args)) {
+      return value.equals(def.value);
+    }
+    // TODO: argument invariance
+    return value.equals(def.value);
+  }
 
   public final <K> void collectArgs(Vector<K>... args) {
     List<K> actualArguments = new ArrayList<K>();

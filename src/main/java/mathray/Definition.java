@@ -42,27 +42,6 @@ public class Definition extends Closure<Value> implements Impl<Value> {
   public String toString() {
     return DefaultPrinter.toString(this);
   }
-  
-  @Override
-  public int hashCode() {
-    return args.hashCode() + value.hashCode();
-  }
-  
-  @Override
-  public boolean equals(Object other) {
-    if(!(other instanceof Definition)) {
-      return false;
-    }
-    Definition def = (Definition)other;
-    if(args.size() != def.args.size()) {
-      return false;
-    }
-    if(args.equals(def.args)) {
-      return value.equals(def.value);
-    }
-    // TODO: argument invariance
-    return value.equals(def.value);
-  }
 
   public static Definition identity(int count) {
     Args args = args(1);
