@@ -13,7 +13,7 @@ public class TestSummary {
   public void testCircleSummary() {
     Summary summary = Summary.of(def(args(x), pow(x, 2)));
     
-    summary.find(0);
+    summary.find(0, 0.1);
   }
 
 }
