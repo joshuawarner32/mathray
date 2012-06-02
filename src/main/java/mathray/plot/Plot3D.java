@@ -2,12 +2,13 @@ package mathray.plot;
 
 import java.awt.image.BufferedImage;
 
+import com.google.common.base.Stopwatch;
+
 import mathray.concrete.BlockD3;
 import mathray.concrete.MatrixD2;
 import mathray.concrete.RayD3;
 import mathray.concrete.VectorD3;
 import mathray.device.FunctionTypes;
-import mathray.util.Stopwatch;
 
 public class Plot3D {
   
@@ -100,8 +101,10 @@ public class Plot3D {
     mat.putEverywhere(Double.POSITIVE_INFINITY);
     BlockD3 block = new BlockD3(-1, -1, 0, 1, 1, 1, 0, 0, width, height);
     Stopwatch watch = new Stopwatch();
+    watch.start();
     blockDivide(func, mat, error, max, block);
-    double time = watch.time() / 1000.0;
+    watch.stop();
+    double time = watch.elapsedMillis() / 1000.0;
     System.out.println("time: " + time);
     double dmin = mat.nonInfiniteMin();
     double dmax = mat.nonInfiniteMax();

@@ -12,6 +12,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.google.common.base.Stopwatch;
+
 public class PlotOptions {
   
   private static Options options = new Options();
@@ -114,7 +116,11 @@ public class PlotOptions {
     
     try {
       PlotCommand cmd = new PlotCommand(plot);
+      Stopwatch watch = new Stopwatch();
+      watch.start();
       Output out = cmd.plot(format);
+      watch.stop();
+      System.out.println("time to plot: " + watch.elapsedMillis() / 1000.0 + " seconds");
       if(output != null) {
         out.save(output);
       } else {
