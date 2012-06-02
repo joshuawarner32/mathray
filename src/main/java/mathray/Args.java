@@ -96,6 +96,10 @@ public class Args implements Iterable<Symbol> {
     }
     return true;
   }
+  
+  public Args concat(Args nargs) {
+    return concat(nargs.syms);
+  }
 
   public Args concat(Symbol... nargs) {
     Symbol[] ns = Arrays.copyOf(syms, syms.length + nargs.length);

@@ -1,5 +1,7 @@
 package mathray.eval.machine;
 
+import java.util.Arrays;
+
 import mathray.Call;
 import mathray.Closure;
 import mathray.Multidef;
@@ -12,6 +14,7 @@ import mathray.device.Device;
 import mathray.device.FunctionType;
 import mathray.device.FunctionTypes;
 import mathray.eval.Impl;
+import mathray.util.Generator;
 import mathray.util.MathEx;
 import mathray.util.Vector;
 import mathray.visitor.Processor;
@@ -195,9 +198,47 @@ public class VisitorDevice extends FunctionSymbolRegistrar<Impl<Double>, Double>
     return eval(def.toMultidef(), args).get(0);
   }
   
-  public static Vector<Double> eval(Closure<?> def, Vector<Double>... args_args) {
-    def.collectArgs(args_args);
-    return null;
+  // TODO: this could be a lot prettier...
+  public static void eval(Multidef def, final double[] args, double[] res) {
+    Vector<Double> vArgs = Vector.generate(args.length, new Generator<Double>() {
+      @Override
+      public Double generate(int index) {
+        return args[index];
+      }
+    });
+    Vector<Double> r = eval(def, vArgs);
+    for(int i = 0; i < r.size(); i++) {
+      res[i] = r.get(i);
+    }
+  }
+  
+  public static FunctionTypes.ClosureD<FunctionTypes.D> closure(Closure<Multidef> def) {
+    final Multidef complete = new Multidef(def.args.concat(def.value.args), def.value.value);
+    return new FunctionTypes.ClosureD<FunctionTypes.D>() {
+      @Override
+      public FunctionTypes.D close(final double... closedArgs) {
+        return new FunctionTypes.D() {
+          @Override
+          public int getOutputArity() {
+            return complete.value.size();
+          }
+          
+          @Override
+          public int getInputArity() {
+            return complete.args.size();
+          }
+          
+          @Override
+          public void call(double[] args, double[] res) {
+            double[] all = Arrays.copyOf(closedArgs, closedArgs.length + args.length);
+            for(int i = 0; i < args.length; i++) {
+              all[i + closedArgs.length] = args[i];
+            }
+            eval(complete, all, res);
+          }
+        };
+      }
+    };
   }
 
   @Override
