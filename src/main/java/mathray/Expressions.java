@@ -28,6 +28,11 @@ public class Expressions {
   public static Args args(int count) {
     return new Args(count);
   }
+  
+  @ConstExpr
+  public static <T> Bindings<T> bindings(Args args, Vector<T> values) {
+    return new Bindings<T>(args, values);
+  }
 
   @ConstExpr
   public static <T> Vector<T> vector(T... values) {

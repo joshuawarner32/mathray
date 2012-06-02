@@ -2,28 +2,23 @@ package mathray.eval.linear;
 
 import static mathray.Expressions.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import mathray.Symbol;
 import mathray.Value;
+import mathray.util.Vector;
 
 public class LinearTerm {
-  public final Value lowOffset;
-  public final Value highOffset;
+  public final Value error;
+  public final Value center;
   
-  final Map<Symbol, Value> linearCoefficients;
+  public final Vector<Value> coefficients;
   
-  LinearTerm(Value lowOffset, Value highOffset, Map<Symbol, Value> linearCoefficients) {
-    this.lowOffset = lowOffset;
-    this.highOffset = highOffset;
-    this.linearCoefficients = linearCoefficients;
+  public LinearTerm(Value error, Value center, Vector<Value> coefficients) {
+    this.error = error;
+    this.center = center;
+    this.coefficients = coefficients;
   }
   
-  public LinearTerm(Symbol symbol) {
-    lowOffset = highOffset = num(0);
-    linearCoefficients = new HashMap<Symbol, Value>();
-    linearCoefficients.put(symbol, symbol);
+  public LinearTerm(Value error, Value center, Value... coefficients) {
+    this(error, center, vector(coefficients));
   }
   
 }
