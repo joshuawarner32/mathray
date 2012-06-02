@@ -34,13 +34,9 @@ public class Derivatives extends FunctionRegistrar<Multidef> {
   
   public static final Derivatives DEFAULT = new Derivatives();
   
-  public static Definition derive(Definition def, Symbol diffVar) {
-    return DEFAULT.transform(def.toMultidef(), diffVar).get(0);
-  }
-  
-  public Multidef transform(Multidef def, final Symbol diffVar) {
-    final Processor<Value> deriver = new Processor<Value>() {
-      @Override
+  private Processor<Value> deriver(final Symbol diffVar) {
+    return new Processor<Value>() {
+    @Override
       public Value process(final Call call, final Vector<Value> args) {
         return add(zip(MUL.define(), lookup(call.func).call(call.args), args));
       }
@@ -55,7 +51,17 @@ public class Derivatives extends FunctionRegistrar<Multidef> {
         return var == diffVar ? num(1) : num(0);
       }
     };
-    
-    return def.transform(deriver);
+  }
+  
+  public static Value derive(Value value, Symbol diffVar) {
+    return value.accept(DEFAULT.deriver(diffVar));
+  }
+  
+  public static Definition derive(Definition def, Symbol diffVar) {
+    return DEFAULT.transform(def.toMultidef(), diffVar).get(0);
+  }
+  
+  public Multidef transform(Multidef def, final Symbol diffVar) {
+    return def.transform(deriver(diffVar));
   }
 }
