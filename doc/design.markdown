@@ -10,7 +10,7 @@ The representation of Mathray values is very abstract: they can be interpreted p
 * <code>Rational</code> represents a fraction.  This is the simplest type that practically all transformations can agree on a meaning for.  This is the only "constant" type that Mathray provides - more complex constants are either represented as <code>Symbols</code>, or left unevaluated.
 * <code>Symbol</code> represents a bound or unbound variable.  These are used both for function parameter references and named constants.
 
-To keep the exact computational type unspecified, <code>Functions</code> (even core operators like ADD, SUB, MUL and DIV) don't have any inherent meaning.  Functions are nothing more than symbolic references.  Their implementation is left completely up to each transformation pass.  Where more concrete definitions of functions are needed (for example, for user-defined functions), <code>Definitions</code> / <code>Multidefs</code> or the more general <code>Closures</code> are used.
+To keep the exact computational type unspecified, <code>Functions</code> (even core operators like ADD, SUB, MUL and DIV) don't have any inherent meaning.  Functions are nothing more than symbolic references.  Their implementation is left completely up to each transformation pass.  Where more concrete definitions of functions are needed (for example, for user-defined functions), <code>Definitions</code> / <code>Multidefs</code> or the more general <code>Lambdas</code> are used.
 
 Mathray is built around a composable set of tranformations:
 
@@ -18,7 +18,7 @@ Mathray is built around a composable set of tranformations:
 * <code>Derivatives</code> handles computing derivatives of values w.r.t. specific <code>Symbols</code>.  This transformation uses the simplest possible rules (it knows only about the derivatives of functions and the chain rule) and doesn't attempt to do any simplification; thus factors of 0 and 1 are very common.
 * <code>Simplifications</code> handles basic simplification transformations such as combining rationals, eliminating terms with factors of 0, computing known values of <code>Functions</code> (such as "sin(0)"), partial constant folding over limited <code>Functions</code>
 * <code>MachineEvaluator</code> uses <code>doubles</code> and a simple <code>Processor</code> to compute actual return values for <code>Definitions</code>
-* <code>JavaCompiler</code> uses [ASM](http://asm.ow2.org/) to transform <code>Definitions</code> or <code>Closures</code> to Java methods that compute concrete function values, given the parameters.
+* <code>JavaCompiler</code> uses [ASM](http://asm.ow2.org/) to transform <code>Definitions</code> or <code>Lambdas</code> to Java methods that compute concrete function values, given the parameters.
 * <code>ComplexTransform</code> changes an expression over the reals to an expression that computes both the real and imaginary components of the same value.
 * <code>IntervalTransform</code> transforms an expression into the same expression computed with Interval Arithmetic.
 
