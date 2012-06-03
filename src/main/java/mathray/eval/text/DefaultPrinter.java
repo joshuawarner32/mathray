@@ -1,7 +1,6 @@
 package mathray.eval.text;
 
 import static mathray.Functions.*;
-import mathray.Definition;
 import mathray.Value;
 import mathray.eval.text.InfixOperator.Associativity;
 
