@@ -35,7 +35,7 @@ The case of plotting a 1D function is (relatively) straight-forward.  Unfortunat
 
 ### 2D Cartesian Equation
 
-There are lots of options for plotting general 2D equations (such as "y^2(y^2-a^2)=x^2(x^2-b^2)", the [Devil's Curve](http://en.wikipedia.org/wiki/Devil's_curve))
+There are lots of options for plotting general 2D equations (such as "y^2*(y^2-a^2)=x^2*(x^2-b^2)", the [Devil's Curve](http://en.wikipedia.org/wiki/Devil's_curve))
 
 * Evaluating the difference between the two sides of the equation, and plotting the sign changes.  At its simplest, we can just evaluate at every pixel, and use black (or line-colored) pixels to indicate a sign change.  This is the approach that the very earliest incarnation of this math-plotting software took.  This can lead to artifacts when when there are two lines of solutions that get very close togethor (as there is no sign change, then).  This also leads to a very pixelated ouput.
 * Using interval arithmetic (or generally, inclusion arithmetic) to evaluate the function over the full range of every pixel.  Color pixels where the output interval contains 0.  This causes overly fat lines where the inclusion arithmetic dramatically over-estimates the real output interval, as well as pixelation artifacts.  Works well enough for simple equations.
