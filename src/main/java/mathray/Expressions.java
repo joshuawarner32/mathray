@@ -51,8 +51,8 @@ public class Expressions {
   }
 
   @ConstExpr
-  public static <T extends Closable> Closure<T> closure(Args args, T def) {
-    return new Closure<T>(args, def);
+  public static <T extends Closable> Lambda<T> closure(Args args, T def) {
+    return new Lambda<T>(args, def);
   }
 
   @ConstExpr

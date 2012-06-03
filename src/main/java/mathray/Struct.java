@@ -1,5 +1,9 @@
 package mathray;
 
+import static mathray.Expressions.*;
+
+import com.google.common.base.Preconditions;
+
 import mathray.util.Vector;
 import mathray.visitor.Context;
 import mathray.visitor.Processor;
@@ -28,6 +32,12 @@ public abstract class Struct implements Closable {
     Context<T> ctx = new Context<T>();
     accept(Visitors.toVisitor(v, ctx));
     return ctx.getStruct(this);
+  }
+  
+  @Override
+  public Closable wrap(Vector<Value> values) {
+    Preconditions.checkArgument(values.size() == size());
+    return struct(values);
   }
   
   @Override

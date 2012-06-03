@@ -38,7 +38,7 @@ public class Derivatives extends FunctionRegistrar<Multidef> {
     return new Processor<Value>() {
     @Override
       public Value process(final Call call, final Vector<Value> args) {
-        return add(zip(MUL.define(), lookup(call.func).call(call.args), args));
+        return add(zip(MUL.define(), lookup(call.func).call(call.args).toVector(), args));
       }
       
       @Override

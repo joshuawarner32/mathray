@@ -32,7 +32,7 @@ public class Splitter {
         bindings[j++] = (Vector)reps;
       } else {
         nargsarr[i++] = var;
-        bindings[j++] = splitter.call(vector((Value)var));
+        bindings[j++] = splitter.call(vector((Value)var)).toVector();
       }
     }
     Processor<Vector<Value>> v = new Processor<Vector<Value>>() {
@@ -48,12 +48,12 @@ public class Splitter {
       
       @Override
       public Vector<Value> process(Rational rat) {
-        return splitter.call(vector((Value)rat));
+        return splitter.call(vector((Value)rat)).toVector();
       }
       
       @Override
       public Vector<Value> process(Call call, Vector<Vector<Value>> args) {
-        return env.lookup(call.func).call(Vector.flatten(args));
+        return env.lookup(call.func).call(Vector.flatten(args)).toVector();
       }
     };
     Vector<Vector<Value>> ret = def.acceptVector(v);

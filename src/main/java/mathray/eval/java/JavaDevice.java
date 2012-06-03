@@ -9,7 +9,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 import mathray.Call;
-import mathray.Closure;
+import mathray.Lambda;
 import mathray.Multidef;
 import mathray.FunctionSymbolRegistrar;
 import mathray.NamedConstants;
@@ -305,10 +305,10 @@ public class JavaDevice extends FunctionSymbolRegistrar<JavaImpl, Double> {
   public static final FunctionGenerator<Multidef, FunctionTypes.D2_1> D2_1 = Dn_1(2); 
   public static final FunctionGenerator<Multidef, FunctionTypes.D3_1> D3_1 = Dn_1(3);
 
-  public static <T> FunctionGenerator<Closure<Multidef>, FunctionTypes.ClosureD<T>> closureD(final FunctionGenerator<Multidef, T> gen) {
-    return new FunctionGenerator<Closure<Multidef>, FunctionTypes.ClosureD<T>>() {
+  public static <T> FunctionGenerator<Lambda<Multidef>, FunctionTypes.ClosureD<T>> closureD(final FunctionGenerator<Multidef, T> gen) {
+    return new FunctionGenerator<Lambda<Multidef>, FunctionTypes.ClosureD<T>>() {
       @Override
-      public Wrapper<FunctionTypes.ClosureD<T>> begin(final Closure<Multidef> def, List<String> extraInterfaces) {
+      public Wrapper<FunctionTypes.ClosureD<T>> begin(final Lambda<Multidef> def, List<String> extraInterfaces) {
         extraInterfaces.add(name(ClosureD.class));
         final Wrapper<T> wrap = gen.begin(def.value, extraInterfaces);
         MethodGenerator closeMethod = wrap.cgen.method(false, "close", "([D)L" + name(Object.class) + ";");
@@ -394,7 +394,7 @@ public class JavaDevice extends FunctionSymbolRegistrar<JavaImpl, Double> {
     return INSTANCE.transform(FUNCTION_D, def);
   }
   
-  public static <T, Clos extends Closure<?>> T compile(FunctionGenerator<Clos, T> ctx, final Clos def) {
+  public static <T, Clos extends Lambda<?>> T compile(FunctionGenerator<Clos, T> ctx, final Clos def) {
     return INSTANCE.transform(ctx, def);
   }
   
@@ -410,7 +410,7 @@ public class JavaDevice extends FunctionSymbolRegistrar<JavaImpl, Double> {
     }
   }
   
-  public <T, Clos extends Closure<?>> T transform(FunctionGenerator<Clos, T> ctx, final Clos def) {
+  public <T, Clos extends Lambda<?>> T transform(FunctionGenerator<Clos, T> ctx, final Clos def) {
     final Wrapper<T> wrap = ctx.begin(def, new ArrayList<String>());
     
     final MethodGenerator mgen = wrap.mgen;

@@ -1,5 +1,7 @@
 package mathray;
 
+import com.google.common.base.Preconditions;
+
 import mathray.eval.text.DefaultPrinter;
 import mathray.eval.text.JavaStringizer;
 import mathray.util.Vector;
@@ -32,6 +34,12 @@ public abstract class Value implements Comparable<Value>, Closable {
   @Override
   public <T> Vector<T> acceptVector(Processor<T> v) {
     return vector(accept(v));
+  }
+  
+  @Override
+  public Closable wrap(Vector<Value> results) {
+    Preconditions.checkArgument(results.size() == 1);
+    return results.get(0);
   }
   
 }

@@ -1,12 +1,11 @@
 package mathray;
 
 import mathray.eval.Impl;
-import mathray.eval.text.DefaultPrinter;
 import mathray.util.Vector;
 import mathray.visitor.Processor;
 import static mathray.Expressions.*;
 
-public class Definition extends Closure<Value> implements Impl<Value> {
+public class Definition extends Lambda<Value> implements Impl<Value> {
   
   public Definition(Args args, Value value) {
     super(args, value);
@@ -36,11 +35,6 @@ public class Definition extends Closure<Value> implements Impl<Value> {
   
   public final Value call(Value... values) {
     return call(vector(values));
-  }
-  
-  @Override
-  public String toString() {
-    return DefaultPrinter.toString(this);
   }
 
   public static Definition identity(int count) {

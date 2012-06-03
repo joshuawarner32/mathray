@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.google.common.base.Preconditions;
+
 public final class Vector<T> implements Collection<T> {
   
   private T[] items;
@@ -33,10 +35,7 @@ public final class Vector<T> implements Collection<T> {
     Vector<O> ret = new Vector<O>();
     ret.items = (O[])new Object[items.length];
     for(int i = 0; i < items.length; i++) {
-      ret.items[i] = t.transform(items[i]);
-      if(ret.items[i] == null) {
-        throw new NullPointerException();
-      }
+      ret.items[i] = Preconditions.checkNotNull(t.transform(items[i]));
     }
     return ret;
   }

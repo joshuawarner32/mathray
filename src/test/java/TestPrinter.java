@@ -64,8 +64,8 @@ public class TestPrinter {
   
   @Test
   public void testDefinition() {
-    assertPrintsTo(def(args(x), sin(x)), "f(x) = sin(x)");
-    assertPrintsTo(def(args(x, y), max(x, y)), "f(x, y) = max(x, y)");
+    assertPrintsTo(def(args(x), sin(x)), "(x) -> sin(x)");
+    assertPrintsTo(def(args(x, y), max(x, y)), "(x, y) -> max(x, y)");
   }
 
 }

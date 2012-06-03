@@ -24,21 +24,6 @@ public class DefaultPrinter {
     .functions(SIN, SINH, ASIN, COS, COSH, ACOS, TAN, TANH, ATAN, ATAN2, SQRT, LOG, MIN, MAX)
     .build();
   
-  public static String toString(Definition def) {
-    StringBuilder b = new StringBuilder();
-    b.append("f(");
-    if(def.args.size() > 0) {
-      b.append(def.args.get(0));
-    }
-    for(int i = 1; i < def.args.size(); i++) {
-      b.append(", ");
-      b.append(def.args.get(i));
-    }
-    b.append(") = ");
-    b.append(BASIC_OPERATORS.unparse(def.value));
-    return b.toString();
-  }
-  
   public static String toString(Value value) {
     return BASIC_OPERATORS.unparse(value);
   }

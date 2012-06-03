@@ -3,7 +3,7 @@ package mathray.eval.machine;
 import java.util.Arrays;
 
 import mathray.Call;
-import mathray.Closure;
+import mathray.Lambda;
 import mathray.Multidef;
 import mathray.Definition;
 import mathray.FunctionSymbolRegistrar;
@@ -212,7 +212,7 @@ public class VisitorDevice extends FunctionSymbolRegistrar<Impl<Double>, Double>
     }
   }
   
-  public static FunctionTypes.ClosureD<FunctionTypes.D> closure(Closure<Multidef> def) {
+  public static FunctionTypes.ClosureD<FunctionTypes.D> closure(Lambda<Multidef> def) {
     final Multidef complete = new Multidef(def.args.concat(def.value.args), def.value.value);
     return new FunctionTypes.ClosureD<FunctionTypes.D>() {
       @Override

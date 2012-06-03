@@ -26,7 +26,7 @@ public class Context<T> {
       public T transform(Value in) {
         T ret = get(in);
         if(ret == null) {
-          throw new NullPointerException();
+          throw new NullPointerException("no definition for " + in);
         }
         return ret;
       }
