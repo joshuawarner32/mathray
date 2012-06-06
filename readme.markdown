@@ -42,6 +42,6 @@ Specifying an equation in x and y causes mathray to plot using an interval arith
 
 <code>./mathray --plot "y^2*(y^2-(8/10)^2)=x^2*(x^2-1)"</code>
 
-NOT YET WORKING: Specifying an equation in x, y, and z causes mathray to plot using a 3D ray-tracer (or a direct analog thereof):
+Specifying an equation in x, y, and z causes mathray to plot using a 3D ray-tracer (or a direct analog thereof):
 
-NOT YET WORKING: <code>./mathray --plot "x^2+y^2=(1-z)*z^4"</code>
+<code>./mathray --plot "x^2+y^2=(1-z)*z^4"</code>
