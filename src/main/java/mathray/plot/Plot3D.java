@@ -123,4 +123,8 @@ public class Plot3D {
     return ret;
   }
   
+  public static BufferedImage plotBlockFunction(FunctionTypes.ZeroInBlockD3 func, FunctionTypes.D output, int width, int height, double error, double max) {
+    return null;
+  }
+  
 }
