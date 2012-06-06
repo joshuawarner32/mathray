@@ -4,6 +4,7 @@ import mathray.Lambda;
 import mathray.Definition;
 import mathray.Multidef;
 import mathray.Symbol;
+import mathray.Value;
 import mathray.device.FunctionTypes;
 import mathray.eval.machine.VisitorDevice;
 import mathray.eval.simplify.Simplifications;
@@ -32,7 +33,7 @@ public class TestProject {
     Definition def = def(args(x), x);
     Lambda<Multidef> projected = Project.project(def.toMultidef(), def.args);
     Multidef simplified = Simplifications.simplify(projected.call(num(0), num(1)));
-    assertEquals(simplified, multidef(args(x), x));
+    assertEquals(multidef(args(x), x), simplified);
   }
   
   @Test
@@ -45,12 +46,16 @@ public class TestProject {
   @Test
   @Ignore
   public void test2DProjectIdentity() {
-    Definition def = def(args(x, y), max(x, y));
-    double[] id = new double[] {0, 0, 1, 0, 0, 1};
-//    assertEquals(0.0, closedProjectedEval(def, id, new double[] {0, 0}), 0.000001);
-//    assertEquals(1.0, closedProjectedEval(def, id, new double[] {0, 1}), 0.000001);
-//    assertEquals(2.0, closedProjectedEval(def, id, new double[] {2, 1}), 0.000001);
-    assertEquals(-1.0, closedProjectedEval(def, id, new double[] {-1, -2}), 0.000001);
+    Multidef def = multidef(args(x, y), x, y);
+    Lambda<Multidef> projected = Project.project(def, def.args);
+    System.out.println(projected);
+    Value[] id = new Value[] {
+      num(0), num(0),
+      num(1), num(-1),
+      num(0), num(1)
+    };
+    Multidef simplified = Simplifications.simplify(projected.call(id));
+    assertEquals(multidef(args(x, y), x, y), simplified);
   }
   
   @Test

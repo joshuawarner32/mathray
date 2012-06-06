@@ -33,7 +33,7 @@ public class CameraD3 {
     double width = Math.sin(fov / 2);
     double height = width / aspect;
     
-    return new CameraD3(pos, forward, right, nup, width, height);
+    return new CameraD3(pos, forward, nup, right, width, height);
   }
   
   public double[] args() {
@@ -47,4 +47,15 @@ public class CameraD3 {
     res.dz = forward.z + (x * width / 2) * right.z + (y * height / 2) * up.z;
   }
 
+  @Override
+  public String toString() {
+    StringBuilder b = new StringBuilder();
+    b.append("CameraD3(\n");
+    b.append("  pos:     ").append(pos).append('\n');
+    b.append("  forward: ").append(forward).append('\n');
+    b.append("  up:      ").append(up).append('\n');
+    b.append("  right:   ").append(right).append('\n');
+    b.append(')');
+    return b.toString();
+  }
 }

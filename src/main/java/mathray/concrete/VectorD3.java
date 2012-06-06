@@ -1,5 +1,7 @@
 package mathray.concrete;
 
+import com.google.common.base.Joiner;
+
 public class VectorD3 {
   
   public double x;
@@ -53,6 +55,11 @@ public class VectorD3 {
     VectorD3 res = new VectorD3();
     res.subInPlace(a, b);
     return res;
+  }
+  
+  @Override
+  public String toString() {
+    return "{" + x + ", " + y + ", " + z + "}";
   }
 
 }
