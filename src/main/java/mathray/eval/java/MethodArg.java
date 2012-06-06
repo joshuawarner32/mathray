@@ -1,6 +1,5 @@
 package mathray.eval.java;
 
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
@@ -25,11 +24,6 @@ public class MethodArg implements JavaValue {
   @Override
   public Type getType() {
     return type;
-  }
-
-  @Override
-  public void forceStore(MethodVisitor m, int index) {
-    m.visitVarInsn(type.getOpcode(Opcodes.ISTORE), index);
   }
 
   @Override

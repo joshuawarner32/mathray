@@ -1,6 +1,5 @@
 package mathray.eval.java;
 
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
@@ -21,11 +20,6 @@ public class ComputedValue implements JavaValue {
   @Override
   public void store(MethodGenerator m) {
     m.methodVisitor.visitVarInsn(type.getOpcode(Opcodes.ISTORE), m.findOrAllocLocalIndex(this));
-  }
-  
-  @Override
-  public void forceStore(MethodVisitor m, int index) {
-    m.visitVarInsn(type.getOpcode(Opcodes.ISTORE), index);
   }
   
   @Override

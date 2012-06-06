@@ -1,6 +1,5 @@
 package mathray.eval.java;
 
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
@@ -26,11 +25,6 @@ class DoubleConstant implements JavaValue {
   @Override
   public void store(MethodGenerator m) {
     // do nothing
-  }
-  
-  @Override
-  public void forceStore(MethodVisitor m, int index) {
-    m.visitVarInsn(Opcodes.DSTORE, index);
   }
   
   @Override
