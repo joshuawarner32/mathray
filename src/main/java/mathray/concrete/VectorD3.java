@@ -1,7 +1,5 @@
 package mathray.concrete;
 
-import com.google.common.base.Joiner;
-
 public class VectorD3 {
   
   public double x;

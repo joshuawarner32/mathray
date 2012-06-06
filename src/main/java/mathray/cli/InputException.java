@@ -1,7 +1,5 @@
 package mathray.cli;
 
-import mathray.eval.text.ParseException;
-
 @SuppressWarnings("serial")
 public class InputException extends Exception {
 
