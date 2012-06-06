@@ -51,11 +51,12 @@ public class TestProject {
     double[] res = new double[3];
     f.close(cam.args()).call(vec.toArray(), res);
     VectorD3 actual = VectorD3.fromArray(res);
-    assertEquals(expected, actual);
+    assertEquals(expected.x, actual.x, 0.00000001);
+    assertEquals(expected.y, actual.y, 0.00000001);
+    assertEquals(expected.z, actual.z, 0.00000001);
   }
   
   @Test
-  @Ignore
   public void test3DProject() {
     Multidef def = multidef(args(x, y, z), x, y, z);
     Lambda<Multidef> projected = Project.project(def, def.args);
@@ -64,6 +65,7 @@ public class TestProject {
     System.out.println(simplified);
     CameraD3 cam = CameraD3.lookAt(new VectorD3(1, 1, 1), new VectorD3(3, 3, 3), 1, 1, new VectorD3(0, 0, 1));
     checkCoordinates(cam, f, new VectorD3(0, 0, 0));
+    checkCoordinates(cam, f, new VectorD3(1, 1, 1));
     checkCoordinates(cam, f, new VectorD3(1, 2, 3));
     checkCoordinates(cam, f, new VectorD3(4, 1, 2));
     checkCoordinates(cam, f, new VectorD3(1.2, 4, -1));

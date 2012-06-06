@@ -16,8 +16,9 @@ public class CameraD3 {
     this.forward = forward;
     this.up = up;
     this.right = right;
-    this.width = width;
-    this.height = height;
+    
+    right.scale(width / 2);
+    up.scale(height / 2);
   }
   
   public static CameraD3 lookAt(VectorD3 pos, VectorD3 lookAt, double fov, double aspect, VectorD3 up) {
@@ -37,21 +38,25 @@ public class CameraD3 {
   }
   
   public double[] args() {
-    return new double[] {right.x, right.y, right.z, up.x, up.y, up.z, forward.x, forward.y, forward.z, pos.x, pos.y, pos.z};
+    return new double[] {
+        pos.x, pos.y, pos.z,
+        right.x, right.y, right.z,
+        up.x, up.y, up.z,
+        forward.x, forward.y, forward.z};
   }
   
   public void ray(double x, double y, RayD3 res) {
     res.setP(pos);
-    res.dx = forward.x + (x * width / 2) * right.x + (y * height / 2) * up.x;
-    res.dy = forward.y + (x * width / 2) * right.y + (y * height / 2) * up.y;
-    res.dz = forward.z + (x * width / 2) * right.z + (y * height / 2) * up.z;
+    res.dx = forward.x + x * right.x + y * up.x;
+    res.dy = forward.y + x * right.y + y * up.y;
+    res.dz = forward.z + x * right.z + y * up.z;
   }
   
   public VectorD3 transform(VectorD3 vec) {
     return new VectorD3(
-      (forward.x + (vec.x * width / 2) * right.x + (vec.y * height / 2) * up.x) * vec.z,
-      (forward.y + (vec.x * width / 2) * right.y + (vec.y * height / 2) * up.y) * vec.z,
-      (forward.z + (vec.x * width / 2) * right.z + (vec.y * height / 2) * up.z) * vec.z);
+      (forward.x + vec.x * right.x + vec.y * up.x) * vec.z + pos.x,
+      (forward.y + vec.x * right.y + vec.y * up.y) * vec.z + pos.y,
+      (forward.z + vec.x * right.z + vec.y * up.z) * vec.z + pos.z);
   }
 
   @Override

@@ -69,5 +69,25 @@ public class VectorD3 {
   public static VectorD3 fromArray(double[] a) {
     return new VectorD3(a[0], a[1], a[2]);
   }
+  
+  @Override
+  public boolean equals(Object obj) {
+    if(!(obj instanceof VectorD3)) {
+      return false;
+    }
+    VectorD3 v = (VectorD3)obj;
+    return x == v.x && y == v.y && z == v.z;
+  }
+  
+  @Override
+  public int hashCode() {
+    return new Double(x).hashCode() + 2 * new Double(y).hashCode() + 3 * new Double(z).hashCode();
+  }
+
+  public void scale(double d) {
+    x *= d;
+    y *= d;
+    z *= d;
+  }
 
 }
