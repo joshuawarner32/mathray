@@ -62,4 +62,12 @@ public class VectorD3 {
     return "{" + x + ", " + y + ", " + z + "}";
   }
 
+  public double[] toArray() {
+    return new double[] {x, y, z};
+  }
+
+  public static VectorD3 fromArray(double[] a) {
+    return new VectorD3(a[0], a[1], a[2]);
+  }
+
 }

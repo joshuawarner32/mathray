@@ -23,6 +23,8 @@ public class RayD3 {
     this(p.x, p.y, p.z, d.x, d.y, d.z);
   }
   
+  public RayD3() {}
+
   public void increment() {
     x += dx;
     y += dy;

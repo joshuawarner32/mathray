@@ -46,6 +46,13 @@ public class CameraD3 {
     res.dy = forward.y + (x * width / 2) * right.y + (y * height / 2) * up.y;
     res.dz = forward.z + (x * width / 2) * right.z + (y * height / 2) * up.z;
   }
+  
+  public VectorD3 transform(VectorD3 vec) {
+    return new VectorD3(
+      (forward.x + (vec.x * width / 2) * right.x + (vec.y * height / 2) * up.x) * vec.z,
+      (forward.y + (vec.x * width / 2) * right.y + (vec.y * height / 2) * up.y) * vec.z,
+      (forward.z + (vec.x * width / 2) * right.z + (vec.y * height / 2) * up.z) * vec.z);
+  }
 
   @Override
   public String toString() {
