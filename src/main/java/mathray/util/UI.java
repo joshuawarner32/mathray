@@ -18,6 +18,7 @@ public class UI {
     final Object lock = new Object();
     final JFrame frame = new JFrame(name);
     frame.add(new JLabel(new ImageIcon(image)));
+    frame.setIconImage(image);
     frame.pack();
     frame.setVisible(true);
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
