@@ -1,6 +1,8 @@
 import static mathray.Expressions.*;
 import static org.junit.Assert.*;
 import mathray.Symbol;
+import mathray.SymbolSource;
+import mathray.Value;
 import mathray.eval.text.DefaultPrinter;
 import mathray.eval.text.ParseException;
 import mathray.eval.text.ParseInfo;
@@ -110,6 +112,15 @@ public class TestParser {
     assertEquals(mul(pow(num(1), neg(num(2))), num(3)), parser.parse("1^-2*3"));
     assertEquals(add(pow(num(1), neg(num(2))), num(3)), parser.parse("1^-2+3"));
     assertEquals(add(num(1), neg(num(2))), parser.parse("1+-2"));
+  }
+  
+  @Test
+  public void testSymbolSource() throws ParseException {
+    SymbolSource source = new SymbolSource();
+    Value val = parser.parse("a+b", source);
+    Symbol a = source.getSymbol("a");
+    Symbol b = source.getSymbol("b");
+    assertEquals(add(a, b), val);
   }
 
 }

@@ -13,6 +13,7 @@ import com.google.common.base.Joiner;
 import mathray.Call;
 import mathray.Function;
 import mathray.Rational;
+import mathray.SymbolSource;
 import mathray.Value;
 import mathray.Symbol;
 import mathray.eval.Impl;
@@ -166,6 +167,10 @@ public class ParseInfo {
   }
   
   public Value parse(String text) throws ParseException {
+    return parse(text, null);
+  }
+  
+  public Value parse(String text, SymbolSource symbolSource) throws ParseException {
     Stack<Value> stack = new Stack<Value>();
     Stack<Operator> ops = new Stack<Operator>();
     ops.push(new SentinelOperator());
@@ -187,7 +192,11 @@ public class ParseInfo {
           if(func != null) {
             ops.push(new FunctionOperator(func));
           } else {
-            throw new ParseException("unknown function '" + tok.text + "'");
+            if(symbolSource != null) {
+              stack.push(symbolSource.getSymbol(tok.text));
+            } else {
+              throw new ParseException("unknown function '" + tok.text + "'");
+            }
           }
         }
         break;
