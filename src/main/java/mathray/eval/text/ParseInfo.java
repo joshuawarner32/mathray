@@ -194,6 +194,7 @@ public class ParseInfo {
           } else {
             if(symbolSource != null) {
               stack.push(symbolSource.getSymbol(tok.text));
+              state = AFTER_VALUE;
             } else {
               throw new ParseException("unknown function '" + tok.text + "'");
             }
