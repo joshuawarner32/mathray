@@ -5,10 +5,12 @@ import java.awt.image.BufferedImage;
 import com.google.common.base.Stopwatch;
 
 import mathray.concrete.BlockD3;
-import mathray.concrete.MatrixD2;
 import mathray.concrete.RayD3;
 import mathray.concrete.VectorD3;
 import mathray.device.FunctionTypes;
+import mathray.flow.Data;
+import mathray.flow.concrete.DataD;
+import mathray.flow.concrete.DataD2;
 
 public class Plot3D {
   
@@ -46,8 +48,8 @@ public class Plot3D {
     public void print();
   }
   
-  public static void blockDivide(final FunctionTypes.ZeroInBlockD3 func, final MatrixD2 mat, final double error, final double max, BlockD3 block) {
-
+  public static DataD2 blockDivide(final FunctionTypes.ZeroInBlockD3 func, int width, int height, final double error, final double max, BlockD3 block) {
+    final DataD2 mat = new DataD2(width, height, Double.POSITIVE_INFINITY);
     Tester tester = new Tester() {
       private void split(BlockD3 block) {
         int xSplit = block.width / 2;
@@ -94,15 +96,14 @@ public class Plot3D {
     };
     tester.test(block);
     tester.print();
+    return mat;
   }
   
   public static BufferedImage plotBlockDepth(final FunctionTypes.ZeroInBlockD3 func, int width, int height, double error, double max) {
-    MatrixD2 mat = new MatrixD2(width, height);
-    mat.putEverywhere(Double.POSITIVE_INFINITY);
     BlockD3 block = new BlockD3(-1, -1, 0, 1, 1, 1, 0, 0, width, height);
     Stopwatch watch = new Stopwatch();
     watch.start();
-    blockDivide(func, mat, error, max, block);
+    DataD2 mat = blockDivide(func, width, height, error, max, block);
     watch.stop();
     double time = watch.elapsedMillis() / 1000.0;
     System.out.println("time: " + time);
@@ -124,7 +125,13 @@ public class Plot3D {
   }
   
   public static BufferedImage plotBlockFunction(FunctionTypes.ZeroInBlockD3 func, FunctionTypes.D output, int width, int height, double error, double max) {
-    return null;
+    BlockD3 block = new BlockD3(-1, -1, 0, 1, 1, 1, 0, 0, width, height);
+    Stopwatch watch = new Stopwatch();
+    watch.start();
+    Data mat = blockDivide(func, width, height, error, max, block);
+    watch.stop();
+    
+    return null;//output.map(mat);
   }
   
 }

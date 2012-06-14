@@ -1,5 +1,7 @@
 package mathray.concrete;
 
+import mathray.flow.concrete.DataD2;
+
 public class BlockD3 {
   
   public double x0;
@@ -38,7 +40,7 @@ public class BlockD3 {
     return z1 - z0;
   }
 
-  public void putOn(MatrixD2 mat) {
+  public void putOn(DataD2 mat) {
     mat.put(x, y, (z0 + z1) / 2);
   }
 

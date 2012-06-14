@@ -1,17 +1,20 @@
-package mathray.concrete;
+package mathray.flow.concrete;
 
 import java.util.Arrays;
 
-public class MatrixD2 {
+import mathray.flow.Data;
+
+public class DataD2 implements Data {
   
   private double[] data;
   public final int width;
   public final int height;
   
-  public MatrixD2(int width, int height) {
+  public DataD2(int width, int height, double value) {
     data = new double[width * height];
     this.width = width;
     this.height = height;
+    Arrays.fill(data, value);
   }
   
   public void put(int x, int y, double value) {
