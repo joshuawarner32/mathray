@@ -1,5 +1,6 @@
 package mathray.eval.calc;
 
+import mathray.Args;
 import mathray.Call;
 import mathray.Multidef;
 import mathray.FunctionRegistrar;
@@ -7,6 +8,7 @@ import mathray.Rational;
 import mathray.Definition;
 import mathray.Value;
 import mathray.Symbol;
+import mathray.util.Transformer;
 import mathray.util.Vector;
 import mathray.visitor.Processor;
 
@@ -63,5 +65,14 @@ public class Derivatives extends FunctionRegistrar<Multidef> {
   
   public Multidef transform(Multidef def, final Symbol diffVar) {
     return def.transform(deriver(diffVar));
+  }
+
+  public static Multidef multiDerive(final Definition def, Args args) {
+    return multidef(args, args.toVector().transform(new Transformer<Symbol, Value>() {
+      @Override
+      public Value transform(Symbol in) {
+        return derive(def.value, in);
+      }
+    }));
   }
 }

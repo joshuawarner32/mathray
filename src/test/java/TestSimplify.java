@@ -38,6 +38,7 @@ public class TestSimplify {
     assertSimplifiesTo(add(num(0), x), x);
     assertSimplifiesTo(add(num(3), num(0)), num(3));
     assertSimplifiesTo(add(num(0), num(3)), num(3));
+    assertSimplifiesTo(add(add(x, num(0)), num(0)), x);
   }
   
   @Test

@@ -1,16 +1,26 @@
 package mathray.plot;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import com.google.common.base.Stopwatch;
-
+import mathray.Definition;
+import mathray.Lambda;
+import mathray.Multidef;
 import mathray.concrete.BlockD3;
+import mathray.concrete.CameraD3;
 import mathray.concrete.RayD3;
 import mathray.concrete.VectorD3;
 import mathray.device.FunctionTypes;
+import mathray.eval.calc.Derivatives;
+import mathray.eval.java.JavaDevice;
+import mathray.eval.simplify.Simplifications;
+import mathray.eval.split.IntervalTransform;
+import mathray.eval.transform.Project;
 import mathray.flow.Data;
 import mathray.flow.concrete.DataD;
-import mathray.flow.concrete.DataD2;
+
+import static mathray.Expressions.*;
 
 public class Plot3D {
   
@@ -48,8 +58,8 @@ public class Plot3D {
     public void print();
   }
   
-  public static DataD2 blockDivide(final FunctionTypes.ZeroInBlockD3 func, int width, int height, final double error, final double max, BlockD3 block) {
-    final DataD2 mat = new DataD2(width, height, Double.POSITIVE_INFINITY);
+  public static DataD blockDivide(final FunctionTypes.ZeroInBlockD3 func, int width, int height, final double error, final double max, BlockD3 block) {
+    final DataD.Builder3 mat = new DataD.Builder3(width, height, 1);
     Tester tester = new Tester() {
       private void split(BlockD3 block) {
         int xSplit = block.width / 2;
@@ -73,7 +83,8 @@ public class Plot3D {
           if(func.maybeHasZeroIn(block)) {
             if(block.width == 1 && block.height == 1) {
               if(block.depth() <= error) {
-                block.putOn(mat);
+                mat.put(block.x, block.y, 0, (block.z0 + block.z1) / 2);
+                
                 break;
               } else {
                 block.half();
@@ -96,42 +107,83 @@ public class Plot3D {
     };
     tester.test(block);
     tester.print();
-    return mat;
-  }
-  
-  public static BufferedImage plotBlockDepth(final FunctionTypes.ZeroInBlockD3 func, int width, int height, double error, double max) {
-    BlockD3 block = new BlockD3(-1, -1, 0, 1, 1, 1, 0, 0, width, height);
-    Stopwatch watch = new Stopwatch();
-    watch.start();
-    DataD2 mat = blockDivide(func, width, height, error, max, block);
-    watch.stop();
-    double time = watch.elapsedMillis() / 1000.0;
-    System.out.println("time: " + time);
-    double dmin = mat.nonInfiniteMin();
-    double dmax = mat.nonInfiniteMax();
-    
-    BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-    for(int y = 0; y < height; y++) {
-      for(int x = 0; x < width; x++) {
-        double val = (mat.get(x, y) - dmin) / (dmax - dmin);
-        int r = (int)(val * 255);
-        int g = (int)(val * 255);
-        int b = (int)(val * 255);
-        
-        ret.setRGB(x, height - 1 - y, (0xff << 24) | (r << 16) | (g << 8) | (b << 0));
-      }
-    }
-    return ret;
+    return mat.build();
   }
   
   public static BufferedImage plotBlockFunction(FunctionTypes.ZeroInBlockD3 func, FunctionTypes.D output, int width, int height, double error, double max) {
     BlockD3 block = new BlockD3(-1, -1, 0, 1, 1, 1, 0, 0, width, height);
-    Stopwatch watch = new Stopwatch();
-    watch.start();
     Data mat = blockDivide(func, width, height, error, max, block);
-    watch.stop();
     
-    return null;//output.map(mat);
+    return renderData(mat, output, -1, 1, -1, 1);
+  }
+  
+  private static BufferedImage renderData(Data input, FunctionTypes.D f, double xmin, double xmax, double ymin, double ymax) {
+    DataD.View3 in = ((DataD)input).asView3();
+    BufferedImage out = new BufferedImage(in.width, in.height, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g = (Graphics2D)out.getGraphics();
+    g.setBackground(Color.WHITE);
+    g.clearRect(0, 0, in.width, in.height);
+
+    double[] ia = new double[3];
+    double[] oa = new double[3];
+    
+    for(int y = 0; y < in.height; y++) {
+      double yfact = y / (double)(in.height - 1);
+      double yval = ymin * (1 - yfact) + ymax * yfact;
+      
+      ia[1] = yval;
+      
+      for(int x = 0; x < in.width; x++) {
+        double xfact = x / (double)(in.width - 1);
+        double xval = xmin * (1 - xfact) + xmax * xfact;
+        
+        ia[0] = xval;
+        
+        double zval = in.get(x, y, 0);
+        
+        ia[2] = zval;
+        
+        f.call(ia, oa);
+        if(hasInfOrNaN(oa)) {
+          g.setPaint(Color.MAGENTA);
+        } else {
+          g.setPaint(new Color(
+              Math.min(Math.max((float)oa[0], 0), 1),
+              Math.min(Math.max((float)oa[1], 0), 1),
+              Math.min(Math.max((float)oa[2], 0), 1)));
+        }
+        g.fillRect(x, in.height - y, 1, 1);
+      }
+    }
+    return out;
+  }
+  
+  private static boolean hasInfOrNaN(double[] oa) {
+    for(double d : oa) {
+      if(Double.isInfinite(d) || Double.isNaN(d)) {
+        System.out.println(d);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public static BufferedImage plotBlockDefault(Definition def, CameraD3 cam, int width, int height, double error, double max) {
+    Lambda<Multidef> proj = Project.project(def.toMultidef(), def.args);
+    proj = proj.close(Simplifications.simplify(proj.value));
+    System.out.println(proj);
+    Lambda<Multidef> inter = proj.close(Simplifications.simplify(IntervalTransform.intervalize(proj.value, proj.value.args)));
+    FunctionTypes.ClosureD<FunctionTypes.ZeroInBlockD3> func = JavaDevice.compile(JavaDevice.closureD(JavaDevice.MAYBE_ZERO_IN_BLOCKD3), inter);
+    System.out.println(cam);
+    
+    Multidef deriv = Derivatives.multiDerive(def, def.args);
+    deriv = Simplifications.simplify(normalize(deriv));
+    System.out.println(deriv);
+    deriv = zip(def(args(x), div(add(x, 1), 2)), deriv);
+    Lambda<Multidef> derivProj = Project.project(deriv, def.args);
+    FunctionTypes.ClosureD<FunctionTypes.D> derivFunc = JavaDevice.compile(JavaDevice.closureD(JavaDevice.FUNCTION_D), derivProj);
+    
+    return plotBlockFunction(func.close(cam.args()), derivFunc.close(cam.args()), width, height, 0.001, 100);
   }
   
 }

@@ -1,7 +1,5 @@
 package mathray.concrete;
 
-import mathray.flow.concrete.DataD2;
-
 public class BlockD3 {
   
   public double x0;
@@ -38,10 +36,6 @@ public class BlockD3 {
 
   public double depth() {
     return z1 - z0;
-  }
-
-  public void putOn(DataD2 mat) {
-    mat.put(x, y, (z0 + z1) / 2);
   }
 
   public BlockD3 split(int x2, int y2, int width2, int height2) {

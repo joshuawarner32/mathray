@@ -14,6 +14,10 @@ public class Expressions {
   
   private Expressions() {}
   
+  public static final Symbol x = sym("x");
+  public static final Symbol y = sym("y");
+  public static final Symbol z = sym("z");
+  
   @ConstExpr
   public static Symbol sym(String name) {
     return new Symbol(name);
@@ -140,6 +144,16 @@ public class Expressions {
     return res;
   }
   
+  @SuppressWarnings("unchecked")
+  @ConstExpr
+  public static Multidef zip(Definition def, Multidef... lists) {
+    Iterable<Value>[] its = new Iterable[lists.length];
+    for(int i = 0; i < lists.length; i++) {
+      its[i] = lists[i].value.toVector();
+    }
+    return multidef(def.args, Vector.fromIterable(zip(def, its)));
+  }
+  
   // so we don't get superfluous warnings elsewhere
   @SuppressWarnings("unchecked")
   @ConstExpr
@@ -204,6 +218,11 @@ public class Expressions {
   }
 
   @ConstExpr
+  public static Value add(Value a, long b) {
+    return add(a, num(b));
+  }
+
+  @ConstExpr
   public static Value add(Value... values) {
     return fold(ADD, Arrays.asList(values));
   }
@@ -236,6 +255,11 @@ public class Expressions {
   @ConstExpr
   public static Value div(Value a, Value b) {
     return DIV.call(a, b);
+  }
+
+  @ConstExpr
+  public static Value div(Value a, long b) {
+    return div(a, num(b));
   }
 
   @ConstExpr
@@ -366,6 +390,19 @@ public class Expressions {
   @ConstExpr
   public static Rational num(long num, long denom) {
     return Rational.get(num, denom);
+  }
+  
+  private static Definition square = def(args(x), pow(x, 2));
+  
+  @ConstExpr
+  public static Value length(Vector<Value> vec) {
+    return sqrt(add(zip(square, vec)));
+  }
+  
+  @ConstExpr
+  public static Multidef normalize(Multidef vec) {
+    Definition divLen = def(args(x), div(x, length(vec.value.toVector())));
+    return multidef(vec.args, Vector.fromIterable(zip(divLen, vec.value.toVector())));
   }
 
 }

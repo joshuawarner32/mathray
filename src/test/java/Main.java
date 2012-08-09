@@ -3,20 +3,15 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import mathray.Args;
-import mathray.Lambda;
 import mathray.Definition;
-import mathray.Multidef;
 import mathray.Symbol;
 import mathray.concrete.CameraD3;
 import mathray.concrete.VectorD3;
 import mathray.device.FunctionTypes;
 import mathray.eval.java.JavaDevice;
-import mathray.eval.simplify.Simplifications;
-import mathray.eval.split.IntervalTransform;
 import mathray.eval.text.DefaultPrinter;
 import mathray.eval.text.ParseException;
 import mathray.eval.text.ParseInfo;
-import mathray.eval.transform.Project;
 import mathray.plot.Frame;
 import mathray.plot.Plot3D;
 import mathray.plot.Plots;
@@ -52,11 +47,8 @@ public class Main {
   }
   
   private static void plot3D(Definition def, int width, int height) {
-    Lambda<Multidef> proj = Project.project(def.toMultidef(), def.args); 
-    Lambda<Multidef> inter = proj.close(Simplifications.simplify(IntervalTransform.intervalize(proj.value, proj.value.args)));
     CameraD3 cam = CameraD3.lookAt(new VectorD3(3, 3, 3), new VectorD3(0, 0, 0), 1, width / (double)height, new VectorD3(0, 0, 1));
-    FunctionTypes.ClosureD<FunctionTypes.ZeroInBlockD3> func = JavaDevice.compile(JavaDevice.closureD(JavaDevice.MAYBE_ZERO_IN_BLOCKD3), inter);
-    BufferedImage image = Plot3D.plotBlockDepth(func.close(cam.args()), width, height, 0.001, 100);
+    BufferedImage image = Plot3D.plotBlockDefault(def, cam, width, height, 0.001, 100);
     UI.show(def.toString(), image);
   }
   
