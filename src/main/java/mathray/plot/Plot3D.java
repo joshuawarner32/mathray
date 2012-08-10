@@ -25,6 +25,7 @@ import mathray.eval.split.IntervalTransform;
 import mathray.eval.transform.Project;
 import mathray.flow.Data;
 import mathray.flow.concrete.DataD;
+import mathray.util.ImageUtil;
 
 import static mathray.Expressions.*;
 
@@ -131,9 +132,6 @@ public class Plot3D {
   private static int color(byte r, byte g, byte b) {
     return (r << 16) + (g << 8) + (b << 0);
   }
-  private static final int[] RGB_MASKS = {0xFF0000, 0xFF00, 0xFF};
-  private static final ColorModel RGB_OPAQUE =
-    new DirectColorModel(32, RGB_MASKS[0], RGB_MASKS[1], RGB_MASKS[2]);
   
   private static BufferedImage renderData(Data input, FunctionTypes.D f, double xmin, double xmax, double ymin, double ymax) {
     DataD.View3 in = ((DataD)input).asView3();
@@ -171,10 +169,7 @@ public class Plot3D {
         out[x + (in.height - y - 1) * in.width] = color;
       }
     }
-    DataBuffer buf = new DataBufferInt(out, out.length);
-    WritableRaster raster = Raster.createPackedRaster(buf, in.width, in.height, in.width, RGB_MASKS, null);
-    BufferedImage outImage = new BufferedImage(RGB_OPAQUE, raster, false, null);
-    return outImage;
+    return ImageUtil.imageFromArray(out, in.width, in.height);
   }
   
   private static boolean hasInfOrNaN(double[] oa) {
