@@ -54,7 +54,7 @@ public class IntervalTransform extends FunctionRegistrar<Multidef> {
   private static Multidef makePowCompute() {
     Value paa = pow(xa, ya);
     Value pbb = pow(xb, yb);
-    Vector<Value> undef = vector((Value)UNDEF, UNDEF);
+    Vector<Value> undef = vector((Value)NEG_INF, POS_INF);
     Vector<Value> even = vector(intervalSelectContains(vector((Value)xa, xb), vector(num(0), max(paa, pbb)), vector(min(paa, pbb), max(paa, pbb))));
     Vector<Value> odd = vector(paa, pbb);
     Vector<Value> isel = vector(intervalSelectInteger(ya, even, odd, undef));

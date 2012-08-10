@@ -176,10 +176,13 @@ public class Plot3D {
     FunctionTypes.ClosureD<FunctionTypes.ZeroInBlockD3> func = JavaDevice.compile(JavaDevice.closureD(JavaDevice.MAYBE_ZERO_IN_BLOCKD3), inter);
     System.out.println(cam);
     
-    Multidef deriv = Derivatives.multiDerive(def, def.args);
-    deriv = Simplifications.simplify(normalize(deriv));
+    Multidef deriv = Simplifications.simplify(Derivatives.multiDerive(def, def.args));
+    System.out.println("original derivitive");
     System.out.println(deriv);
+    deriv = normalize(deriv);
+    deriv = Simplifications.simplify(deriv);
     deriv = zip(def(args(x), div(add(x, 1), 2)), deriv);
+    deriv = Simplifications.simplify(deriv);
     Lambda<Multidef> derivProj = Project.project(deriv, def.args);
     FunctionTypes.ClosureD<FunctionTypes.D> derivFunc = JavaDevice.compile(JavaDevice.closureD(JavaDevice.FUNCTION_D), derivProj);
     

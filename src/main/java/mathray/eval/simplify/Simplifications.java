@@ -280,10 +280,19 @@ public class Simplifications extends PatternRegistry {
 
     @Override
     public Expr exprMul(Expr expr) {
+      if(coeff.num == 0) {
+        throw new IllegalStateException();
+      }
       if(expr instanceof ConstExpr) {
+        if(((ConstExpr)expr).value.num == 0) {
+          return new ConstExpr(num(0));
+        }
         return new ProductExpr(coeff.mul(((ConstExpr)expr).value), factors);
       } else if(expr instanceof ProductExpr) {
         ProductExpr prod = (ProductExpr)expr;
+        if(prod.coeff.num == 0) {
+          throw new IllegalStateException();
+        }
         return new ProductExpr(coeff.mul(prod.coeff), factors.concat(prod.factors));
       } else {
         return new ProductExpr(coeff, factors.append(expr));

@@ -7,6 +7,7 @@ import mathray.Symbol;
 import mathray.Value;
 import mathray.eval.simplify.Simplifications;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -159,10 +160,11 @@ public class TestSimplify {
     assertSame(c.args.get(0), ((Call)c.args.get(1)).args.get(0));
   }
   
+  @Ignore
   @Test
   public void testSimpleAddFactor() {
-    //assertSimplifiesTo(add(x, x), mul(num(2), x));
-    //assertSimplifiesTo(add(x, x, x), mul(num(3), x));
+    assertSimplifiesTo(add(x, x), mul(num(2), x));
+    assertSimplifiesTo(add(x, x, x), mul(num(3), x));
   }
 
 }

@@ -12,7 +12,11 @@ public class FunctionSymbolRegistrar<FuncData, SymData> extends FunctionRegistra
   }
   
   public SymData lookup(Symbol sym) {
-    return syms.get(sym);
+    SymData ret = syms.get(sym);
+    if(ret == null) {
+      throw new UndefinedSymbolException(sym);
+    }
+    return ret;
   }
   
 }

@@ -10,6 +10,7 @@ import mathray.FunctionSymbolRegistrar;
 import mathray.NamedConstants;
 import mathray.Rational;
 import mathray.Symbol;
+import mathray.Value;
 import mathray.device.Device;
 import mathray.device.FunctionType;
 import mathray.device.FunctionTypes;
@@ -170,19 +171,31 @@ public class VisitorDevice extends FunctionSymbolRegistrar<Impl<Double>, Double>
   }
   
   public Vector<Double> transform(final Multidef def, final Vector<Double> params) {
+    if(def.args.size() != params.size()) {
+      throw new IllegalArgumentException();
+    }
+    
     final Processor<Double> v = new Processor<Double>() {
+      
+      public Double check(Double d, Value value) {
+        if(Double.isNaN(d)) {
+          throw new VisitorArithmeticException(d, value); 
+        }
+        return d;
+      }
+      
       @Override
       public Double process(Call call, Vector<Double> args) {
-        return lookup(call.func).call(args);
+        return check(lookup(call.func).call(args), call);
       }
 
       @Override
       public Double process(Symbol sym) {
-        int ret = def.args.indexOf(sym);
-        if(ret != -1) {
-          return params.get(ret);
+        int s = def.args.indexOf(sym);
+        if(s != -1) {
+          return check(params.get(s), sym);
         } else {
-          return lookup(sym);
+          return check(lookup(sym), sym);
         }
       }
 
@@ -212,11 +225,14 @@ public class VisitorDevice extends FunctionSymbolRegistrar<Impl<Double>, Double>
     }
   }
   
-  public static FunctionTypes.ClosureD<FunctionTypes.D> closure(Lambda<Multidef> def) {
+  public static FunctionTypes.ClosureD<FunctionTypes.D> closure(final Lambda<Multidef> def) {
     final Multidef complete = new Multidef(def.args.concat(def.value.args), def.value.value);
     return new FunctionTypes.ClosureD<FunctionTypes.D>() {
       @Override
       public FunctionTypes.D close(final double... closedArgs) {
+        if(closedArgs.length != def.args.size()) {
+          throw new IllegalArgumentException("expected " + def.args.size() + " but got " + closedArgs.length);
+        }
         return new FunctionTypes.D() {
           @Override
           public int getOutputArity() {
@@ -230,7 +246,10 @@ public class VisitorDevice extends FunctionSymbolRegistrar<Impl<Double>, Double>
           
           @Override
           public void call(double[] args, double[] res) {
-            double[] all = Arrays.copyOf(closedArgs, closedArgs.length + args.length);
+            if(args.length != def.value.args.size()) {
+              throw new IllegalArgumentException("expected " + def.value.args.size() + " but got " + args.length);
+            }
+            double[] all = Arrays.copyOf(closedArgs, complete.args.size());
             for(int i = 0; i < args.length; i++) {
               all[i + closedArgs.length] = args[i];
             }

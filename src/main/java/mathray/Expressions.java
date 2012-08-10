@@ -148,10 +148,17 @@ public class Expressions {
   @ConstExpr
   public static Multidef zip(Definition def, Multidef... lists) {
     Iterable<Value>[] its = new Iterable[lists.length];
+    Args args = null;
     for(int i = 0; i < lists.length; i++) {
       its[i] = lists[i].value.toVector();
+      if(args == null) {
+        args = lists[i].args;
+      }
+      if(!lists[i].args.equals(args)) {
+        throw new IllegalArgumentException();
+      }
     }
-    return multidef(def.args, Vector.fromIterable(zip(def, its)));
+    return multidef(args, Vector.fromIterable(zip(def, its)));
   }
   
   // so we don't get superfluous warnings elsewhere
