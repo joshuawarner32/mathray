@@ -3,6 +3,12 @@ package mathray.plot;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferInt;
+import java.awt.image.DirectColorModel;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 
 import mathray.Definition;
 import mathray.Lambda;
@@ -117,12 +123,21 @@ public class Plot3D {
     return renderData(mat, output, -1, 1, -1, 1);
   }
   
+  private static byte fixByte(float data) {
+    data = Math.min(Math.max(data, 0), 1);
+    return (byte)(data * 255);
+  }
+  
+  private static int color(byte r, byte g, byte b) {
+    return (r << 16) + (g << 8) + (b << 0);
+  }
+  private static final int[] RGB_MASKS = {0xFF0000, 0xFF00, 0xFF};
+  private static final ColorModel RGB_OPAQUE =
+    new DirectColorModel(32, RGB_MASKS[0], RGB_MASKS[1], RGB_MASKS[2]);
+  
   private static BufferedImage renderData(Data input, FunctionTypes.D f, double xmin, double xmax, double ymin, double ymax) {
     DataD.View3 in = ((DataD)input).asView3();
-    BufferedImage out = new BufferedImage(in.width, in.height, BufferedImage.TYPE_INT_ARGB);
-    Graphics2D g = (Graphics2D)out.getGraphics();
-    g.setBackground(Color.WHITE);
-    g.clearRect(0, 0, in.width, in.height);
+    int[] out = new int[in.width * in.height];
 
     double[] ia = new double[3];
     double[] oa = new double[3];
@@ -144,18 +159,22 @@ public class Plot3D {
         ia[2] = zval;
         
         f.call(ia, oa);
+        int color;
         if(hasInfOrNaN(oa)) {
-          g.setPaint(Color.MAGENTA);
+          color = 0xff00ffff;
         } else {
-          g.setPaint(new Color(
-              Math.min(Math.max((float)oa[0], 0), 1),
-              Math.min(Math.max((float)oa[1], 0), 1),
-              Math.min(Math.max((float)oa[2], 0), 1)));
+          color = color(
+              fixByte((float)oa[0]),
+              fixByte((float)oa[1]),
+              fixByte((float)oa[2]));
         }
-        g.fillRect(x, in.height - y, 1, 1);
+        out[x + (in.height - y - 1) * in.width] = color;
       }
     }
-    return out;
+    DataBuffer buf = new DataBufferInt(out, out.length);
+    WritableRaster raster = Raster.createPackedRaster(buf, in.width, in.height, in.width, RGB_MASKS, null);
+    BufferedImage outImage = new BufferedImage(RGB_OPAQUE, raster, false, null);
+    return outImage;
   }
   
   private static boolean hasInfOrNaN(double[] oa) {
