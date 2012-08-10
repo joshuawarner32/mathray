@@ -8,6 +8,7 @@ import mathray.Definition;
 import mathray.device.FunctionTypes;
 import mathray.eval.java.JavaDevice;
 import mathray.eval.split.IntervalTransform;
+import mathray.util.ImageUtil;
 
 public class Equation2DPlotter implements Plotter {
   
@@ -67,14 +68,8 @@ public class Equation2DPlotter implements Plotter {
     }
     
     double[] out = new double[2 * w * h];
+    int[] data = new int[w * h];
     rf.repeat(in, out);
-    
-    BufferedImage ret = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-    Graphics2D g = (Graphics2D)ret.getGraphics();
-    g.setBackground(Color.WHITE);
-    g.clearRect(0, 0, w, h);
-    
-    g.setPaint(Color.BLACK);
     
     for(int y = 0; y < h; y++) {
       for(int x = 0; x < w; x++) {
@@ -82,11 +77,13 @@ public class Equation2DPlotter implements Plotter {
         double a = out[i + 0];
         double b = out[i + 1];
         if(a * b <= 0) {
-          g.fillRect(x, h - y, 1, 1);
+          data[x + (h - y - 1) * w] = 0x000000;
+        } else {
+          data[x + (h - y - 1) * w] = 0xffffff;
         }
       }
     }
-    
+    BufferedImage ret = ImageUtil.imageFromArray(data, w, h);
     return new ImageOutput(def.value.toString() + " = 0", ret);
   }
 
