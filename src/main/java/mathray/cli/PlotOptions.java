@@ -2,6 +2,7 @@ package mathray.cli;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import mathray.plot.Format;
 import mathray.plot.Output;
@@ -20,7 +21,6 @@ public class PlotOptions {
   
   static {
     options.addOption(opt("help", "print this message"));
-    options.addOption(arg("plot", "equation", "function or equation to plot"));
     options.addOption(arg("w", "width", "width", "width of output in pixels"));
     options.addOption(arg("h", "height", "height", "height of output in pixels"));
     options.addOption(arg("xa", "value", "lowest (left-most) x value visible in output"));
@@ -67,12 +67,13 @@ public class PlotOptions {
         return;
       }
       
-      if(!line.hasOption("plot")) {
+      String[] plots = line.getArgs();
+      if(plots.length < 1) {
         System.err.println("specify an equation or function to plot");
         printHelp = true;
         return;
       } else {
-        plot = line.getOptionValue("plot");
+        plot = plots[0];
       }
       
       if(line.hasOption("xa")) {
@@ -107,7 +108,7 @@ public class PlotOptions {
   public void start() {
     if(!valid || printHelp) {
       HelpFormatter formatter = new HelpFormatter();
-      formatter.printHelp("mathray --plot \"<equation or function>\"", options);
+      formatter.printHelp("mathray \"<equation or function>\"", options);
       return;
     }
     if(!valid) {
