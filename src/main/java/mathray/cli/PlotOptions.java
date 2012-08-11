@@ -24,11 +24,8 @@ public class PlotOptions {
     options.addOption(opt("help", "print this message"));
     options.addOption(arg("s", "size", "<width>x<height>", "size of output in pixels"));
     options.addOption(arg("r", "range", "<xmin>:<xmax>,<ymin>:<ymax>", "range of visible coordinates"));
-    options.addOption(arg("xb", "value", "highest (right-most) x value visible in output"));
-    options.addOption(arg("ya", "value", "lowest y value visible in output (near bottom)"));
-    options.addOption(arg("yb", "value", "highest y value visible in output (near top)"));
     
-    options.addOption(arg("output", "file", "file to write result to"));
+    options.addOption(arg("o", "output", "file", "file to write result to"));
   }
   
   private static Option arg(String name, String argName, String desc) {
