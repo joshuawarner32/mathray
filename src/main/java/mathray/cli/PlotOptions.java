@@ -3,6 +3,7 @@ package mathray.cli;
 import java.io.File;
 import java.io.IOException;
 
+import mathray.concrete.VectorD3;
 import mathray.plot.Format;
 import mathray.plot.Output;
 import mathray.plot.Range;
@@ -22,8 +23,12 @@ public class PlotOptions {
   
   static {
     options.addOption(opt("help", "print this message"));
-    options.addOption(arg("s", "size", "<width>x<height>", "size of output in pixels"));
-    options.addOption(arg("r", "range", "<xmin>:<xmax>,<ymin>:<ymax>", "range of visible coordinates"));
+    options.addOption(arg("s", "size", "width>x<height", "size of output in pixels"));
+    options.addOption(arg("r", "range", "xmin>:<xmax>,<ymin>:<ymax", "range of visible coordinates"));
+    options.addOption(arg("c", "camera", "x>,<y>,<z", "camera position"));
+    options.addOption(arg("l", "lookat", "x>,<y>,<z", "look-at position"));
+    options.addOption(arg("u", "up", "x>,<y>,<z", "up vector"));
+    options.addOption(arg("f", "fov", "value", "field of view"));
     
     options.addOption(arg("o", "output", "file", "file to write result to"));
   }
@@ -60,6 +65,17 @@ public class PlotOptions {
       throw new InputException("specify range as <min>:<max>, got " + s);
     }
     return new Range(Double.parseDouble(p[0]), Double.parseDouble(p[1]));
+  }
+  
+  private static VectorD3 parseVector3(String s) throws InputException {
+    String[] p = s.split(",");
+    if(p.length != 3) {
+      throw new InputException("specify vector as <x>,<y>,<z>, got " + s);
+    }
+    return new VectorD3(
+        Double.parseDouble(p[0]),
+        Double.parseDouble(p[1]),
+        Double.parseDouble(p[2]));
   }
   
   public PlotOptions(String[] args) {
@@ -99,6 +115,22 @@ public class PlotOptions {
         if(s.length == 2) {
           format.yRange = parseRange(s[1]);
         }
+      }
+      
+      if(line.hasOption("camera")) {
+        format.cameraPosition = parseVector3(line.getOptionValue("camera"));
+      }
+      
+      if(line.hasOption("lookat")) {
+        format.cameraLookAt = parseVector3(line.getOptionValue("lookat"));
+      }
+      
+      if(line.hasOption("up")) {
+        format.cameraUp = parseVector3(line.getOptionValue("up"));
+      }
+      
+      if(line.hasOption("fov")) {
+        format.cameraFieldOfView = Double.parseDouble(line.getOptionValue("fov"));
       }
       
       if(line.hasOption("output")) {

@@ -43,16 +43,26 @@ public class VectorD3 {
     return res;
   }
   
-  public void subInPlace(VectorD3 a, VectorD3 b) {
+  public VectorD3 subInPlace(VectorD3 a, VectorD3 b) {
     x = a.x - b.x;
     y = a.y - b.y;
     z = a.z - b.z;
+    return this;
   }
 
   public static VectorD3 sub(VectorD3 a, VectorD3 b) {
-    VectorD3 res = new VectorD3();
-    res.subInPlace(a, b);
-    return res;
+    return new VectorD3().subInPlace(a, b);
+  }
+  
+  public VectorD3 addInPlace(VectorD3 a, VectorD3 b) {
+    x = a.x + b.x;
+    y = a.y + b.y;
+    z = a.z + b.z;
+    return this;
+  }
+  
+  public static VectorD3 add(VectorD3 a, VectorD3 b) {
+    return new VectorD3().addInPlace(a, b);
   }
   
   @Override
@@ -86,6 +96,10 @@ public class VectorD3 {
     x *= d;
     y *= d;
     z *= d;
+  }
+
+  public VectorD3 add(VectorD3 vectorD3) {
+    return null;
   }
 
 }
