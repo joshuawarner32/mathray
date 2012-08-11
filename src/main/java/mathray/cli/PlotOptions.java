@@ -2,7 +2,6 @@ package mathray.cli;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 import mathray.plot.Format;
 import mathray.plot.Output;
@@ -21,8 +20,7 @@ public class PlotOptions {
   
   static {
     options.addOption(opt("help", "print this message"));
-    options.addOption(arg("w", "width", "width", "width of output in pixels"));
-    options.addOption(arg("h", "height", "height", "height of output in pixels"));
+    options.addOption(arg("s", "size", "<width>x<height>", "size of output in pixels"));
     options.addOption(arg("xa", "value", "lowest (left-most) x value visible in output"));
     options.addOption(arg("xb", "value", "highest (right-most) x value visible in output"));
     options.addOption(arg("ya", "value", "lowest y value visible in output (near bottom)"));
@@ -89,11 +87,11 @@ public class PlotOptions {
         format.yb = Double.parseDouble(line.getOptionValue("yb"));
       }
       
-      if(line.hasOption("width")) {
-        format.width = Integer.parseInt(line.getOptionValue("width"));
-      }
-      if(line.hasOption("height")) {
-        format.height = Integer.parseInt(line.getOptionValue("height"));
+      if(line.hasOption("size")) {
+        String s = line.getOptionValue("size");
+        int i = s.indexOf('x');
+        format.width = Integer.parseInt(s.substring(0, i));
+        format.height = Integer.parseInt(s.substring(i + 1));
       }
       
       if(line.hasOption("output")) {
