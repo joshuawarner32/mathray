@@ -6,12 +6,8 @@ public class Format {
   
   public Integer height;
   
-  public Double xa;
+  public Range xRange;
   
-  public Double xb;
+  public Range yRange;
   
-  public Double ya;
-  
-  public Double yb;
-
 }

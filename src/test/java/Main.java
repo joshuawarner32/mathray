@@ -15,6 +15,7 @@ import mathray.eval.text.ParseInfo;
 import mathray.plot.Frame;
 import mathray.plot.Plot3D;
 import mathray.plot.Plots;
+import mathray.plot.Range;
 import mathray.random.ValueRandom;
 import mathray.util.UI;
 import mathray.util.Vector;
@@ -60,7 +61,7 @@ public class Main {
     g.clearRect(0, 0, 512, 512);
     FunctionTypes.D1_1 f = JavaDevice.compile(JavaDevice.D1_1, def.toMultidef());
     g.setPaint(Color.BLACK);
-    Plots.graphPlot(f, Frame.frameFor(def, -10, 10), 512).draw(g, 0, 0, 512, 512);
+    Plots.graphPlot(f, Frame.frameFor(def, new Range(-10, 10)), 512).draw(g, 0, 0, 512, 512);
     UI.show(def.toString(), image);
   }
 

@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import mathray.plot.Format;
 import mathray.plot.Output;
+import mathray.plot.Range;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -21,7 +23,7 @@ public class PlotOptions {
   static {
     options.addOption(opt("help", "print this message"));
     options.addOption(arg("s", "size", "<width>x<height>", "size of output in pixels"));
-    options.addOption(arg("xa", "value", "lowest (left-most) x value visible in output"));
+    options.addOption(arg("r", "range", "<xmin>:<xmax>,<ymin>:<ymax>", "range of visible coordinates"));
     options.addOption(arg("xb", "value", "highest (right-most) x value visible in output"));
     options.addOption(arg("ya", "value", "lowest y value visible in output (near bottom)"));
     options.addOption(arg("yb", "value", "highest y value visible in output (near top)"));
@@ -55,6 +57,14 @@ public class PlotOptions {
 
   private File output;
   
+  private static Range parseRange(String s) throws InputException {
+    String[] p = s.split(":");
+    if(p.length != 2) {
+      throw new InputException("specify range as <min>:<max>, got " + s);
+    }
+    return new Range(Double.parseDouble(p[0]), Double.parseDouble(p[1]));
+  }
+  
   public PlotOptions(String[] args) {
     
     try {
@@ -74,30 +84,33 @@ public class PlotOptions {
         plot = plots[0];
       }
       
-      if(line.hasOption("xa")) {
-        format.xa = Double.parseDouble(line.getOptionValue("xa"));
-      }
-      if(line.hasOption("xb")) {
-        format.xb = Double.parseDouble(line.getOptionValue("xb"));
-      }
-      if(line.hasOption("ya")) {
-        format.ya = Double.parseDouble(line.getOptionValue("ya"));
-      }
-      if(line.hasOption("yb")) {
-        format.yb = Double.parseDouble(line.getOptionValue("yb"));
+      if(line.hasOption("size")) {
+        String[] s = line.getOptionValue("size").split("x");
+        if(s.length != 2) {
+          throw new InputException("specify size as <width>x<height>, got " + line.getOptionValue("size"));
+        }
+        format.width = Integer.parseInt(s[0]);
+        format.height = Integer.parseInt(s[1]);
       }
       
-      if(line.hasOption("size")) {
-        String s = line.getOptionValue("size");
-        int i = s.indexOf('x');
-        format.width = Integer.parseInt(s.substring(0, i));
-        format.height = Integer.parseInt(s.substring(i + 1));
+      if(line.hasOption("range")) {
+        String[] s = line.getOptionValue("range").split(",");
+        if(s.length < 1 || s.length > 2) {
+          throw new InputException("specify range as <xmin>-<xmax>[,<ymin>-<ymax>], got " + line.getOptionValue("range"));
+        }
+        format.xRange = parseRange(s[0]);
+        if(s.length == 2) {
+          format.yRange = parseRange(s[1]);
+        }
       }
       
       if(line.hasOption("output")) {
         output = new File(line.getOptionValue("output"));
       }
     } catch(ParseException e) {
+      System.err.println(e.getMessage());
+      valid = false;
+    } catch(InputException e) {
       System.err.println(e.getMessage());
       valid = false;
     }

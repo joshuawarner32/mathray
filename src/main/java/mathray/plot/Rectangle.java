@@ -7,6 +7,10 @@ public class Rectangle {
   public final double ya;
   public final double yb;
   
+  public Rectangle(Range x, Range y) {
+    this(x.min, x.max, y.min, y.max);
+  }
+  
   public Rectangle(double xa, double xb, double ya, double yb) {
     this.xa = xa;
     this.xb = xb;

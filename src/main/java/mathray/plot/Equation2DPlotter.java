@@ -17,29 +17,11 @@ public class Equation2DPlotter implements Plotter {
     if(format.height == null) {
       format.height = 512;
     }
-    if(format.xa == null) {
-      if(format.xb == null) {
-        format.xa = -10d;
-        format.xb = 10d;
-      } else {
-        format.xa = format.xb - 10;
-      }
-    } else {
-      if(format.xb == null) {
-        format.xb = format.xa + 10;
-      }
+    if(format.xRange == null) {
+      format.xRange = new Range(-10, 10);
     }
-    if(format.ya == null) {
-      if(format.yb == null) {
-        format.ya = -10d;
-        format.yb = 10d;
-      } else {
-        format.ya = format.yb - 10;
-      }
-    } else {
-      if(format.yb == null) {
-        format.yb = format.ya + 10;
-      }
+    if(format.yRange == null) {
+      format.yRange = new Range(-10, 10);
     }
   }
 
@@ -47,7 +29,7 @@ public class Equation2DPlotter implements Plotter {
   public Output plot(Definition def, Format format) {
     pickFormat(format);
     
-    Rectangle rect = new Rectangle(format.xa, format.xb, format.ya, format.yb);
+    Rectangle rect = new Rectangle(format.xRange, format.yRange);
     FunctionTypes.D f = JavaDevice.compile(IntervalTransform.intervalize(def.toMultidef(), def.args));
     FunctionTypes.RepeatD rf = FunctionTypes.toRepeatD(f);
     int w = format.width;

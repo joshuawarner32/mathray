@@ -13,25 +13,16 @@ public class Function1DPlotter implements Plotter {
     if(format.height == null) {
       format.height = 512;
     }
-    if(format.xa == null) {
-      if(format.xb == null) {
-        format.xa = -10d;
-        format.xb = 10d;
-      } else {
-        format.xa = format.xb - 10;
-      }
-    } else {
-      if(format.xb == null) {
-        format.xb = format.xa + 10;
-      }
+    if(format.xRange == null) {
+      format.xRange = new Range(-10, 10);
     }
   }
   
   public static Rectangle pickFrame(Definition def, Format format) {
-    if(format.ya != null && format.yb != null) {
-      return new Rectangle(format.xa, format.xb, format.ya, format.yb);
+    if(format.yRange != null) {
+      return new Rectangle(format.xRange, format.yRange);
     } else {
-      return Frame.frameFor(def, format.xa, format.xb);
+      return Frame.frameFor(def, format.xRange);
     }
   }
 

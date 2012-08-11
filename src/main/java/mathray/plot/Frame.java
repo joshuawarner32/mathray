@@ -10,7 +10,7 @@ public class Frame {
 
   private Frame() {}
   
-  public static Rectangle frameFor(Definition def, double xmin, double xmax) {
+  public static Rectangle frameFor(Definition def, Range xRange) {
     double ymin = Double.MAX_VALUE;
     double ymax = -Double.MAX_VALUE;
     Multidef inter = IntervalTransform.intervalize(def.toMultidef(), def.args);
@@ -21,8 +21,8 @@ public class Frame {
     double[] vals = new double[intervals * 2];
     
     for(int i = 0; i < intervals; i++) {
-      inputs[2 * i] = (xmax - xmin) * i / intervals + xmin;
-      inputs[2 * i + 1] = (xmax - xmin) * (i + 1) / intervals + xmin;
+      inputs[2 * i] = (xRange.max - xRange.min) * i / intervals + xRange.min;
+      inputs[2 * i + 1] = (xRange.max - xRange.min) * (i + 1) / intervals + xRange.min;
     }
     
     funcRepeat.repeat(inputs, vals);
@@ -41,7 +41,7 @@ public class Frame {
     double yrad = (ymax - ymin) / 2;
     ymax = ycenter + yrad * 1.1;
     ymin = ycenter - yrad * 1.1;
-    return new Rectangle(xmin, xmax, ymin, ymax);
+    return new Rectangle(xRange.min, xRange.max, ymin, ymax);
   }
 
 }
