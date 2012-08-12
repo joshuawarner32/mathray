@@ -16,6 +16,7 @@ import mathray.plot.Frame;
 import mathray.plot.Plot3D;
 import mathray.plot.Plots;
 import mathray.plot.Range;
+import mathray.plot.Resolution;
 import mathray.random.ValueRandom;
 import mathray.util.UI;
 import mathray.util.Vector;
@@ -49,7 +50,7 @@ public class Main {
   
   private static void plot3D(Definition def, int width, int height) {
     CameraD3 cam = CameraD3.lookAt(new VectorD3(3, 3, 3), new VectorD3(0, 0, 0), 1, width / (double)height, new VectorD3(0, 0, 1));
-    BufferedImage image = Plot3D.plotBlockDefault(def, cam, width, height, 0.001, 100);
+    BufferedImage image = Plot3D.plotBlockNormal(def, cam, new Plot3D.PlotData(new Resolution(width, height), 100, 0.001));
     UI.show(def.toString(), image);
   }
   

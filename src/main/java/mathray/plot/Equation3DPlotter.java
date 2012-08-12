@@ -9,11 +9,8 @@ import mathray.concrete.VectorD3;
 public class Equation3DPlotter implements Plotter {
   
   private CameraD3 pickFormat(Format format) {
-    if(format.width == null) {
-      format.width = 512;
-    }
-    if(format.height == null) {
-      format.height = 512;
+    if(format.resolution == null) {
+      format.resolution = new Resolution(512, 512);
     }
     
     if(format.cameraPosition == null) {
@@ -37,14 +34,14 @@ public class Equation3DPlotter implements Plotter {
       format.cameraFieldOfView = 1d;
     }
     
-    return CameraD3.lookAt(format.cameraPosition, format.cameraLookAt, 1, format.width / (double)format.height, format.cameraUp);
+    return CameraD3.lookAt(format.cameraPosition, format.cameraLookAt, format.cameraFieldOfView, format.resolution.width / (double)format.resolution.height, format.cameraUp);
   }
 
   @Override
   public Output plot(Definition def, Format format) {
     CameraD3 cam = pickFormat(format);
     
-    BufferedImage image = Plot3D.plotBlockDefault(def, cam, format.width, format.height, 0.001, 100);
+    BufferedImage image = Plot3D.plotBlockNormal(def, cam, new Plot3D.PlotData(format.resolution, 100, 0.001));
     return new ImageOutput(def.toString() + " = 0", image);
   }
 

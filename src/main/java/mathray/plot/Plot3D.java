@@ -23,6 +23,18 @@ import static mathray.Expressions.*;
 
 public class Plot3D {
   
+  public static class PlotData {
+    public final Resolution resolution;
+    public final double max;
+    public final double error;
+    
+    public PlotData(Resolution resolution, double max, double error) {
+      this.resolution = resolution;
+      this.max = max;
+      this.error = error;
+    }
+  }
+  
   private Plot3D() {}
   
   public static boolean solve(FunctionTypes.ZeroOnRayD3 func, RayD3 solution, double max, double error) {
@@ -57,7 +69,12 @@ public class Plot3D {
     public void print();
   }
   
-  public static DataD blockDivide(final FunctionTypes.ZeroInBlockD3 func, int width, int height, final double error, final double max, BlockD3 block) {
+  public static DataD blockDivide(final FunctionTypes.ZeroInBlockD3 func, BlockD3 block, PlotData data) {
+    final int width = data.resolution.width;
+    final int height = data.resolution.height;
+    final double max = data.max;
+    final double error = data.error;
+    
     final DataD.Builder3 mat = new DataD.Builder3(width, height, 1);
     Tester tester = new Tester() {
       private void split(BlockD3 block) {
@@ -109,9 +126,9 @@ public class Plot3D {
     return mat.build();
   }
   
-  public static BufferedImage plotBlockFunction(FunctionTypes.ZeroInBlockD3 func, FunctionTypes.D output, int width, int height, double error, double max) {
-    BlockD3 block = new BlockD3(-1, -1, 0, 1, 1, 1, 0, 0, width, height);
-    Data mat = blockDivide(func, width, height, error, max, block);
+  public static BufferedImage plotBlockFunction(FunctionTypes.ZeroInBlockD3 func, FunctionTypes.D output, PlotData data) {
+    BlockD3 block = new BlockD3(-1, -1, 0, 1, 1, 1, 0, 0, data.resolution.width, data.resolution.height);
+    Data mat = blockDivide(func, block, data);
     
     return renderData(mat, output, -1, 1, -1, 1);
   }
@@ -174,14 +191,7 @@ public class Plot3D {
     return false;
   }
 
-  public static BufferedImage plotBlockDefault(Definition def, CameraD3 cam, int width, int height, double error, double max) {
-    Lambda<Multidef> proj = Project.project(def.toMultidef(), def.args);
-    proj = proj.close(Simplifications.simplify(proj.value));
-    System.out.println(proj);
-    Lambda<Multidef> inter = proj.close(Simplifications.simplify(IntervalTransform.intervalize(proj.value, proj.value.args)));
-    FunctionTypes.ClosureD<FunctionTypes.ZeroInBlockD3> func = JavaDevice.compile(JavaDevice.closureD(JavaDevice.MAYBE_ZERO_IN_BLOCKD3), inter);
-    System.out.println(cam);
-    
+  public static BufferedImage plotBlockNormal(Definition def, CameraD3 cam, PlotData data) {
     Multidef deriv = Simplifications.simplify(Derivatives.multiDerive(def, def.args));
     System.out.println("original derivitive");
     System.out.println(deriv);
@@ -189,10 +199,24 @@ public class Plot3D {
     deriv = Simplifications.simplify(deriv);
     deriv = zip(def(args(x), div(add(x, 1), 2)), deriv);
     deriv = Simplifications.simplify(deriv);
-    Lambda<Multidef> derivProj = Project.project(deriv, def.args);
-    FunctionTypes.ClosureD<FunctionTypes.D> derivFunc = JavaDevice.compile(JavaDevice.closureD(JavaDevice.FUNCTION_D), derivProj);
     
-    return plotBlockFunction(func.close(cam.args()), derivFunc.close(cam.args()), width, height, 0.001, 100);
+    return plotBlockFunction(def, deriv, cam, data);
+  }
+  
+  public static final Multidef DEPTH_FUNCTION = multidef(args(x, y, z), z, z, z); 
+  
+  public static BufferedImage plotBlockFunction(Definition def, Multidef f, CameraD3 cam, PlotData data) {
+    Lambda<Multidef> proj = Project.project(def.toMultidef(), def.args);
+    proj = proj.close(Simplifications.simplify(proj.value));
+    System.out.println(proj);
+    Lambda<Multidef> inter = proj.close(Simplifications.simplify(IntervalTransform.intervalize(proj.value, proj.value.args)));
+    FunctionTypes.ClosureD<FunctionTypes.ZeroInBlockD3> func = JavaDevice.compile(JavaDevice.closureD(JavaDevice.MAYBE_ZERO_IN_BLOCKD3), inter);
+    System.out.println(cam);
+    
+    Lambda<Multidef> derivProj = Project.project(f, def.args);
+    FunctionTypes.ClosureD<FunctionTypes.D> colorFunc = JavaDevice.compile(JavaDevice.closureD(JavaDevice.FUNCTION_D), derivProj);
+    
+    return plotBlockFunction(func.close(cam.args()), colorFunc.close(cam.args()), data);
   }
   
 }

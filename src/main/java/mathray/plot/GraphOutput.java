@@ -26,7 +26,7 @@ public class GraphOutput implements Output {
   
   void draw() {
     if(image == null) {
-      image = new BufferedImage(format.width, format.height, BufferedImage.TYPE_INT_ARGB);
+      image = new BufferedImage(format.resolution.width, format.resolution.height, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g = image.createGraphics();
       g.setBackground(Color.WHITE);
       g.clearRect(0, 0, image.getWidth(), image.getHeight());

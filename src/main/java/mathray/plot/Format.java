@@ -4,9 +4,7 @@ import mathray.concrete.VectorD3;
 
 public class Format {
   
-  public Integer width;
-  
-  public Integer height;
+  public Resolution resolution;
   
   public Range xRange;
   

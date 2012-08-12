@@ -11,11 +11,8 @@ import mathray.util.ImageUtil;
 public class Equation2DPlotter implements Plotter {
   
   private void pickFormat(Format format) {
-    if(format.width == null) {
-      format.width = 512;
-    }
-    if(format.height == null) {
-      format.height = 512;
+    if(format.resolution == null) {
+      format.resolution = new Resolution(512, 512);
     }
     if(format.xRange == null) {
       format.xRange = new Range(-10, 10);
@@ -32,8 +29,8 @@ public class Equation2DPlotter implements Plotter {
     Rectangle rect = new Rectangle(format.xRange, format.yRange);
     FunctionTypes.D f = JavaDevice.compile(IntervalTransform.intervalize(def.toMultidef(), def.args));
     FunctionTypes.RepeatD rf = FunctionTypes.toRepeatD(f);
-    int w = format.width;
-    int h = format.height;
+    int w = format.resolution.width;
+    int h = format.resolution.height;
     
     double[] in = new double[4 * w * h];
     

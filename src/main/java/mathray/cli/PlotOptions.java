@@ -7,6 +7,7 @@ import mathray.concrete.VectorD3;
 import mathray.plot.Format;
 import mathray.plot.Output;
 import mathray.plot.Range;
+import mathray.plot.Resolution;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
@@ -102,8 +103,9 @@ public class PlotOptions {
         if(s.length != 2) {
           throw new InputException("specify size as <width>x<height>, got " + line.getOptionValue("size"));
         }
-        format.width = Integer.parseInt(s[0]);
-        format.height = Integer.parseInt(s[1]);
+        format.resolution = new Resolution(
+            Integer.parseInt(s[0]),
+            Integer.parseInt(s[1]));
       }
       
       if(line.hasOption("range")) {
