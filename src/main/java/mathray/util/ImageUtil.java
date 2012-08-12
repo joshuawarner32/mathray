@@ -16,15 +16,15 @@ public class ImageUtil {
   private static final ColorModel RGB_OPAQUE =
     new DirectColorModel(32, RGB_MASKS[0], RGB_MASKS[1], RGB_MASKS[2]);
   
-  public static int color(byte r, byte g, byte b) {
-    return (r << 16) + (g << 8) + (b << 0);
+  public static int color(int r, int g, int b) {
+    return ((r & 0xff) << 16) | ((g & 0xff) << 8) | ((b & 0xff) << 0);
   }
   
   public static BufferedImage imageFromArray(int[] data, int width, int height) {
     DataBuffer buf = new DataBufferInt(data, data.length);
     WritableRaster raster = Raster.createPackedRaster(buf, width, height, width, RGB_MASKS, null);
-    BufferedImage outImage = new BufferedImage(RGB_OPAQUE, raster, false, null);
-    return outImage;
+    BufferedImage image = new BufferedImage(RGB_OPAQUE, raster, false, null);
+    return image;
   }
 
 }

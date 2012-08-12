@@ -12,7 +12,11 @@ public class FunctionRegistrar<FuncData> {
   }
   
   public FuncData lookup(Function func) {
-    return funcs.get(func);
+    FuncData ret = funcs.get(func);
+    if(ret == null) {
+      throw new UndefinedFunctionException(func);
+    }
+    return ret;
   }
   
 }

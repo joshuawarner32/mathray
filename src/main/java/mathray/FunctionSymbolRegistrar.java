@@ -14,7 +14,7 @@ public class FunctionSymbolRegistrar<FuncData, SymData> extends FunctionRegistra
   public SymData lookup(Symbol sym) {
     SymData ret = syms.get(sym);
     if(ret == null) {
-      throw new UndefinedSymbolException(sym);
+      throw new UndefinedSymbolException(sym, syms.keySet());
     }
     return ret;
   }

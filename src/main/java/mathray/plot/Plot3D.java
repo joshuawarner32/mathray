@@ -3,8 +3,11 @@ package mathray.plot;
 import java.awt.image.BufferedImage;
 
 import mathray.Definition;
+import mathray.Functions;
 import mathray.Lambda;
 import mathray.Multidef;
+import mathray.Symbol;
+import mathray.Value;
 import mathray.concrete.BlockD3;
 import mathray.concrete.CameraD3;
 import mathray.concrete.RayD3;
@@ -138,10 +141,6 @@ public class Plot3D {
     return (byte)(data * 255);
   }
   
-  private static int color(byte r, byte g, byte b) {
-    return (r << 16) + (g << 8) + (b << 0);
-  }
-  
   private static BufferedImage renderData(Data input, FunctionTypes.D f, double xmin, double xmax, double ymin, double ymax) {
     DataD.View3 in = ((DataD)input).asView3();
     int[] out = new int[in.width * in.height];
@@ -170,7 +169,7 @@ public class Plot3D {
         if(hasInfOrNaN(oa)) {
           color = 0xff00ffff;
         } else {
-          color = color(
+          color = ImageUtil.color(
               fixByte((float)oa[0]),
               fixByte((float)oa[1]),
               fixByte((float)oa[2]));
@@ -198,12 +197,19 @@ public class Plot3D {
     deriv = normalize(deriv);
     deriv = Simplifications.simplify(deriv);
     deriv = zip(def(args(x), div(add(x, 1), 2)), deriv);
+//     deriv = zip(Functions.ABS.define(), deriv);
     deriv = Simplifications.simplify(deriv);
     
     return plotBlockFunction(def, deriv, cam, data);
   }
   
-  public static final Multidef DEPTH_FUNCTION = multidef(args(x, y, z), z, z, z); 
+  public static BufferedImage plotBlockDepth(Definition def, double min, double max, CameraD3 cam, PlotData data) {
+    Symbol z = sym("z");
+    Value v = z;//div(sub(z, min), sub(max, min));
+    Multidef depth = multidef(args(x, y, z), v, v, v);
+    
+    return plotBlockFunction(def, depth, cam, data);
+  }
   
   public static BufferedImage plotBlockFunction(Definition def, Multidef f, CameraD3 cam, PlotData data) {
     Lambda<Multidef> proj = Project.project(def.toMultidef(), def.args);
@@ -213,7 +219,7 @@ public class Plot3D {
     FunctionTypes.ClosureD<FunctionTypes.ZeroInBlockD3> func = JavaDevice.compile(JavaDevice.closureD(JavaDevice.MAYBE_ZERO_IN_BLOCKD3), inter);
     System.out.println(cam);
     
-    Lambda<Multidef> derivProj = Project.project(f, def.args);
+    Lambda<Multidef> derivProj = Project.project(f, f.args);
     FunctionTypes.ClosureD<FunctionTypes.D> colorFunc = JavaDevice.compile(JavaDevice.closureD(JavaDevice.FUNCTION_D), derivProj);
     
     return plotBlockFunction(func.close(cam.args()), colorFunc.close(cam.args()), data);

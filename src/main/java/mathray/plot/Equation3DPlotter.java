@@ -41,7 +41,8 @@ public class Equation3DPlotter implements Plotter {
   public Output plot(Definition def, Format format) {
     CameraD3 cam = pickFormat(format);
     
-    BufferedImage image = Plot3D.plotBlockNormal(def, cam, new Plot3D.PlotData(format.resolution, 100, 0.001));
+    BufferedImage image = Plot3D.plotBlockNormal(def, cam, new Plot3D.PlotData(format.resolution, 100, 0.0001));
+//    BufferedImage image = Plot3D.plotBlockDepth(def, 0, 1, cam, new Plot3D.PlotData(format.resolution, 100, 0.0001));
     return new ImageOutput(def.toString() + " = 0", image);
   }
 

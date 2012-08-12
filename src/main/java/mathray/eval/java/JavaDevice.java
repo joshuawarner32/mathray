@@ -41,6 +41,7 @@ public class JavaDevice extends FunctionSymbolRegistrar<JavaImpl, Double> {
     register(MUL, binOp(Opcodes.DMUL));
     register(DIV, binOp(Opcodes.DDIV));
     register(NEG, unaryOp(Opcodes.DNEG));
+    register(ABS, staticCall1("java/lang/Math", "abs"));
     register(SQRT, staticCall1("java/lang/Math", "sqrt"));
     register(SIN, staticCall1("java/lang/Math", "sin"));
     register(SINH, staticCall1("java/lang/Math", "sinh"));
