@@ -16,11 +16,10 @@ Mathray can be run in one of two ways:
 The usage statement is pretty self-explanatory:
 
 <pre>
-usage: mathray --plot "<equation or function>"
+usage: mathray "<equation or function>"
  -h,--height <height>   height of output in pixels
     --help              print this message
     --output <file>     file to write result to
-    --plot <equation>   function or equation to plot
  -w,--width <width>     width of output in pixels
     --xa <value>        lowest (left-most) x value visible in output
     --xb <value>        highest (right-most) x value visible in output
@@ -32,16 +31,16 @@ usage: mathray --plot "<equation or function>"
 
 Specifying a function in x causes mathray to plot using a very simple and fast function plotter:
 
-<code>./mathray --plot "sin(x)"</code>
+<code>./mathray "sin(x)"</code>
 
-<code>./mathray --plot "log(x)+2/3*sin(2x * tau)</code>
+<code>./mathray "log(x)+2/3*sin(2x * tau)"</code>
 
 Notice the "tau" constant, the _real_ circle constant (see [tauday.com](http://www.tauday.com)).  Mathray also supports plain-old pi and e.
 
 Specifying an equation in x and y causes mathray to plot using an interval arithmetic solver:
 
-<code>./mathray --plot "y^2*(y^2-(8/10)^2)=x^2*(x^2-1)"</code>
+<code>./mathray "y^2*(y^2-(8/10)^2)=x^2*(x^2-1)"</code>
 
 Specifying an equation in x, y, and z causes mathray to plot using a 3D ray-tracer (or a direct analog thereof):
 
-<code>./mathray --plot "x^2+y^2=(1-z)*z^4"</code>
+<code>./mathray "x^2+y^2=(1-z)*z^4"</code>
