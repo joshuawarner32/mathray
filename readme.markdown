@@ -1,5 +1,22 @@
 # Mathray
 
+![Kiss Function](/example.png?raw=true "Kiss Function")
+
+`x^2 + y^2=(1 - z)*z^4`
+
+![Clebsch Surface](/example-2.png?raw=true "Clebsch Surface")
+
+```
+81*(x^3 + y^3 + z^3)
+- 189*(x^2*y + x^2*z + y^2*x + y^2*z + z^2*x + z^2*y)
++ 54*x*y*z
++ 126*(x*y + x*z + y*z)
+- 9*(x^2 + y^2 + z^2)
+- 9*(x + y + z)
++ 1 = 0
+```
+
+
 Mathray is a general-purpose high-quality mathematical plotter.
 
 ## Getting Started
